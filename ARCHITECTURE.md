@@ -25,11 +25,15 @@ The MVP does not include:
 
 ## Tech Stack
 
-- Framework: `Next.js` with App Router
-- Language: `TypeScript`
-- Authentication: `Auth.js` with Google provider
-- Database: `PostgreSQL`
+- Runtime: `Node.js 24.14.1 LTS`
+- Framework: `Next.js 15.5.3` with App Router
+- UI runtime: `react 19.1.1` and `react-dom 19.1.1`
+- Language: `TypeScript 5.9.2`
+- Authentication: `Auth.js` for Next.js via `next-auth 4.24.11` with Google provider
+- Database: `PostgreSQL 18.3`
 - Runtime shape: modular monolith
+
+These versions are the pinned architecture baseline as of `2026-04-16`. Newer versions should not be adopted automatically; upgrades should be explicit decisions that update this document.
 
 ## System Shape
 
