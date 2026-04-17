@@ -1,33 +1,45 @@
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { PrismaClient, WordListKind } from "@prisma/client";
+import { Prisma, PrismaClient, WordListKind } from "@prisma/client";
 import {
-  BUILT_IN_EXCLUSION_SLUG,
+  BUILT_IN_EXCLUSION,
   BUILT_IN_LISTS,
 } from "@/lib/word-lists/catalog";
+import { loadWordListTerms } from "@/lib/word-lists/load-word-list-terms";
 
 const prisma = new PrismaClient();
 
-async function loadTerms(fileName: string) {
-  const raw = await readFile(
-    join(process.cwd(), "vendor/word-lists", fileName),
-    "utf8",
+async function loadBuiltInWordLists() {
+  const positiveLists = await Promise.all(
+    BUILT_IN_LISTS.map(async (list) => ({
+      ...list,
+      kind: WordListKind.POSITIVE,
+      terms: await loadWordListTerms(
+        join(process.cwd(), "vendor/word-lists", list.fileName),
+      ),
+    })),
   );
 
-  return raw
-    .split("\n")
-    .map((line) => line.trim().toLowerCase())
-    .filter(Boolean);
+  const exclusionList = {
+    ...BUILT_IN_EXCLUSION,
+    kind: WordListKind.EXCLUSION,
+    terms: await loadWordListTerms(
+      join(process.cwd(), "vendor/word-lists", BUILT_IN_EXCLUSION.fileName),
+    ),
+  };
+
+  return [...positiveLists, exclusionList];
 }
 
-async function seedWordList(input: {
-  slug: string;
-  name: string;
-  kind: WordListKind;
-  fileName: string;
-}) {
-  const terms = await loadTerms(input.fileName);
-  const wordList = await prisma.wordList.upsert({
+async function refreshWordList(
+  tx: Prisma.TransactionClient,
+  input: {
+    slug: string;
+    name: string;
+    kind: WordListKind;
+    terms: string[];
+  },
+) {
+  const wordList = await tx.wordList.upsert({
     where: { slug: input.slug },
     update: { name: input.name, kind: input.kind },
     create: {
@@ -37,13 +49,13 @@ async function seedWordList(input: {
     },
   });
 
-  await prisma.wordListEntry.deleteMany({
+  await tx.wordListEntry.deleteMany({
     where: { wordListId: wordList.id },
   });
 
-  if (terms.length > 0) {
-    await prisma.wordListEntry.createMany({
-      data: terms.map((term) => ({
+  if (input.terms.length > 0) {
+    await tx.wordListEntry.createMany({
+      data: input.terms.map((term) => ({
         wordListId: wordList.id,
         term,
       })),
@@ -53,19 +65,12 @@ async function seedWordList(input: {
 }
 
 async function main() {
-  for (const list of BUILT_IN_LISTS) {
-    await seedWordList({
-      ...list,
-      kind: WordListKind.POSITIVE,
-      fileName: `${list.slug}.txt`,
-    });
-  }
+  const builtInWordLists = await loadBuiltInWordLists();
 
-  await seedWordList({
-    slug: BUILT_IN_EXCLUSION_SLUG,
-    name: "Built-in Exclusions",
-    kind: WordListKind.EXCLUSION,
-    fileName: "exclusion.txt",
+  await prisma.$transaction(async (tx) => {
+    for (const wordList of builtInWordLists) {
+      await refreshWordList(tx, wordList);
+    }
   });
 }
 

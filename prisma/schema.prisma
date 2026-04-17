@@ -35,6 +35,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -43,6 +44,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -59,7 +62,6 @@ model Document {
   title            String
   originalName     String
   rawMarkdown      String             @db.Text
-  shareEnabled     Boolean            @default(false)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   owner            User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -68,6 +70,8 @@ model Document {
   highlightMatches HighlightMatch[]
   annotations      Annotation[]
   share            DocumentShare?
+
+  @@index([ownerId, createdAt])
 }
 
 model DocumentBlock {
@@ -80,6 +84,7 @@ model DocumentBlock {
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@unique([documentId, blockKey])
+  @@index([documentId, sortOrder])
 }
 
 model DocumentWordList {
@@ -123,6 +128,8 @@ model HighlightMatch {
   endOffset   Int
   term        String
   document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, blockKey, startOffset])
 }
 
 model Annotation {
@@ -139,6 +146,8 @@ model Annotation {
   updatedAt     DateTime @updatedAt
   document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, startBlockKey, startOffset])
 }
 
 model DocumentShare {
