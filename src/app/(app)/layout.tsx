@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { getRequiredSession } from "@/lib/auth";
+import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
 
 export default async function AppLayout({
   children,
@@ -9,7 +9,11 @@ export default async function AppLayout({
 }) {
   try {
     await getRequiredSession();
-  } catch {
+  } catch (error) {
+    if (!(error instanceof UnauthenticatedError)) {
+      throw error;
+    }
+
     redirect("/sign-in");
   }
 
