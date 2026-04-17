@@ -16,6 +16,13 @@ type CreateDocumentFromUploadInput = {
   prisma: Pick<PrismaClient, "document">;
 };
 
+export class DocumentUploadValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DocumentUploadValidationError";
+  }
+}
+
 export async function createDocumentFromUpload(input: CreateDocumentFromUploadInput) {
   validateMarkdownUpload(input.file);
 
@@ -63,11 +70,11 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
 
 function validateMarkdownUpload(file: File) {
   if (!isMarkdownFile(file)) {
-    throw new Error("Only Markdown files are supported");
+    throw new DocumentUploadValidationError("Only Markdown files are supported");
   }
 
   if (file.size > MAX_UPLOAD_SIZE_BYTES) {
-    throw new Error("Markdown files must be 512 KB or smaller");
+    throw new DocumentUploadValidationError("Markdown files must be 512 KB or smaller");
   }
 }
 

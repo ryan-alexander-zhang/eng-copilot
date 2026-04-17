@@ -2,7 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { createDocumentFromUpload } from "@/lib/documents/create-document-from-upload";
+import {
+  DocumentUploadValidationError,
+  createDocumentFromUpload,
+} from "@/lib/documents/create-document-from-upload";
 import { UploadForm, type UploadFormState } from "@/components/documents/upload-form";
 
 export default function NewDocumentPage() {
@@ -26,7 +29,7 @@ export default function NewDocumentPage() {
         prisma,
       });
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof DocumentUploadValidationError) {
         return { error: error.message };
       }
 
