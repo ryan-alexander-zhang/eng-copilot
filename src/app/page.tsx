@@ -1,4 +1,4 @@
-export default async function RootPage() {
+export default function RootPage() {
   return (
     <main>
       <h1>Markdown Word Annotation</h1>
