@@ -1,23 +1,20 @@
 import "@testing-library/jest-dom/vitest";
-import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
-import RootLayout from "@/app/layout";
-import RootPage from "@/app/page";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import SignInPage from "@/app/sign-in/page";
 
-describe("RootPage", () => {
-  it("renders the app shell through the root layout", () => {
-    const html = renderToStaticMarkup(
-      <RootLayout>
-        <RootPage />
-      </RootLayout>,
-    );
+vi.mock("next-auth/react", () => ({
+  signIn: vi.fn(),
+}));
 
-    expect(html).toContain('<html lang="en">');
-    expect(html).toContain("<body>");
-    expect(html).toContain("<main>");
-    expect(html).toContain("Markdown Word Annotation");
-    expect(html).toContain(
-      "Upload Markdown, highlight vocabulary, annotate text, and share read-only study views.",
-    );
+describe("SignInPage", () => {
+  it("renders the Google sign-in prompt", () => {
+    render(<SignInPage />);
+
+    expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument();
+    expect(screen.getByText("Continue with Google to access your documents.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Sign in with Google" }),
+    ).toBeInTheDocument();
   });
 });
