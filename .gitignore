@@ -8,4 +8,7 @@ coverage/
 playwright-report/
 
 .env.local
+.env
 .env.*.local
+test-results/
+tsconfig.tsbuildinfo
