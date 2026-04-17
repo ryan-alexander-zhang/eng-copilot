@@ -1,0 +1,5 @@
+allocate
+coherent
+derive
+notion
+precede
