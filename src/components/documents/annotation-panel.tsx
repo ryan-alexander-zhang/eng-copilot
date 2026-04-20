@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, type ChangeEvent } from "react";
+
 type AnnotationPanelBlock = {
   blockKey: string;
   text: string;
@@ -28,19 +32,30 @@ export function AnnotationPanel({
   updateAction: (formData: FormData) => Promise<void>;
   deleteAction: (formData: FormData) => Promise<void>;
 }) {
-  const firstBlock = blocks[0];
+  const hasBlocks = blocks.length > 0;
+  const firstBlock = hasBlocks ? blocks[0] : null;
+  const [endBlockKey, setEndBlockKey] = useState(firstBlock?.blockKey ?? "");
+  const [endOffset, setEndOffset] = useState(firstBlock?.text.length.toString() ?? "0");
+
+  function handleEndBlockKeyChange(event: ChangeEvent<HTMLSelectElement>) {
+    const nextBlockKey = event.target.value;
+    const nextBlock = blocks.find((block) => block.blockKey === nextBlockKey);
+
+    setEndBlockKey(nextBlockKey);
+    setEndOffset(nextBlock ? nextBlock.text.length.toString() : "0");
+  }
 
   return (
     <section aria-label="Annotation panel">
       <h2>Annotations</h2>
-      {blocks.length === 0 ? (
+      {!hasBlocks ? (
         <p>Add document content before creating annotations.</p>
       ) : (
         <form action={createAction}>
           <fieldset>
             <legend>Create annotation</legend>
             <label htmlFor="startBlockKey">Start block</label>
-            <select id="startBlockKey" name="startBlockKey" defaultValue={firstBlock.blockKey}>
+            <select id="startBlockKey" name="startBlockKey" defaultValue={firstBlock!.blockKey}>
               {blocks.map((block) => (
                 <option key={block.blockKey} value={block.blockKey}>
                   {block.blockKey} - {truncateBlockText(block.text)}
@@ -50,7 +65,7 @@ export function AnnotationPanel({
             <label htmlFor="startOffset">Start offset</label>
             <input id="startOffset" name="startOffset" type="number" min="0" defaultValue="0" required />
             <label htmlFor="endBlockKey">End block</label>
-            <select id="endBlockKey" name="endBlockKey" defaultValue={firstBlock.blockKey}>
+            <select id="endBlockKey" name="endBlockKey" value={endBlockKey} onChange={handleEndBlockKeyChange}>
               {blocks.map((block) => (
                 <option key={block.blockKey} value={block.blockKey}>
                   {block.blockKey} - {truncateBlockText(block.text)}
@@ -63,7 +78,8 @@ export function AnnotationPanel({
               name="endOffset"
               type="number"
               min="0"
-              defaultValue={firstBlock.text.length.toString()}
+              value={endOffset}
+              onChange={(event) => setEndOffset(event.target.value)}
               required
             />
             <label htmlFor="note">Note</label>

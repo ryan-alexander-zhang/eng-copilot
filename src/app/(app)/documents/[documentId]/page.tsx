@@ -126,13 +126,12 @@ function getOptionalString(formData: FormData, fieldName: string) {
   return value;
 }
 
-function getRequiredInteger(formData: FormData, fieldName: string) {
+export function getRequiredInteger(formData: FormData, fieldName: string) {
   const value = getRequiredString(formData, fieldName);
-  const parsed = Number.parseInt(value, 10);
 
-  if (!Number.isInteger(parsed) || parsed < 0) {
+  if (!/^\d+$/.test(value)) {
     throw new Error(`Invalid ${fieldName}`);
   }
 
-  return parsed;
+  return Number(value);
 }
