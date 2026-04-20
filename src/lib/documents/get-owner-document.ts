@@ -18,6 +18,12 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
       originalName: true,
       createdAt: true,
       updatedAt: true,
+      share: {
+        select: {
+          token: true,
+          isActive: true,
+        },
+      },
       blocks: {
         orderBy: {
           sortOrder: "asc",

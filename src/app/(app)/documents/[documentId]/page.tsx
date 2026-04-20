@@ -9,10 +9,13 @@ import { deleteAnnotation } from "@/lib/annotations/delete-annotation";
 import { updateAnnotation } from "@/lib/annotations/update-annotation";
 import { getOwnerDocument } from "@/lib/documents/get-owner-document";
 import { updateDocumentHighlightLists } from "@/lib/highlights/update-document-highlight-lists";
+import { enableDocumentShare } from "@/lib/shares/enable-document-share";
+import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
 import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
 import { AnnotationPanel } from "@/components/documents/annotation-panel";
 import { DocumentReader } from "@/components/documents/document-reader";
 import { ListToggleForm } from "@/components/documents/list-toggle-form";
+import { SharePanel } from "@/components/documents/share-panel";
 
 export default async function DocumentPage({
   params,
@@ -134,6 +137,30 @@ export default async function DocumentPage({
     revalidatePath(`/documents/${ownerDocumentId}`);
   }
 
+  async function enableShareAction() {
+    "use server";
+
+    await enableDocumentShare({
+      documentId: ownerDocumentId,
+      ownerId,
+      prisma,
+    });
+
+    revalidatePath(`/documents/${ownerDocumentId}`);
+  }
+
+  async function revokeShareAction() {
+    "use server";
+
+    await revokeDocumentShare({
+      documentId: ownerDocumentId,
+      ownerId,
+      prisma,
+    });
+
+    revalidatePath(`/documents/${ownerDocumentId}`);
+  }
+
   return (
     <main>
       <p>
@@ -147,6 +174,11 @@ export default async function DocumentPage({
           {document.createdAt.toLocaleDateString()}
         </time>
       </p>
+      <SharePanel
+        share={document.share}
+        enableAction={enableShareAction}
+        revokeAction={revokeShareAction}
+      />
       <ListToggleForm lists={listOptions} action={updateHighlightListsAction} />
       <DocumentReader
         blocks={document.blocks}
