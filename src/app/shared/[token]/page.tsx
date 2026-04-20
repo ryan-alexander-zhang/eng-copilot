@@ -9,6 +9,8 @@ export default async function SharedDocumentPage({
 }: {
   params: Promise<{ token: string }>;
 }) {
+  const { token } = await params;
+
   try {
     await getRequiredSession();
   } catch (error) {
@@ -16,29 +18,15 @@ export default async function SharedDocumentPage({
       throw error;
     }
 
-    redirect("/sign-in");
+    redirect(`/sign-in?callbackUrl=${encodeURIComponent(`/shared/${token}`)}`);
   }
 
-  const { token } = await params;
-
+  let document: Awaited<ReturnType<typeof getSharedDocument>>;
   try {
-    const document = await getSharedDocument({
+    document = await getSharedDocument({
       prisma,
       token,
     });
-
-    return (
-      <main>
-        <h1>Read-only shared view</h1>
-        <h2>{document.title}</h2>
-        <p>{document.originalName}</p>
-        <DocumentReader
-          blocks={document.blocks}
-          highlightMatches={document.highlightMatches}
-          annotations={document.annotations}
-        />
-      </main>
-    );
   } catch (error) {
     if (error instanceof Error && error.message === "SHARE_NOT_FOUND") {
       notFound();
@@ -46,4 +34,17 @@ export default async function SharedDocumentPage({
 
     throw error;
   }
+
+  return (
+    <main>
+      <h1>Read-only shared view</h1>
+      <h2>{document.title}</h2>
+      <p>{document.originalName}</p>
+      <DocumentReader
+        blocks={document.blocks}
+        highlightMatches={document.highlightMatches}
+        annotations={document.annotations}
+      />
+    </main>
+  );
 }
