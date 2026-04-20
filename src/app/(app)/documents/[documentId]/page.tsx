@@ -116,12 +116,20 @@ export default async function DocumentPage({
   async function updateHighlightListsAction(formData: FormData) {
     "use server";
 
-    await updateDocumentHighlightLists({
-      documentId: ownerDocumentId,
-      ownerId,
-      selectedWordListIds: getFormValues(formData, "wordListId"),
-      prisma,
-    });
+    try {
+      await updateDocumentHighlightLists({
+        documentId: ownerDocumentId,
+        ownerId,
+        selectedWordListIds: getFormValues(formData, "wordListId"),
+        prisma,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message === "Document not found") {
+        notFound();
+      }
+
+      throw error;
+    }
 
     revalidatePath(`/documents/${ownerDocumentId}`);
   }
