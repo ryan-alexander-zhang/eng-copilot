@@ -105,11 +105,13 @@ function buildAnnotationQuote(input: {
 
     return block.text;
   });
-  const quote = parts.join("\n");
+  const selectedCharacterCount = parts.reduce((count, part) => count + part.length, 0);
 
-  if (quote.length === 0) {
+  if (selectedCharacterCount === 0) {
     throw new Error("Annotation quote cannot be empty");
   }
+
+  const quote = parts.join("\n");
 
   return quote;
 }
