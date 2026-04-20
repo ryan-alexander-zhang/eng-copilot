@@ -9,27 +9,20 @@ type UpdateAnnotationInput = {
 };
 
 export async function updateAnnotation(input: UpdateAnnotationInput) {
-  const annotation = await input.prisma.annotation.findFirst({
+  const result = await input.prisma.annotation.updateMany({
     where: {
       id: input.annotationId,
       documentId: input.documentId,
       ownerId: input.ownerId,
     },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!annotation) {
-    throw new Error("Annotation not found");
-  }
-
-  return input.prisma.annotation.update({
-    where: {
-      id: annotation.id,
-    },
     data: {
       note: input.note.trim(),
     },
   });
+
+  if (result.count === 0) {
+    throw new Error("Annotation not found");
+  }
+
+  return result;
 }

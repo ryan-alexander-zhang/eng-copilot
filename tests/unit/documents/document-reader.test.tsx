@@ -108,4 +108,39 @@ describe("DocumentReader", () => {
     expect(spans?.[0]).not.toHaveStyle({ backgroundColor: "rgb(254, 240, 138)" });
     expect(spans?.[0]).not.toHaveStyle({ textDecoration: "underline" });
   });
+
+  it("renders the non-paragraph block kinds", () => {
+    render(
+      <DocumentReader
+        blocks={[
+          { blockKey: "heading:1", kind: "heading", text: "Heading text" },
+          { blockKey: "list-item:1", kind: "list-item", text: "List text" },
+          { blockKey: "blockquote:1", kind: "blockquote", text: "Quote text" },
+          { blockKey: "code:1", kind: "code", text: "const x = 1;" },
+        ]}
+        highlightMatches={[
+          {
+            blockKey: "heading:1",
+            startOffset: 0,
+            endOffset: 7,
+            term: "Heading",
+          },
+        ]}
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: "code:1",
+            startOffset: 0,
+            endBlockKey: "code:1",
+            endOffset: 5,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { level: 3, name: "Heading text" })).toBeInTheDocument();
+    expect(screen.getByText("List text").closest("p")).toHaveTextContent("• List text");
+    expect(screen.getByText("Quote text").closest("blockquote")).toHaveTextContent("Quote text");
+    expect(screen.getByTitle("Annotations: annotation-1").closest("code")).toHaveTextContent("const x = 1;");
+  });
 });

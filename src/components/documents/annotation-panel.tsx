@@ -86,7 +86,15 @@ export function AnnotationPanel({
               ))}
             </select>
             <label htmlFor="startOffset">Start offset</label>
-            <input id="startOffset" name="startOffset" type="number" min="0" defaultValue="0" required />
+            <input
+              key={startBlockKey}
+              id="startOffset"
+              name="startOffset"
+              type="number"
+              min="0"
+              defaultValue="0"
+              required
+            />
             <label htmlFor="endBlockKey">End block</label>
             <select id="endBlockKey" name="endBlockKey" value={endBlockKey} onChange={handleEndBlockKeyChange}>
               {endBlockOptions.map((block) => (

@@ -99,9 +99,8 @@ describe("createAnnotation", () => {
 });
 
 describe("updateAnnotation", () => {
-  it("rejects updates for an annotation the owner does not control", async () => {
-    const findFirst = vi.fn().mockResolvedValue(null);
-    const update = vi.fn();
+  it("updates through an owner-scoped write and trims the note", async () => {
+    const updateMany = vi.fn().mockResolvedValue({ count: 1 });
 
     await expect(
       updateAnnotation({
@@ -111,24 +110,51 @@ describe("updateAnnotation", () => {
         note: " note ",
         prisma: {
           annotation: {
-            findFirst,
-            update,
+            updateMany,
           },
         } as never,
       }),
-    ).rejects.toThrow("Annotation not found");
+    ).resolves.toEqual({ count: 1 });
 
-    expect(findFirst).toHaveBeenCalledWith({
+    expect(updateMany).toHaveBeenCalledWith({
       where: {
         id: "ann_123",
         documentId: "doc_123",
         ownerId: "user_123",
       },
-      select: {
-        id: true,
+      data: {
+        note: "note",
       },
     });
-    expect(update).not.toHaveBeenCalled();
+  });
+
+  it("rejects updates for an annotation the owner does not control", async () => {
+    const updateMany = vi.fn().mockResolvedValue({ count: 0 });
+
+    await expect(
+      updateAnnotation({
+        annotationId: "ann_123",
+        documentId: "doc_123",
+        ownerId: "user_123",
+        note: " note ",
+        prisma: {
+          annotation: {
+            updateMany,
+          },
+        } as never,
+      }),
+    ).rejects.toThrow("Annotation not found");
+
+    expect(updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "ann_123",
+        documentId: "doc_123",
+        ownerId: "user_123",
+      },
+      data: {
+        note: "note",
+      },
+    });
   });
 });
 

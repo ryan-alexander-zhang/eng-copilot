@@ -55,4 +55,28 @@ describe("AnnotationPanel", () => {
     expect(screen.getByLabelText("End block")).toHaveValue("paragraph:2");
     expect(screen.getByLabelText("End offset")).toHaveValue(3);
   });
+
+  it("resets the start offset when the start block changes", () => {
+    render(
+      <AnnotationPanel
+        blocks={[
+          { blockKey: "paragraph:1", text: "hello world" },
+          { blockKey: "paragraph:2", text: "hey" },
+        ]}
+        annotations={[]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("Start offset"), {
+      target: { value: "10" },
+    });
+    fireEvent.change(screen.getByLabelText("Start block"), {
+      target: { value: "paragraph:2" },
+    });
+
+    expect(screen.getByLabelText("Start offset")).toHaveValue(0);
+  });
 });
