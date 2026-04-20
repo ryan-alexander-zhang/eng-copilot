@@ -1,19 +1,22 @@
-"use client";
+import SignInButton from "./sign-in-button";
 
-import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+type SignInPageProps = {
+  searchParams?: Promise<{
+    callbackUrl?: string | string[];
+  }>;
+};
 
-export default function SignInPage() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+export default async function SignInPage({ searchParams }: SignInPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const callbackUrl = Array.isArray(resolvedSearchParams?.callbackUrl)
+    ? resolvedSearchParams.callbackUrl[0]
+    : resolvedSearchParams?.callbackUrl;
 
   return (
     <main>
       <h1>Sign in</h1>
       <p>Continue with Google to access your documents.</p>
-      <button onClick={() => void signIn("google", { callbackUrl })}>
-        Sign in with Google
-      </button>
+      <SignInButton callbackUrl={callbackUrl ?? "/"} />
     </main>
   );
 }

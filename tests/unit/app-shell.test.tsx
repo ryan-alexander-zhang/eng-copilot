@@ -2,32 +2,20 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 import SignInPage from "@/app/sign-in/page";
+import SignInButton from "@/app/sign-in/sign-in-button";
 
 vi.mock("next-auth/react", () => ({
   signIn: vi.fn(),
-}));
-
-vi.mock("next/navigation", () => ({
-  useSearchParams: vi.fn(),
 }));
 
 afterEach(() => {
   cleanup();
 });
 
-describe("SignInPage", () => {
-  const useSearchParamsMock = vi.mocked(useSearchParams);
-
-  afterEach(() => {
-    useSearchParamsMock.mockReset();
-  });
-
-  it("renders the Google sign-in prompt", () => {
-    useSearchParamsMock.mockReturnValue(new URLSearchParams());
-
-    render(<SignInPage />);
+describe("SignInButton", () => {
+  it("renders the Google sign-in prompt", async () => {
+    render(await SignInPage({ searchParams: Promise.resolve({}) }));
 
     expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument();
     expect(screen.getByText("Continue with Google to access your documents.")).toBeInTheDocument();
@@ -39,9 +27,7 @@ describe("SignInPage", () => {
   it("starts Google sign-in with the owner shell callback", () => {
     const signInMock = vi.mocked(signIn);
 
-    useSearchParamsMock.mockReturnValue(new URLSearchParams());
-
-    render(<SignInPage />);
+    render(<SignInButton callbackUrl="/" />);
 
     fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
 
@@ -50,12 +36,10 @@ describe("SignInPage", () => {
     });
   });
 
-  it("honors a callbackUrl query parameter", () => {
+  it("honors a callbackUrl query parameter", async () => {
     const signInMock = vi.mocked(signIn);
 
-    useSearchParamsMock.mockReturnValue(new URLSearchParams("callbackUrl=/shared/token"));
-
-    render(<SignInPage />);
+    render(await SignInPage({ searchParams: Promise.resolve({ callbackUrl: "/shared/token" }) }));
 
     fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
 
