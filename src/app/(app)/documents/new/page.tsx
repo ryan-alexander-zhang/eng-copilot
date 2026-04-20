@@ -23,11 +23,13 @@ export default function NewDocumentPage() {
     }
 
     try {
-      await createDocumentFromUpload({
+      const document = await createDocumentFromUpload({
         ownerId: session.user.id,
         file,
         prisma,
       });
+
+      redirect(`/documents/${document.id}`);
     } catch (error) {
       if (error instanceof DocumentUploadValidationError) {
         return { error: error.message };
@@ -35,8 +37,6 @@ export default function NewDocumentPage() {
 
       throw error;
     }
-
-    redirect("/documents");
   }
 
   return (

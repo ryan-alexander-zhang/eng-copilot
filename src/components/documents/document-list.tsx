@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type DocumentListItem = {
   id: string;
   title: string;
@@ -18,7 +20,9 @@ export function DocumentList({
     <ul>
       {documents.map((document) => (
         <li key={document.id}>
-          <h2>{document.title}</h2>
+          <h2>
+            <Link href={`/documents/${document.id}`}>{document.title}</Link>
+          </h2>
           <p>{document.originalName}</p>
           <p>
             Uploaded{" "}
