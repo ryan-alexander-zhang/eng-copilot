@@ -183,17 +183,15 @@ function buildRenderSlices(input: {
     return [];
   }
 
+  const validHighlightMatches = input.highlightMatches.filter(
+    (match) =>
+      isValidRange(match.startOffset, input.text.length) &&
+      isValidRange(match.endOffset, input.text.length) &&
+      match.startOffset < match.endOffset,
+  );
   const boundaries = new Set([0, input.text.length]);
 
-  for (const match of input.highlightMatches) {
-    if (!isValidRange(match.startOffset, input.text.length)) {
-      continue;
-    }
-
-    if (!isValidRange(match.endOffset, input.text.length) || match.startOffset >= match.endOffset) {
-      continue;
-    }
-
+  for (const match of validHighlightMatches) {
     boundaries.add(match.startOffset);
     boundaries.add(match.endOffset);
   }
@@ -232,7 +230,7 @@ function buildRenderSlices(input: {
       text: input.text.slice(startOffset, endOffset),
       startOffset,
       endOffset,
-      highlightTerms: input.highlightMatches
+      highlightTerms: validHighlightMatches
         .filter((match) => match.startOffset <= startOffset && endOffset <= match.endOffset)
         .map((match) => match.term),
       annotationIds: input.annotationSegments

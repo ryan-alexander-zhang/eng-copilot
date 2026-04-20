@@ -30,4 +30,29 @@ describe("AnnotationPanel", () => {
 
     expect(screen.getByLabelText("End offset")).toHaveValue(3);
   });
+
+  it("keeps the end block aligned when the start block moves later", () => {
+    render(
+      <AnnotationPanel
+        blocks={[
+          { blockKey: "paragraph:1", text: "hello world" },
+          { blockKey: "paragraph:2", text: "hey" },
+        ]}
+        annotations={[]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("End block"), {
+      target: { value: "paragraph:1" },
+    });
+    fireEvent.change(screen.getByLabelText("Start block"), {
+      target: { value: "paragraph:2" },
+    });
+
+    expect(screen.getByLabelText("End block")).toHaveValue("paragraph:2");
+    expect(screen.getByLabelText("End offset")).toHaveValue(3);
+  });
 });

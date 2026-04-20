@@ -34,8 +34,26 @@ export function AnnotationPanel({
 }) {
   const hasBlocks = blocks.length > 0;
   const firstBlock = hasBlocks ? blocks[0] : null;
+  const [startBlockKey, setStartBlockKey] = useState(firstBlock?.blockKey ?? "");
   const [endBlockKey, setEndBlockKey] = useState(firstBlock?.blockKey ?? "");
   const [endOffset, setEndOffset] = useState(firstBlock?.text.length.toString() ?? "0");
+
+  const startBlockIndex = blocks.findIndex((block) => block.blockKey === startBlockKey);
+  const endBlockIndex = blocks.findIndex((block) => block.blockKey === endBlockKey);
+  const endBlockOptions = blocks.filter((_, index) => index >= Math.max(startBlockIndex, 0));
+
+  function handleStartBlockKeyChange(event: ChangeEvent<HTMLSelectElement>) {
+    const nextBlockKey = event.target.value;
+    const nextBlockIndex = blocks.findIndex((block) => block.blockKey === nextBlockKey);
+    const nextBlock = blocks[nextBlockIndex];
+
+    setStartBlockKey(nextBlockKey);
+
+    if (nextBlockIndex > endBlockIndex) {
+      setEndBlockKey(nextBlockKey);
+      setEndOffset(nextBlock ? nextBlock.text.length.toString() : "0");
+    }
+  }
 
   function handleEndBlockKeyChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextBlockKey = event.target.value;
@@ -55,7 +73,12 @@ export function AnnotationPanel({
           <fieldset>
             <legend>Create annotation</legend>
             <label htmlFor="startBlockKey">Start block</label>
-            <select id="startBlockKey" name="startBlockKey" defaultValue={firstBlock!.blockKey}>
+            <select
+              id="startBlockKey"
+              name="startBlockKey"
+              value={startBlockKey}
+              onChange={handleStartBlockKeyChange}
+            >
               {blocks.map((block) => (
                 <option key={block.blockKey} value={block.blockKey}>
                   {block.blockKey} - {truncateBlockText(block.text)}
@@ -66,7 +89,7 @@ export function AnnotationPanel({
             <input id="startOffset" name="startOffset" type="number" min="0" defaultValue="0" required />
             <label htmlFor="endBlockKey">End block</label>
             <select id="endBlockKey" name="endBlockKey" value={endBlockKey} onChange={handleEndBlockKeyChange}>
-              {blocks.map((block) => (
+              {endBlockOptions.map((block) => (
                 <option key={block.blockKey} value={block.blockKey}>
                   {block.blockKey} - {truncateBlockText(block.text)}
                 </option>
