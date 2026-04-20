@@ -1,5 +1,6 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
+import type { ParsedBlock } from "@/lib/markdown/parse-markdown-to-blocks";
 
 type HighlightPrisma = Pick<PrismaClient, "document" | "highlightMatch"> | Pick<
   Prisma.TransactionClient,
@@ -25,6 +26,8 @@ export async function recomputeDocumentHighlights(input: RecomputeDocumentHighli
         },
         select: {
           blockKey: true,
+          kind: true,
+          sortOrder: true,
           text: true,
         },
       },
@@ -36,7 +39,10 @@ export async function recomputeDocumentHighlights(input: RecomputeDocumentHighli
   }
 
   const highlightMatches = computeHighlightMatches({
-    blocks: document.blocks,
+    blocks: document.blocks.map((block) => ({
+      ...block,
+      kind: block.kind as ParsedBlock["kind"],
+    })),
     activeTerms: input.activeTerms,
     excludedTerms: input.excludedTerms,
   });

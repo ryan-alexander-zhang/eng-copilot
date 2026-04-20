@@ -38,6 +38,8 @@ describe("recomputeDocumentHighlights", () => {
           },
           select: {
             blockKey: true,
+            kind: true,
+            sortOrder: true,
             text: true,
           },
         },
