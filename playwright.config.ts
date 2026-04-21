@@ -18,7 +18,7 @@ export default defineConfig({
     ? {
         command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
         url: "http://127.0.0.1:3000",
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
         env: {
           ...process.env,
           NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://127.0.0.1:3000",
