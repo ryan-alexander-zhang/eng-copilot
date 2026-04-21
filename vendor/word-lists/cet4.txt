@@ -3,3 +3,5 @@ benefit
 culture
 describe
 improve
+starts
+photograph
