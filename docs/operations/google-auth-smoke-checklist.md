@@ -1,6 +1,6 @@
 # Google Auth Smoke Checklist
 
-Use this checklist for a real Google-auth smoke test. The automated Playwright spec seeds NextAuth sessions directly and does not exercise Google OAuth.
+Use this checklist for a real Google-auth smoke test. The automated Playwright spec seeds Auth.js sessions directly and does not exercise Google OAuth.
 
 ## Prerequisites
 
@@ -10,6 +10,18 @@ Use this checklist for a real Google-auth smoke test. The automated Playwright s
 - `NEXTAUTH_URL` matches the local app URL, usually `http://127.0.0.1:3000` or `http://localhost:3000`.
 - `npm install` has been run.
 - `npm run db:generate` and `npm run db:seed` have been run.
+
+## Google OAuth Console Setup
+
+1. Create or select a Google Cloud project.
+2. Configure the OAuth consent screen.
+3. Create an `OAuth 2.0 Client ID` for `Web application`.
+4. Add the local JavaScript origin:
+   - `http://localhost:3000`
+5. Add the local redirect URI:
+   - `http://localhost:3000/api/auth/callback/google`
+6. Copy the client id and client secret into `.env`.
+7. Keep the host in Google OAuth and `NEXTAUTH_URL` exactly aligned. Mixing `localhost` and `127.0.0.1` will break the flow.
 
 ## Smoke Flow
 
