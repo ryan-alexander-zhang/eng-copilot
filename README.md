@@ -26,4 +26,4 @@ When `DATABASE_URL` or `NEXTAUTH_SECRET` is missing, the E2E skips with a clear 
 
 ## Operations
 
-- Real Google auth smoke checklist: [docs/operations/google-auth-smoke-checklist.md](/Users/erpang/GitHubProjects/eng-copilot/docs/operations/google-auth-smoke-checklist.md)
+- Real Google auth smoke checklist: [docs/operations/google-auth-smoke-checklist.md](docs/operations/google-auth-smoke-checklist.md)
