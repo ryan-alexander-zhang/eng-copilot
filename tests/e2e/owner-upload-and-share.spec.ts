@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import nextEnv from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, WordListKind } from "@prisma/client";
 import { expect, test } from "@playwright/test";
 
 const { loadEnvConfig } = nextEnv;
@@ -18,9 +18,12 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     `E2E requires ${missingAppEnv.join(", ")}. Set app env to run this flow.`,
   );
 
+  await ensureBuiltInWordLists();
+
   const ownerSessionToken = randomUUID();
   const viewerSessionToken = randomUUID();
   const ownerContext = await browser.newContext();
+  const anonymousContext = await browser.newContext();
   const viewerContext = await browser.newContext();
   const ownerIdentity = await seedUserWithSession({
     email: `owner-${randomUUID()}@example.com`,
@@ -82,6 +85,13 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
       throw new Error("Missing share href");
     }
 
+    const anonymousPage = await anonymousContext.newPage();
+    await anonymousPage.goto(shareHref);
+    await expect(anonymousPage).toHaveURL(/\/sign-in\?callbackUrl=%2Fshared%2F/);
+    await expect(
+      anonymousPage.getByRole("heading", { level: 1, name: "Sign in" }),
+    ).toBeVisible();
+
     await viewerContext.addCookies([
       buildSessionCookie({
         baseURL,
@@ -105,6 +115,7 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     await expect(viewerPage.getByRole("button", { name: "Enable share link" })).toHaveCount(0);
   } finally {
     await ownerContext.close();
+    await anonymousContext.close();
     await viewerContext.close();
     await prisma.session.deleteMany({
       where: {
@@ -134,6 +145,76 @@ function buildSessionCookie(input: { baseURL: string | undefined; sessionToken: 
     httpOnly: true,
     sameSite: "Lax" as const,
   };
+}
+
+async function ensureBuiltInWordLists() {
+  const cet4 = await prisma.wordList.upsert({
+    where: {
+      slug: "cet4",
+    },
+    update: {
+      name: "CET4",
+      kind: WordListKind.POSITIVE,
+    },
+    create: {
+      slug: "cet4",
+      name: "CET4",
+      kind: WordListKind.POSITIVE,
+    },
+    select: {
+      id: true,
+    },
+  });
+  const builtInExclusion = await prisma.wordList.upsert({
+    where: {
+      slug: "builtin-exclusion",
+    },
+    update: {
+      name: "Built-in Exclusions",
+      kind: WordListKind.EXCLUSION,
+    },
+    create: {
+      slug: "builtin-exclusion",
+      name: "Built-in Exclusions",
+      kind: WordListKind.EXCLUSION,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  await prisma.wordListEntry.deleteMany({
+    where: {
+      wordListId: {
+        in: [cet4.id, builtInExclusion.id],
+      },
+    },
+  });
+  await prisma.wordListEntry.createMany({
+    data: [
+      {
+        wordListId: cet4.id,
+        term: "ability",
+      },
+      {
+        wordListId: cet4.id,
+        term: "benefit",
+      },
+      {
+        wordListId: cet4.id,
+        term: "culture",
+      },
+      {
+        wordListId: cet4.id,
+        term: "improve",
+      },
+      {
+        wordListId: builtInExclusion.id,
+        term: "markdown",
+      },
+    ],
+    skipDuplicates: true,
+  });
 }
 
 async function seedUserWithSession(input: {

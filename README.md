@@ -22,6 +22,8 @@ Markdown-first reading with built-in vocabulary highlights, annotations, and aut
 
 The Playwright E2E seeds NextAuth database sessions directly for owner and viewer contexts. It does not run real Google OAuth.
 
+The spec also upserts the minimal built-in word-list entries it needs for highlight assertions, so it does not depend on pre-seeded CET data.
+
 When `DATABASE_URL` or `NEXTAUTH_SECRET` is missing, the E2E skips with a clear reason instead of crashing. When those env vars are present, Playwright auto-starts the local Next.js app on `http://127.0.0.1:3000`.
 
 ## Operations
