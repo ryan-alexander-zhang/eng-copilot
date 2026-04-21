@@ -47,4 +47,16 @@ describe("SignInButton", () => {
       callbackUrl: "/shared/token",
     });
   });
+
+  it("shows a Google OAuth error message when sign-in bootstrap fails", async () => {
+    render(await SignInPage({ searchParams: Promise.resolve({ error: "OAuthSignin" }) }));
+
+    expect(
+      screen.getByRole("alert", {
+        name: "",
+      }),
+    ).toHaveTextContent(
+      "Google sign-in could not be started. Check the Google OAuth settings and the server's outbound network access, then try again.",
+    );
+  });
 });

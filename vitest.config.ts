@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
+const authFile = fileURLToPath(new URL("./auth.ts", import.meta.url));
 const srcDir = fileURLToPath(new URL("./src", import.meta.url));
 
 export default defineConfig({
@@ -9,10 +10,18 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    exclude: [...configDefaults.exclude, "tests/e2e/**"],
   },
   resolve: {
-    alias: {
-      "@": srcDir,
-    },
+    alias: [
+      {
+        find: "@/auth",
+        replacement: authFile,
+      },
+      {
+        find: "@",
+        replacement: srcDir,
+      },
+    ],
   },
 });

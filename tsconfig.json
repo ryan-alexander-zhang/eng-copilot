@@ -19,6 +19,9 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@/auth": [
+        "./auth.ts"
+      ],
       "@/*": [
         "./src/*"
       ]

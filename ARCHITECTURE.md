@@ -28,7 +28,7 @@ The MVP does not include:
 - Framework: `next 16.2.4` with App Router
 - UI runtime: `react 19.2.5` and `react-dom 19.2.5`
 - Language: `typescript 6.0.2`
-- Authentication: `Auth.js` for Next.js via `next-auth 4.24.14` with Google provider
+- Authentication: `Auth.js` for Next.js via `next-auth 5.0.0-beta.31` with Google provider
 - Runtime: `Node.js LTS`, pinned later to the minimum version required by the selected `next` release
 - Database: `PostgreSQL`, pinned later in deployment and infrastructure configuration
 - Runtime shape: modular monolith

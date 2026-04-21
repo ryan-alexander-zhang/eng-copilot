@@ -160,7 +160,7 @@ function buildSessionCookie(input: { baseURL: string | undefined; sessionToken: 
   const url = new URL(input.baseURL ?? "http://127.0.0.1:3000");
 
   return {
-    name: "next-auth.session-token",
+    name: "authjs.session-token",
     value: input.sessionToken,
     domain: url.hostname,
     path: "/",

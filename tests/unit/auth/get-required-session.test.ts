@@ -1,26 +1,32 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getServerSession } from "next-auth";
-import { authOptions, getRequiredSession } from "@/lib/auth";
+import { auth } from "@/auth";
+import { ProxyAgent } from "undici";
+import {
+  applySessionUserId,
+  createGoogleAuthFetch,
+  getGoogleHttpOptions,
+} from "@/lib/auth-config";
+import { getRequiredSession } from "@/lib/auth";
 
-vi.mock("next-auth", () => ({
-  getServerSession: vi.fn(),
+vi.mock("@/auth", () => ({
+  auth: vi.fn(),
 }));
 
 describe("getRequiredSession", () => {
-  const getServerSessionMock = vi.mocked(getServerSession);
+  const authMock = vi.mocked(auth);
 
   afterEach(() => {
-    getServerSessionMock.mockReset();
+    authMock.mockReset();
   });
 
   it("throws when the request is unauthenticated", async () => {
-    getServerSessionMock.mockResolvedValue(null);
+    authMock.mockResolvedValue(null);
 
     await expect(getRequiredSession()).rejects.toThrow("UNAUTHENTICATED");
   });
 
   it("throws when the session is missing the owner id", async () => {
-    getServerSessionMock.mockResolvedValue({
+    authMock.mockResolvedValue({
       user: {
         email: "owner@example.com",
       },
@@ -39,13 +45,13 @@ describe("getRequiredSession", () => {
       expires: "2099-01-01T00:00:00.000Z",
     };
 
-    getServerSessionMock.mockResolvedValue(session);
+    authMock.mockResolvedValue(session);
 
     await expect(getRequiredSession()).resolves.toEqual(session);
   });
 
   it("adds the owner id to the session in the NextAuth callback", async () => {
-    const session = await authOptions.callbacks?.session?.({
+    const session = await applySessionUserId({
       session: {
         user: {
           email: "owner@example.com",
@@ -61,4 +67,59 @@ describe("getRequiredSession", () => {
 
     expect(session?.user.id).toBe("user_123");
   });
+
+  it("uses a longer Google discovery timeout without a proxy", () => {
+    expect(getGoogleHttpOptions({})).toEqual({
+      proxyUrl: undefined,
+      timeoutMs: 10_000,
+    });
+  });
+
+  it("returns the configured proxy URL when a proxy is present", () => {
+    expect(
+      getGoogleHttpOptions({
+        HTTPS_PROXY: "http://127.0.0.1:7890",
+      }),
+    ).toEqual({
+      proxyUrl: "http://127.0.0.1:7890",
+      timeoutMs: 10_000,
+    });
+  });
+
+  it("uses an undici proxy dispatcher when a proxy is configured", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null));
+    const originalFetch = global.fetch;
+    global.fetch = fetchMock;
+
+    const googleFetch = createGoogleAuthFetch({
+      HTTPS_PROXY: "http://127.0.0.1:7890",
+    });
+
+    await googleFetch("https://accounts.google.com");
+
+    const [, init] = fetchMock.mock.calls[0];
+
+    global.fetch = originalFetch;
+
+    expect(init.dispatcher).toBeInstanceOf(ProxyAgent);
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it("still applies a timeout when no proxy is configured", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null));
+    const originalFetch = global.fetch;
+    global.fetch = fetchMock;
+
+    const googleFetch = createGoogleAuthFetch({});
+
+    await googleFetch("https://accounts.google.com");
+
+    const [, init] = fetchMock.mock.calls[0];
+
+    global.fetch = originalFetch;
+
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+    expect(init.dispatcher).toBeUndefined();
+  });
+
 });
