@@ -17,5 +17,5 @@ export default async function AppLayout({
     redirect("/sign-in");
   }
 
-  return <>{children}</>;
+  return <div className="min-h-screen bg-[#F8FAFC] text-[#111827]">{children}</div>;
 }

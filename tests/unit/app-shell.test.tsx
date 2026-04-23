@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { signIn } from "next-auth/react";
+import LandingPage from "@/app/page";
 import SignInPage from "@/app/sign-in/page";
 import SignInButton from "@/app/sign-in/sign-in-button";
 
@@ -13,14 +14,37 @@ afterEach(() => {
   cleanup();
 });
 
+describe("LandingPage", () => {
+  it("renders the public landing hero", () => {
+    render(<LandingPage />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Make long Markdown documents easier to read, review, and share.",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open your workspace" })).toHaveAttribute(
+      "href",
+      "/documents",
+    );
+  });
+});
+
 describe("SignInButton", () => {
   it("renders the Google sign-in prompt", async () => {
     render(await SignInPage({ searchParams: Promise.resolve({}) }));
 
-    expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument();
-    expect(screen.getByText("Continue with Google to access your documents.")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Sign in with Google" }),
+      screen.getByRole("heading", {
+        name: "Sign in to continue",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Use Google to open your reading library and pick up where you left off."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("This workspace uses Google sign-in.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Continue with Google" }),
     ).toBeInTheDocument();
   });
 
@@ -29,7 +53,7 @@ describe("SignInButton", () => {
 
     render(<SignInButton callbackUrl="/" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
+    fireEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
 
     expect(signInMock).toHaveBeenCalledWith("google", {
       callbackUrl: "/",
@@ -41,7 +65,8 @@ describe("SignInButton", () => {
 
     render(await SignInPage({ searchParams: Promise.resolve({ callbackUrl: "/shared/token" }) }));
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign in with Google" }));
+    expect(screen.getByRole("heading", { name: "Open the shared document" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
 
     expect(signInMock).toHaveBeenCalledWith("google", {
       callbackUrl: "/shared/token",

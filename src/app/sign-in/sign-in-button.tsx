@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 
 type SignInButtonProps = {
@@ -7,9 +8,21 @@ type SignInButtonProps = {
 };
 
 export default function SignInButton({ callbackUrl }: SignInButtonProps) {
+  const [pending, setPending] = useState(false);
+
   return (
-    <button onClick={() => void signIn("google", { callbackUrl })}>
-      Sign in with Google
+    <button
+      className="button-primary w-full justify-center"
+      disabled={pending}
+      onClick={() => {
+        setPending(true);
+        void Promise.resolve(signIn("google", { callbackUrl })).catch(() => {
+          setPending(false);
+        });
+      }}
+      type="button"
+    >
+      {pending ? "Opening Google..." : "Continue with Google"}
     </button>
   );
 }

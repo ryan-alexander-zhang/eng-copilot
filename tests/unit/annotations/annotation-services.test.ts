@@ -123,7 +123,9 @@ describe("updateAnnotation", () => {
         ownerId: "user_123",
       },
       data: {
+        color: "yellow",
         note: "note",
+        tags: [],
       },
     });
   });
@@ -152,7 +154,9 @@ describe("updateAnnotation", () => {
         ownerId: "user_123",
       },
       data: {
+        color: "yellow",
         note: "note",
+        tags: [],
       },
     });
   });

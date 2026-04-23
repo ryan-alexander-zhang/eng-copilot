@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AnnotationPanel } from "@/components/documents/annotation-panel";
 
@@ -8,75 +8,71 @@ afterEach(() => {
 });
 
 describe("AnnotationPanel", () => {
-  it("updates the end offset when the end block changes", () => {
+  it("renders an empty-state message when no annotations exist", () => {
     render(
-      <AnnotationPanel
-        blocks={[
-          { blockKey: "paragraph:1", text: "hello world" },
-          { blockKey: "paragraph:2", text: "hey" },
-        ]}
-        annotations={[]}
-        createAction={vi.fn().mockResolvedValue(undefined)}
-        updateAction={vi.fn().mockResolvedValue(undefined)}
-        deleteAction={vi.fn().mockResolvedValue(undefined)}
-      />,
+      <AnnotationPanel annotations={[]} onSelectAnnotation={vi.fn()} variant="detailed" />,
     );
 
-    expect(screen.getByLabelText("End offset")).toHaveValue(11);
-
-    fireEvent.change(screen.getByLabelText("End block"), {
-      target: { value: "paragraph:2" },
-    });
-
-    expect(screen.getByLabelText("End offset")).toHaveValue(3);
+    expect(screen.getByText("No annotations yet.")).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toHaveDisplayValue("All annotations");
   });
 
-  it("keeps the end block aligned when the start block moves later", () => {
+  it("renders selectable summaries for existing annotations", () => {
+    const onSelectAnnotation = vi.fn();
+
     render(
       <AnnotationPanel
-        blocks={[
-          { blockKey: "paragraph:1", text: "hello world" },
-          { blockKey: "paragraph:2", text: "hey" },
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: "paragraph:1",
+            startOffset: 0,
+            endBlockKey: "paragraph:1",
+            endOffset: 7,
+            quote: "ability",
+            note: "Owner note for shared viewer.",
+            color: "yellow",
+            tags: [],
+            createdAt: new Date("2026-04-22T00:00:00.000Z"),
+            updatedAt: new Date("2026-04-22T00:00:00.000Z"),
+          },
         ]}
-        annotations={[]}
-        createAction={vi.fn().mockResolvedValue(undefined)}
-        updateAction={vi.fn().mockResolvedValue(undefined)}
-        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        onSelectAnnotation={onSelectAnnotation}
+        selectedAnnotationId="annotation-1"
+        variant="compact"
       />,
     );
 
-    fireEvent.change(screen.getByLabelText("End block"), {
-      target: { value: "paragraph:1" },
-    });
-    fireEvent.change(screen.getByLabelText("Start block"), {
-      target: { value: "paragraph:2" },
-    });
-
-    expect(screen.getByLabelText("End block")).toHaveValue("paragraph:2");
-    expect(screen.getByLabelText("End offset")).toHaveValue(3);
+    expect(screen.getByText("Owner note for shared viewer.")).toBeInTheDocument();
+    expect(screen.getByText("Yesterday")).toBeInTheDocument();
+    screen.getByRole("button", { name: /Owner note for shared viewer\./ }).click();
+    expect(onSelectAnnotation).toHaveBeenCalledWith("annotation-1");
   });
 
-  it("resets the start offset when the start block changes", () => {
+  it("renders read-only notes for shared readers", () => {
     render(
       <AnnotationPanel
-        blocks={[
-          { blockKey: "paragraph:1", text: "hello world" },
-          { blockKey: "paragraph:2", text: "hey" },
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: "paragraph:1",
+            startOffset: 0,
+            endBlockKey: "paragraph:1",
+            endOffset: 7,
+            quote: "ability",
+            note: "Shared readers should see this note.",
+            color: "yellow",
+            tags: [],
+            createdAt: new Date("2026-04-22T00:00:00.000Z"),
+            updatedAt: new Date("2026-04-22T00:00:00.000Z"),
+          },
         ]}
-        annotations={[]}
-        createAction={vi.fn().mockResolvedValue(undefined)}
-        updateAction={vi.fn().mockResolvedValue(undefined)}
-        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        readOnly
+        variant="compact"
       />,
     );
 
-    fireEvent.change(screen.getByLabelText("Start offset"), {
-      target: { value: "10" },
-    });
-    fireEvent.change(screen.getByLabelText("Start block"), {
-      target: { value: "paragraph:2" },
-    });
-
-    expect(screen.getByLabelText("Start offset")).toHaveValue(0);
+    expect(screen.getByText("Shared readers should see this note.")).toBeInTheDocument();
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
   });
 });

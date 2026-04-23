@@ -31,6 +31,22 @@ describe("getSharedDocument", () => {
       id: "doc_123",
       title: "Shared doc",
       originalName: "shared.md",
+      rawMarkdown: "alpha",
+      createdAt: new Date("2026-04-16T00:00:00.000Z"),
+      updatedAt: new Date("2026-04-17T00:00:00.000Z"),
+      owner: {
+        name: "Alex Chen",
+        email: "alex@example.com",
+      },
+      activeLists: [
+        {
+          wordList: {
+            id: "list_123",
+            slug: "cet4",
+            name: "CET4",
+          },
+        },
+      ],
       blocks: [{ blockKey: "paragraph:0", sortOrder: 0, kind: "paragraph", text: "alpha" }],
       highlightMatches: [
         {
@@ -50,6 +66,8 @@ describe("getSharedDocument", () => {
           endOffset: 5,
           quote: "alpha",
           note: "note",
+          tags: [],
+          color: "yellow",
           createdAt: new Date("2026-04-17T00:00:00.000Z"),
           updatedAt: new Date("2026-04-17T00:00:00.000Z"),
         },
@@ -82,6 +100,26 @@ describe("getSharedDocument", () => {
             id: true,
             title: true,
             originalName: true,
+            rawMarkdown: true,
+            createdAt: true,
+            updatedAt: true,
+            owner: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+            activeLists: {
+              select: {
+                wordList: {
+                  select: {
+                    id: true,
+                    slug: true,
+                    name: true,
+                  },
+                },
+              },
+            },
             blocks: {
               orderBy: {
                 sortOrder: "asc",
@@ -106,7 +144,7 @@ describe("getSharedDocument", () => {
             },
             annotations: {
               orderBy: {
-                createdAt: "asc",
+                updatedAt: "desc",
               },
               select: {
                 id: true,
@@ -116,6 +154,8 @@ describe("getSharedDocument", () => {
                 endOffset: true,
                 quote: true,
                 note: true,
+                tags: true,
+                color: true,
                 createdAt: true,
                 updatedAt: true,
               },

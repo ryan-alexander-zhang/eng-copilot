@@ -8,6 +8,8 @@ type CreateAnnotationInput = {
   endBlockKey: string;
   endOffset: number;
   note: string;
+  tags?: string[];
+  color?: string;
   prisma: Pick<PrismaClient, "annotation" | "document">;
 };
 
@@ -52,6 +54,8 @@ export async function createAnnotation(input: CreateAnnotationInput) {
       endOffset: input.endOffset,
       quote,
       note: input.note.trim(),
+      tags: normalizeTags(input.tags),
+      color: input.color?.trim() || "yellow",
     },
   });
 }
@@ -118,4 +122,20 @@ function buildAnnotationQuote(input: {
 
 function isValidOffset(offset: number, textLength: number) {
   return Number.isInteger(offset) && offset >= 0 && offset <= textLength;
+}
+
+function normalizeTags(tags?: string[]) {
+  const uniqueTags = new Set<string>();
+
+  for (const tag of tags ?? []) {
+    const normalizedTag = tag.trim().toLowerCase();
+
+    if (normalizedTag.length === 0) {
+      continue;
+    }
+
+    uniqueTags.add(normalizedTag);
+  }
+
+  return [...uniqueTags];
 }

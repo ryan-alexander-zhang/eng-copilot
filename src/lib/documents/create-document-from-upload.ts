@@ -1,8 +1,9 @@
-import type { PrismaClient } from "@prisma/client";
+import { WordListKind, type PrismaClient } from "@prisma/client";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
 import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
+import { BUILT_IN_EXCLUSION_SLUG, BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
 
-const MAX_UPLOAD_SIZE_BYTES = 512 * 1024;
+const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
 const MARKDOWN_FILE_EXTENSIONS = [".md", ".markdown", ".mdown", ".mkd"];
 const MARKDOWN_CONTENT_TYPES = new Set([
   "application/markdown",
@@ -13,7 +14,7 @@ const MARKDOWN_CONTENT_TYPES = new Set([
 type CreateDocumentFromUploadInput = {
   ownerId: string;
   file: File;
-  prisma: Pick<PrismaClient, "document">;
+  prisma: Pick<PrismaClient, "document" | "wordList" | "userWordListPreference">;
 };
 
 export class DocumentUploadValidationError extends Error {
@@ -28,10 +29,14 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
 
   const rawMarkdown = await input.file.text();
   const blocks = parseMarkdownToBlocks(rawMarkdown);
+  const { activeTerms, excludedTerms, selectedWordListIds } = await getOwnerWordListSelection({
+    ownerId: input.ownerId,
+    prisma: input.prisma,
+  });
   const highlightMatches = computeHighlightMatches({
     blocks,
-    activeTerms: new Set(),
-    excludedTerms: new Set(),
+    activeTerms,
+    excludedTerms,
   });
 
   return input.prisma.document.create({
@@ -48,6 +53,15 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
                 sortOrder: block.sortOrder,
                 kind: block.kind,
                 text: block.text,
+              })),
+            },
+          }
+        : {}),
+      ...(selectedWordListIds.length > 0
+        ? {
+            activeLists: {
+              create: selectedWordListIds.map((wordListId) => ({
+                wordListId,
               })),
             },
           }
@@ -92,4 +106,77 @@ function getDocumentTitle(fileName: string) {
   const strippedExtension = fileName.replace(/\.(md|markdown|mdown|mkd)$/i, "").trim();
 
   return strippedExtension.length > 0 ? strippedExtension : fileName;
+}
+
+async function getOwnerWordListSelection(input: {
+  ownerId: string;
+  prisma: Pick<PrismaClient, "wordList" | "userWordListPreference">;
+}) {
+  if (!("userWordListPreference" in input.prisma) || !("wordList" in input.prisma)) {
+    return {
+      selectedWordListIds: [],
+      activeTerms: new Set<string>(),
+      excludedTerms: new Set<string>(),
+    };
+  }
+
+  const [preferredLists, selectableLists, exclusionList] = await Promise.all([
+    input.prisma.userWordListPreference.findMany({
+      where: {
+        userId: input.ownerId,
+      },
+      select: {
+        wordListId: true,
+      },
+    }),
+    input.prisma.wordList.findMany({
+      where: {
+        kind: WordListKind.POSITIVE,
+        slug: {
+          in: BUILT_IN_LISTS.map((list) => list.slug),
+        },
+      },
+      select: {
+        id: true,
+        entries: {
+          select: {
+            term: true,
+          },
+        },
+      },
+    }),
+    input.prisma.wordList.findUnique({
+      where: {
+        slug: BUILT_IN_EXCLUSION_SLUG,
+      },
+      select: {
+        entries: {
+          select: {
+            term: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  if (!exclusionList) {
+    throw new Error("Built-in exclusion list not found");
+  }
+
+  const selectedWordListIds = preferredLists
+    .map((preference) => preference.wordListId)
+    .filter((wordListId) => selectableLists.some((list) => list.id === wordListId));
+  const selectedWordListIdSet = new Set(selectedWordListIds);
+
+  return {
+    selectedWordListIds,
+    activeTerms: new Set(
+      selectableLists.flatMap((wordList) =>
+        selectedWordListIdSet.has(wordList.id)
+          ? wordList.entries.map((entry) => entry.term)
+          : [],
+      ),
+    ),
+    excludedTerms: new Set(exclusionList.entries.map((entry) => entry.term)),
+  };
 }

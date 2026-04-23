@@ -22,7 +22,7 @@ describe("DocumentList", () => {
       />,
     );
 
-    expect(screen.getByRole("link", { name: "Quarterly Report" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Quarterly Report/ })).toHaveAttribute(
       "href",
       "/documents/doc_123",
     );

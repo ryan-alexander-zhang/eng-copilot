@@ -1,5 +1,10 @@
 allocate
+adaptability
+committing
 coherent
+consistently
 derive
+necessity
 notion
 precede
+reflect

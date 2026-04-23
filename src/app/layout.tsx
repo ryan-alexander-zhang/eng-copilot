@@ -1,15 +1,36 @@
 import type { Metadata } from "next";
 import { ReactNode } from "react";
+import { Funnel_Sans, Geist, Inter } from "next/font/google";
+import "./globals.css";
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const funnelSans = Funnel_Sans({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
-  title: "Markdown Word Annotation",
-  description: "Markdown-first reading with highlights and annotations",
+  title: "eng-copilot",
+  description: "Markdown-first reading with highlights, annotations, and secure sharing.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body
+        className={`${geist.variable} ${inter.variable} ${funnelSans.variable} font-[var(--font-body)] antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

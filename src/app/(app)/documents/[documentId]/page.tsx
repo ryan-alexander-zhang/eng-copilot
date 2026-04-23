@@ -1,21 +1,25 @@
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
-import { WordListKind } from "@prisma/client";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createAnnotation } from "@/lib/annotations/create-annotation";
 import { deleteAnnotation } from "@/lib/annotations/delete-annotation";
 import { updateAnnotation } from "@/lib/annotations/update-annotation";
+import {
+  countWords,
+  estimateReadingMinutes,
+  formatDateTimeLabel,
+  formatRelativeDayLabel,
+  formatStorageAmount,
+} from "@/lib/documents/metrics";
 import { getOwnerDocument } from "@/lib/documents/get-owner-document";
-import { updateDocumentHighlightLists } from "@/lib/highlights/update-document-highlight-lists";
 import { enableDocumentShare } from "@/lib/shares/enable-document-share";
 import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
 import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
-import { AnnotationPanel } from "@/components/documents/annotation-panel";
-import { DocumentReader } from "@/components/documents/document-reader";
-import { ListToggleForm } from "@/components/documents/list-toggle-form";
-import { SharePanel } from "@/components/documents/share-panel";
+import { DocumentWorkspace } from "@/components/documents/document-workspace";
+import { DocumentUploadSidebar } from "@/components/layout/document-upload-sidebar";
+import { OwnerDocumentsSidebar } from "@/components/layout/owner-documents-sidebar";
+import { OwnerTopBar } from "@/components/layout/owner-top-bar";
 
 export default async function DocumentPage({
   params,
@@ -36,41 +40,81 @@ export default async function DocumentPage({
 
   const ownerDocumentId = document.id;
   const ownerId = session.user.id;
-  const builtInPositiveLists = await prisma.wordList.findMany({
-    where: {
-      kind: WordListKind.POSITIVE,
-      slug: {
-        in: BUILT_IN_LISTS.map((list) => list.slug),
+  const [sidebarDocuments, sidebarDocumentCount, activeWordListsWithEntries, userWordListPrefs] = await Promise.all([
+    prisma.document.findMany({
+      where: {
+        ownerId: session.user.id,
       },
-    },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-    },
-  });
-  const activeDocumentWordLists = await prisma.documentWordList.findMany({
-    where: {
-      documentId: ownerDocumentId,
-    },
-    select: {
-      wordListId: true,
-    },
-  });
-  const activeWordListIds = new Set(activeDocumentWordLists.map((wordList) => wordList.wordListId));
-  const listOptions = BUILT_IN_LISTS.map(({ slug }) => {
-    const wordList = builtInPositiveLists.find((candidate) => candidate.slug === slug);
-
-    if (!wordList) {
-      return null;
-    }
-
-    return {
-      id: wordList.id,
-      name: wordList.name,
-      isActive: activeWordListIds.has(wordList.id),
-    };
-  }).filter((wordList): wordList is { id: string; name: string; isActive: boolean } => wordList !== null);
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select: {
+        id: true,
+        title: true,
+        updatedAt: true,
+        rawMarkdown: true,
+      },
+      take: 8,
+    }),
+    prisma.document.count({
+      where: {
+        ownerId: session.user.id,
+      },
+    }),
+    prisma.wordList.findMany({
+      where: {
+        id: {
+          in: document.activeLists.map((entry) => entry.wordList.id),
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        entries: {
+          select: {
+            term: true,
+          },
+        },
+      },
+    }),
+    prisma.userWordListPreference.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      select: {
+        wordList: {
+          select: {
+            slug: true,
+          },
+        },
+      },
+    }),
+    ]);
+  const storageBytes = sidebarDocuments.reduce(
+    (sum, item) => sum + Buffer.byteLength(item.rawMarkdown, "utf8"),
+    0,
+  );
+  const storageTotalBytes = 10 * 1024 * 1024 * 1024;
+  const matchedWords = [...document.highlightMatches]
+    .reduce<Map<string, number>>((counts, match) => {
+      counts.set(match.term, (counts.get(match.term) ?? 0) + 1);
+      return counts;
+    }, new Map())
+    .entries();
+  const matchedWordItems = [...matchedWords]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 8)
+    .map(([term, count]) => ({
+      count,
+      listName:
+        activeWordListsWithEntries.find((wordList) =>
+          wordList.entries.some((entry) => entry.term === term),
+        )?.name ?? null,
+      term,
+    }));
+  const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
+  const wordCount = countWords(document.rawMarkdown);
+  const readingMinutes = estimateReadingMinutes(wordCount);
 
   async function createAnnotationAction(formData: FormData) {
     "use server";
@@ -83,6 +127,8 @@ export default async function DocumentPage({
       endBlockKey: getRequiredString(formData, "endBlockKey"),
       endOffset: getRequiredInteger(formData, "endOffset"),
       note: getOptionalString(formData, "note"),
+      tags: getStringList(formData, "tags"),
+      color: getOptionalString(formData, "color") || "yellow",
       prisma,
     });
 
@@ -97,6 +143,8 @@ export default async function DocumentPage({
       documentId: ownerDocumentId,
       ownerId,
       note: getOptionalString(formData, "note"),
+      tags: getStringList(formData, "tags"),
+      color: getOptionalString(formData, "color") || "yellow",
       prisma,
     });
 
@@ -112,27 +160,6 @@ export default async function DocumentPage({
       ownerId,
       prisma,
     });
-
-    revalidatePath(`/documents/${ownerDocumentId}`);
-  }
-
-  async function updateHighlightListsAction(formData: FormData) {
-    "use server";
-
-    try {
-      await updateDocumentHighlightLists({
-        documentId: ownerDocumentId,
-        ownerId,
-        selectedWordListIds: getFormValues(formData, "wordListId"),
-        prisma,
-      });
-    } catch (error) {
-      if (error instanceof Error && error.message === "Document not found") {
-        notFound();
-      }
-
-      throw error;
-    }
 
     revalidatePath(`/documents/${ownerDocumentId}`);
   }
@@ -162,39 +189,53 @@ export default async function DocumentPage({
   }
 
   return (
-    <main>
-      <p>
-        <Link href="/documents">Back to documents</Link>
-      </p>
-      <h1>{document.title}</h1>
-      <p>{document.originalName}</p>
-      <p>
-        Uploaded{" "}
-        <time dateTime={document.createdAt.toISOString()}>
-          {document.createdAt.toLocaleDateString()}
-        </time>
-      </p>
-      <SharePanel
-        share={document.share}
-        enableAction={enableShareAction}
-        revokeAction={revokeShareAction}
-      />
-      <ListToggleForm lists={listOptions} action={updateHighlightListsAction} />
-      <DocumentReader
-        blocks={document.blocks}
-        highlightMatches={document.highlightMatches}
-        annotations={document.annotations}
-      />
-      <AnnotationPanel
-        blocks={document.blocks.map((block) => ({
-          blockKey: block.blockKey,
-          text: block.text,
-        }))}
-        annotations={document.annotations}
-        createAction={createAnnotationAction}
-        updateAction={updateAnnotationAction}
-        deleteAction={deleteAnnotationAction}
-      />
+    <main className="min-h-screen bg-[#F8FAFC]">
+      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
+        <OwnerTopBar activeTab="documents" userInitial={userInitial} />
+
+        <div className="flex min-h-[calc(100vh-72px)]">
+          <aside className="w-full max-w-[296px] border-r border-[#E8EBF0] bg-white px-6 py-6">
+            <DocumentUploadSidebar />
+            <div className="mt-6">
+              <OwnerDocumentsSidebar
+                documents={sidebarDocuments.map((item) => ({
+                  id: item.id,
+                  title: item.title,
+                  dayLabel: formatRelativeDayLabel(item.updatedAt),
+                  readingMinutes: estimateReadingMinutes(countWords(item.rawMarkdown)),
+                  isActive: item.id === document.id,
+                }))}
+              storage={{
+                  usedLabel: formatStorageAmount(storageBytes),
+                  totalLabel: "10 GB",
+                  progress: storageBytes / storageTotalBytes,
+                }}
+                totalCount={sidebarDocumentCount}
+              />
+            </div>
+          </aside>
+
+          <DocumentWorkspace
+            annotations={document.annotations}
+            blocks={document.blocks}
+            createAction={createAnnotationAction}
+            deleteAction={deleteAnnotationAction}
+            enableShareAction={enableShareAction}
+            highlightMatches={document.highlightMatches}
+            matchedWords={matchedWordItems}
+            readingMinutes={readingMinutes}
+            revokeShareAction={revokeShareAction}
+            share={document.share}
+            title={document.title}
+            updateAction={updateAnnotationAction}
+            updatedLabel={formatDateTimeLabel(document.updatedAt)}
+            wordCount={wordCount}
+            wordLists={buildReaderWordLists(
+              userWordListPrefs.map((preference) => preference.wordList.slug),
+            )}
+          />
+        </div>
+      </div>
     </main>
   );
 }
@@ -229,8 +270,24 @@ export function getRequiredInteger(formData: FormData, fieldName: string) {
   return Number(value);
 }
 
-function getFormValues(formData: FormData, fieldName: string) {
+function getStringList(formData: FormData, fieldName: string) {
   return formData
     .getAll(fieldName)
     .filter((value): value is string => typeof value === "string" && value.length > 0);
+}
+
+function getUserInitial(value: string) {
+  return value.trim().charAt(0).toUpperCase() || "U";
+}
+
+function buildReaderWordLists(selectedSlugs: string[]) {
+  const selectedSlugSet = new Set(selectedSlugs);
+
+  return BUILT_IN_LISTS.filter((list) =>
+    ["cet4", "cet6", "ielts", "toefl"].includes(list.slug),
+  ).map((list) => ({
+    id: list.slug,
+    name: list.name,
+    isSelected: selectedSlugSet.has(list.slug),
+  }));
 }

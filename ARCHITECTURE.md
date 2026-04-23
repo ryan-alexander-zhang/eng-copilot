@@ -2,21 +2,23 @@
 
 ## Status
 
-This document defines the initial architecture for the MVP.
+This document describes the current frontend and application architecture after the Lunaris-inspired UI refresh shipped on 2026-04-22.
 
 ## Product Scope
 
-The MVP is a web application for Markdown-first reading and study workflows.
+The application is a Markdown-first reading and study workspace.
 
 Users can:
 
+- open a public landing page that explains the product
 - sign in with Google
 - upload Markdown documents
-- view built-in vocabulary highlights
-- add persistent annotations
+- view persisted built-in vocabulary highlights
+- create persistent annotations from the rendered preview
+- update and delete their own annotations
 - share a read-only document view with other signed-in Google users
 
-The MVP does not include:
+The product still does not include:
 
 - PDF support
 - collaborative editing
@@ -29,15 +31,82 @@ The MVP does not include:
 - UI runtime: `react 19.2.5` and `react-dom 19.2.5`
 - Language: `typescript 6.0.2`
 - Authentication: `Auth.js` for Next.js via `next-auth 5.0.0-beta.31` with Google provider
-- Runtime: `Node.js LTS`, pinned later to the minimum version required by the selected `next` release
-- Database: `PostgreSQL`, pinned later in deployment and infrastructure configuration
+- Styling: `tailwindcss 4.2.4`, `@tailwindcss/postcss 4.2.4`, `postcss 8.5.10`
+- Motion: `framer-motion 12.38.0`
+- Database: `PostgreSQL`
 - Runtime shape: modular monolith
 
-The npm package versions above were checked on `2026-04-16` with `npm view <package> version`. Newer versions should not be adopted automatically; upgrades should be explicit decisions that update this document.
+The package versions above were checked on 2026-04-22 with `npm view <package> version`.
 
-## System Shape
+## Frontend Delivery Model
 
-The MVP should be implemented as a single Next.js application with clear server and client boundaries.
+The frontend uses the Lunaris UI delivery model rather than a published npm component package.
+
+That means:
+
+- Tailwind CSS and Framer Motion are installed as project dependencies
+- Lunaris-inspired components are implemented locally inside the repo
+- copied and adapted snippet code is treated as application code, not as a third-party runtime dependency
+
+The `ui.pen` file is the main structural and visual reference for the current page set.
+
+## Presentation Zones
+
+The UI is split into four presentation zones.
+
+### Public Marketing
+
+Owned route:
+
+- `/`
+
+Responsibilities:
+
+- provide a public landing page
+- explain the product workflow
+- direct users to sign-in or the authenticated workspace
+
+### Authenticated App Shell
+
+Owned routes:
+
+- `/documents`
+- `/documents/new`
+- `/documents/[documentId]`
+
+Responsibilities:
+
+- enforce owner authentication
+- provide the shared authenticated frame and navigation
+- keep document management screens visually consistent
+
+### Owner Document Workspace
+
+Owned route:
+
+- `/documents/[documentId]`
+
+Responsibilities:
+
+- render document metadata
+- manage built-in highlight list toggles
+- manage share state
+- render the Markdown preview
+- create, update, and delete annotations
+
+### Shared Read-Only Reader
+
+Owned route:
+
+- `/shared/[token]`
+
+Responsibilities:
+
+- require Google authentication
+- render the same persisted blocks, highlights, and annotations as the owner view
+- remove all owner-only mutation controls
+
+## Server And Client Boundaries
 
 The server is responsible for:
 
@@ -48,35 +117,72 @@ The server is responsible for:
 - exclusion filtering
 - annotation persistence
 - shared-link authorization
+- revalidating document pages after mutations
 
 The client is responsible for:
 
-- rendering document content
-- rendering persisted highlights
-- rendering persisted annotations
-- text selection for owner-created annotations
-- owner-only document controls
+- rendering document content and preview slices
+- rendering persisted highlights and annotations
+- mapping text selections back to block keys and offsets
+- opening the annotation context menu and creation dialog in the owner workspace
+- rendering owner-only UI controls and shared read-only UI variants
+
+## Annotation Workflow
+
+The application no longer creates annotations through manual block and offset entry in a side form.
+
+The current owner flow is:
+
+1. select text in the rendered preview
+2. right-click a valid selection
+3. open a lightweight context menu with `Create annotation`
+4. confirm the selection and note in a dialog
+5. submit the existing server-side anchor contract:
+   - `startBlockKey`
+   - `startOffset`
+   - `endBlockKey`
+   - `endOffset`
+   - `note`
+
+Annotation editing and deletion remain in the annotation list panel.
+
+Shared readers can view annotations but cannot create, edit, or delete them.
+
+## Rendering Model
+
+Document content is still rendered from persisted block records with stable `blockKey` anchors.
+
+The preview renderer:
+
+- preserves block identity in the DOM
+- splits text into deterministic slices at highlight and annotation boundaries
+- maps browser selections back to persisted block offsets
+- applies visual precedence so annotation styling wins over word-highlight styling when the same range has both states
+
+Visual semantics:
+
+- word-list highlights use a warm yellow palette
+- annotations use a distinct blue-cyan palette
 
 ## Storage Strategy
 
-`PostgreSQL` is required for the MVP.
-
-It stores:
+`PostgreSQL` stores:
 
 - users
 - documents
 - raw Markdown content
+- parsed blocks
 - built-in word lists
 - built-in exclusion lists
 - persisted highlight matches
 - annotations
 - share records
 
-The MVP should not depend on filesystem storage for uploaded documents. Raw Markdown should be stored as text in the database because the initial file format is plain text and the application needs durable, queryable, user-scoped state.
+The application does not depend on filesystem storage for uploaded documents. Raw Markdown remains persisted as text in the database.
 
 ## Access Model
 
-There are two roles in the MVP:
+There are still two roles:
 
 - owner: the authenticated user who uploaded the document
 - shared viewer: any signed-in Google user who opens a valid shared link
@@ -100,8 +206,9 @@ Shared viewers cannot:
 - change list settings
 - create annotations
 - edit annotations
+- delete annotations
 - reshare documents on behalf of the owner
 
 ## Evolution Path
 
-If later versions add PDF support or large binary assets, document content storage can move behind a dedicated abstraction and be migrated to object storage without changing the MVP domain model.
+If later versions add PDF support or larger binary assets, document content can move behind a dedicated storage abstraction without changing the current owner/shared reader model.

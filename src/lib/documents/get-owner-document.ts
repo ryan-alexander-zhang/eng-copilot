@@ -16,12 +16,24 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
       id: true,
       title: true,
       originalName: true,
+      rawMarkdown: true,
       createdAt: true,
       updatedAt: true,
       share: {
         select: {
           token: true,
           isActive: true,
+        },
+      },
+      activeLists: {
+        select: {
+          wordList: {
+            select: {
+              id: true,
+              slug: true,
+              name: true,
+            },
+          },
         },
       },
       blocks: {
@@ -48,7 +60,7 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
       },
       annotations: {
         orderBy: {
-          createdAt: "asc",
+          updatedAt: "desc",
         },
         select: {
           id: true,
@@ -58,6 +70,8 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
           endOffset: true,
           quote: true,
           note: true,
+          tags: true,
+          color: true,
           createdAt: true,
           updatedAt: true,
         },

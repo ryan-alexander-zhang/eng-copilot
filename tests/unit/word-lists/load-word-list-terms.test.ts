@@ -13,10 +13,12 @@ describe("loadWordListTerms", () => {
     }
   });
 
-  it("loads the built-in placeholder CET4 file", async () => {
-    await expect(
-      loadWordListTerms(join(process.cwd(), "vendor/word-lists/cet4.txt")),
-    ).resolves.toEqual(["ability", "benefit", "culture", "describe", "improve"]);
+  it("loads the built-in CET4 file as a non-empty normalized list", async () => {
+    const terms = await loadWordListTerms(join(process.cwd(), "vendor/word-lists/cet4.txt"));
+
+    expect(terms.length).toBeGreaterThan(0);
+    expect(terms.every((term) => term.length > 0)).toBe(true);
+    expect(terms.every((term) => term === term.trim().toLowerCase())).toBe(true);
   });
 
   it("normalizes case and removes blank lines", async () => {

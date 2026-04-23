@@ -64,13 +64,13 @@ Only the frontend styling and motion dependencies are updated in this work.
 
 Checked on 2026-04-22:
 
-- `tailwindcss`: `4.1.12`
-- `framer-motion`: `12.23.12`
+- `tailwindcss`: `4.2.4`
+- `framer-motion`: `12.38.0`
 
 Additional required support packages:
 
-- `@tailwindcss/postcss`
-- `postcss`
+- `@tailwindcss/postcss 4.2.4`
+- `postcss 8.5.10`
 
 The current core stack is intentionally unchanged.
 

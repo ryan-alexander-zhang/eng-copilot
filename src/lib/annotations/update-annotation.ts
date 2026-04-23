@@ -5,6 +5,8 @@ type UpdateAnnotationInput = {
   documentId: string;
   ownerId: string;
   note: string;
+  tags?: string[];
+  color?: string;
   prisma: Pick<PrismaClient, "annotation">;
 };
 
@@ -17,6 +19,8 @@ export async function updateAnnotation(input: UpdateAnnotationInput) {
     },
     data: {
       note: input.note.trim(),
+      tags: normalizeTags(input.tags),
+      color: input.color?.trim() || "yellow",
     },
   });
 
@@ -25,4 +29,20 @@ export async function updateAnnotation(input: UpdateAnnotationInput) {
   }
 
   return result;
+}
+
+function normalizeTags(tags?: string[]) {
+  const uniqueTags = new Set<string>();
+
+  for (const tag of tags ?? []) {
+    const normalizedTag = tag.trim().toLowerCase();
+
+    if (normalizedTag.length === 0) {
+      continue;
+    }
+
+    uniqueTags.add(normalizedTag);
+  }
+
+  return [...uniqueTags];
 }

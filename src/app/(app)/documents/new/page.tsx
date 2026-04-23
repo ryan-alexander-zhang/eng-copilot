@@ -40,13 +40,35 @@ export default function NewDocumentPage() {
   }
 
   return (
-    <main>
-      <h1>Upload document</h1>
-      <p>Add a Markdown document to your library.</p>
-      <UploadForm action={uploadDocument} />
-      <p>
-        <Link href="/documents">Back to documents</Link>
-      </p>
+    <main className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
+      <section>
+        <Link
+          className="inline-flex text-sm font-medium text-zinc-600 underline-offset-4 hover:underline"
+          href="/documents"
+        >
+          Back to library
+        </Link>
+        <span className="eyebrow mt-6">New document</span>
+        <h1 className="display-copy mt-5 text-5xl font-semibold leading-[0.96] text-zinc-950">
+          Add a document
+        </h1>
+        <p className="mt-4 max-w-xl text-base leading-8 text-zinc-600">
+          Bring in one Markdown file. We&apos;ll turn it into a clear reading view you can
+          highlight, annotate, and share.
+        </p>
+        <div className="surface-card-muted mt-6 space-y-3">
+          <p className="text-sm font-semibold text-zinc-900">What happens next</p>
+          <ul className="space-y-2 text-sm leading-7 text-zinc-600">
+            <li>Review vocabulary highlights in the reading view.</li>
+            <li>Save notes beside the exact passage you selected.</li>
+            <li>Share a view-only page when someone else needs the same context.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="surface-card">
+        <UploadForm action={uploadDocument} />
+      </section>
     </main>
   );
 }

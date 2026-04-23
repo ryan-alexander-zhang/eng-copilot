@@ -17,6 +17,26 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
           id: true,
           title: true,
           originalName: true,
+          rawMarkdown: true,
+          createdAt: true,
+          updatedAt: true,
+          owner: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+          activeLists: {
+            select: {
+              wordList: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                },
+              },
+            },
+          },
           blocks: {
             orderBy: {
               sortOrder: "asc",
@@ -41,7 +61,7 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
           },
           annotations: {
             orderBy: {
-              createdAt: "asc",
+              updatedAt: "desc",
             },
             select: {
               id: true,
@@ -51,6 +71,8 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
               endOffset: true,
               quote: true,
               note: true,
+              tags: true,
+              color: true,
               createdAt: true,
               updatedAt: true,
             },
