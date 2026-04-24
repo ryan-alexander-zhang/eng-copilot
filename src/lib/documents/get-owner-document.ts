@@ -11,6 +11,7 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
     where: {
       id: input.documentId,
       ownerId: input.ownerId,
+      trashedAt: null,
     },
     select: {
       id: true,

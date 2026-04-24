@@ -34,6 +34,7 @@ export default async function WordListsPage({
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        trashedAt: null,
       },
       orderBy: {
         updatedAt: "desc",
@@ -49,6 +50,7 @@ export default async function WordListsPage({
     prisma.document.count({
       where: {
         ownerId: session.user.id,
+        trashedAt: null,
       },
     }),
   ]);

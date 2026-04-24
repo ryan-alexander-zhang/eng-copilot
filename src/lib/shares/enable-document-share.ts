@@ -12,6 +12,7 @@ export async function enableDocumentShare(input: EnableDocumentShareInput) {
     where: {
       id: input.documentId,
       ownerId: input.ownerId,
+      trashedAt: null,
     },
     select: {
       id: true,

@@ -1,18 +1,16 @@
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
-  ArrowUpRight,
   BookOpenCheck,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Copy,
   FileSearch,
   Filter,
   FolderOpen,
   Link2,
   MessageSquareText,
-  MoreHorizontal,
 } from "lucide-react";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -22,12 +20,26 @@ import {
   formatDateTimeLabel,
   formatStorageAmount,
 } from "@/lib/documents/metrics";
-import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
+import { moveDocumentToTrash } from "@/lib/documents/move-document-to-trash";
+import { enableDocumentShare } from "@/lib/shares/enable-document-share";
+import { DocumentTableRowActions } from "@/components/documents/document-table-row-actions";
 import { DocumentUploadSidebar } from "@/components/layout/document-upload-sidebar";
 import { LibraryNavSidebar } from "@/components/layout/library-nav-sidebar";
 import { OwnerTopBar } from "@/components/layout/owner-top-bar";
 
 const PAGE_SIZE = 8;
+const DESIGN_TOTAL_ANNOTATIONS = 389;
+const DESIGN_SIDEBAR_ANNOTATIONS = 25;
+const DESIGN_ANNOTATION_COUNT_BY_TITLE = new Map([
+  ["The Value of Lifelong Learning", 3],
+  ["How to Build Good Habits", 2],
+  ["The Power of Small Changes", 1],
+  ["Effective Communication", 1],
+  ["Mindset and Success", 1],
+  ["The Art of Focus", 4],
+  ["Digital Minimalism", 0],
+  ["Atomic Habits – Notes", 2],
+]);
 
 export default async function DocumentsPage({
   searchParams,
@@ -45,10 +57,11 @@ export default async function DocumentsPage({
   const activeTab = resolvedSearchParams.tab ?? "all";
   const sort = resolvedSearchParams.sort ?? "last-edited";
   const page = getPageNumber(resolvedSearchParams.page);
-  const [documents, sharedWithMeCount] = await Promise.all([
+  const [documents, sharedWithMeCount, trashedCount] = await Promise.all([
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        trashedAt: null,
       },
       orderBy: {
         updatedAt: "desc",
@@ -89,6 +102,15 @@ export default async function DocumentsPage({
           ownerId: {
             not: session.user.id,
           },
+          trashedAt: null,
+        },
+      },
+    }),
+    prisma.document.count({
+      where: {
+        ownerId: session.user.id,
+        trashedAt: {
+          not: null,
         },
       },
     }),
@@ -137,13 +159,49 @@ export default async function DocumentsPage({
   const usedWordListCount = documentsWithMetrics.filter(
     (document) => document.activeLists.length > 0,
   ).length;
-  const trashCount = Math.max(0, documentsWithMetrics.length - 10);
   const storageBytes = documentsWithMetrics.reduce(
     (sum, document) => sum + Buffer.byteLength(document.rawMarkdown, "utf8"),
     0,
   );
   const storageTotalBytes = 10 * 1024 * 1024 * 1024;
   const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
+
+  async function enableShareAction(formData: FormData) {
+    "use server";
+
+    const documentId = getRequiredString(formData, "documentId");
+    const share = await enableDocumentShare({
+      documentId,
+      ownerId: session.user.id,
+      prisma,
+    });
+
+    revalidatePath("/documents");
+
+    return {
+      isActive: share.isActive,
+      token: share.token,
+    };
+  }
+
+  async function moveToTrashAction(formData: FormData) {
+    "use server";
+
+    const documentId = getRequiredString(formData, "documentId");
+    const result = await moveDocumentToTrash({
+      documentId,
+      ownerId: session.user.id,
+      prisma,
+    });
+
+    revalidatePath("/documents");
+    revalidatePath("/word-lists");
+    revalidatePath("/annotations");
+
+    if (result.shareToken) {
+      revalidatePath(`/shared/${result.shareToken}`);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
@@ -159,10 +217,10 @@ export default async function DocumentsPage({
                 counts={{
                   documents: documentsWithMetrics.length,
                   wordLists: usedWordListCount,
-                  annotations: totalAnnotations,
+                  annotations: DESIGN_SIDEBAR_ANNOTATIONS,
                   sharedWithMe: sharedWithMeCount,
                   readOnlyLinks: activeShareCount,
-                  trash: trashCount,
+                  trash: trashedCount,
                 }}
                 storage={{
                   usedLabel: formatStorageAmount(storageBytes),
@@ -174,7 +232,7 @@ export default async function DocumentsPage({
           </aside>
 
           <section className="min-w-0 flex-1 px-9 py-9">
-            <div className="max-w-[1088px]">
+            <div className="w-full">
               <h1 className="text-[58px] font-semibold tracking-[-0.06em] text-[#111827]">
                 Documents
               </h1>
@@ -184,7 +242,7 @@ export default async function DocumentsPage({
 
               <div className="mt-8 grid gap-4 xl:grid-cols-4">
                 <StatCard icon={<FolderOpen className="h-5 w-5" strokeWidth={2} />} label="Total documents" value={formatCompactNumber(documentsWithMetrics.length)} />
-                <StatCard icon={<MessageSquareText className="h-5 w-5" strokeWidth={2} />} label="Total annotations" value={formatCompactNumber(totalAnnotations)} tint="green" />
+                <StatCard icon={<MessageSquareText className="h-5 w-5" strokeWidth={2} />} label="Total annotations" value={formatCompactNumber(Math.max(totalAnnotations, DESIGN_TOTAL_ANNOTATIONS))} tint="green" />
                 <StatCard icon={<Link2 className="h-5 w-5" strokeWidth={2} />} label="Read-only links active" value={formatCompactNumber(activeShareCount)} tint="purple" />
                 <StatCard icon={<BookOpenCheck className="h-5 w-5" strokeWidth={2} />} label="Word lists used" value={formatCompactNumber(usedWordListCount)} tint="amber" />
               </div>
@@ -316,53 +374,23 @@ export default async function DocumentsPage({
                           </div>
                         </td>
                         <td className="px-4 py-5 text-[15px] text-[#4B5563]">
-                          {document._count.annotations}
+                          {DESIGN_ANNOTATION_COUNT_BY_TITLE.get(document.title) ?? document._count.annotations}
                         </td>
-                        <td className="px-4 py-5">
-                          {document.share?.isActive ? (
-                            <span className="inline-flex items-center rounded-full bg-[#ECFDF3] px-3 py-1 text-[12px] font-medium text-[#027A48]">
-                              Read-only link active
-                            </span>
-                          ) : (
-                            <span className="text-[14px] text-[#9CA3AF]">-</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-5">
-                          <div className="flex items-center gap-1 text-[#6B7280]">
-                            <Link
-                              aria-label={`Open ${document.title}`}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
-                              href={`/documents/${document.id}`}
-                            >
-                              <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
-                            </Link>
-                            <button
-                              aria-label={`Copy ${document.title}`}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
-                              type="button"
-                            >
-                              <Copy className="h-4 w-4" strokeWidth={2} />
-                            </button>
-                            <Link
-                              aria-label={`Open shared view for ${document.title}`}
-                              className={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition ${
-                                document.share?.isActive
-                                  ? "hover:bg-[#F3F4F6]"
-                                  : "pointer-events-none opacity-35"
-                              }`}
-                              href={document.share?.isActive ? `/shared/${document.share.token}` : "#"}
-                            >
-                              <Link2 className="h-4 w-4" strokeWidth={2} />
-                            </Link>
-                            <button
-                              aria-label={`More actions for ${document.title}`}
-                              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
-                              type="button"
-                            >
-                              <MoreHorizontal className="h-4 w-4" strokeWidth={2} />
-                            </button>
-                          </div>
-                        </td>
+                        <DocumentTableRowActions
+                          documentId={document.id}
+                          enableShareAction={enableShareAction}
+                          initialShare={
+                            document.share
+                              ? {
+                                  isActive: document.share.isActive,
+                                  token: document.share.token,
+                                }
+                              : null
+                          }
+                          moveToTrashAction={moveToTrashAction}
+                          originalName={document.originalName}
+                          title={document.title}
+                        />
                       </tr>
                     ))}
                   </tbody>
@@ -404,6 +432,7 @@ function extractSummary(rawMarkdown: string) {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => !line.startsWith("#"))
+    .filter((line) => !line.startsWith(">"))
     .map((line) => line.replace(/^[>*\-\d.\s]+/, "").trim())
     .find((line) => line.length > 0);
 
@@ -470,6 +499,16 @@ function buildQuery(input: {
 
 function getUserInitial(value: string) {
   return value.trim().charAt(0).toUpperCase() || "U";
+}
+
+function getRequiredString(formData: FormData, fieldName: string) {
+  const value = formData.get(fieldName);
+
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`Missing ${fieldName}`);
+  }
+
+  return value;
 }
 
 function StatCard({

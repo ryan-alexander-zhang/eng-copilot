@@ -12,6 +12,7 @@ import {
   formatRelativeDayLabel,
   formatStorageAmount,
 } from "@/lib/documents/metrics";
+import { buildMatchedWords } from "@/lib/documents/build-matched-words";
 import { getOwnerDocument } from "@/lib/documents/get-owner-document";
 import { enableDocumentShare } from "@/lib/shares/enable-document-share";
 import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
@@ -21,13 +22,31 @@ import { DocumentUploadSidebar } from "@/components/layout/document-upload-sideb
 import { OwnerDocumentsSidebar } from "@/components/layout/owner-documents-sidebar";
 import { OwnerTopBar } from "@/components/layout/owner-top-bar";
 
+const READER_MATCHED_WORD_ORDER = [
+  "valuable",
+  "necessity",
+  "embrace",
+  "adaptability",
+  "critical",
+  "opportunities",
+  "beautiful",
+  "curious",
+  "consistently",
+  "reflect",
+  "inspire",
+  "committing",
+];
+
 export default async function DocumentPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ documentId: string }>;
+  searchParams: Promise<{ annotation?: string }>;
 }) {
   const session = await getRequiredSession();
   const { documentId } = await params;
+  const resolvedSearchParams = await searchParams;
   const document = await getOwnerDocument({
     documentId,
     ownerId: session.user.id,
@@ -44,6 +63,7 @@ export default async function DocumentPage({
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        trashedAt: null,
       },
       orderBy: {
         updatedAt: "desc",
@@ -59,6 +79,7 @@ export default async function DocumentPage({
     prisma.document.count({
       where: {
         ownerId: session.user.id,
+        trashedAt: null,
       },
     }),
     prisma.wordList.findMany({
@@ -95,26 +116,19 @@ export default async function DocumentPage({
     0,
   );
   const storageTotalBytes = 10 * 1024 * 1024 * 1024;
-  const matchedWords = [...document.highlightMatches]
-    .reduce<Map<string, number>>((counts, match) => {
-      counts.set(match.term, (counts.get(match.term) ?? 0) + 1);
-      return counts;
-    }, new Map())
-    .entries();
-  const matchedWordItems = [...matchedWords]
-    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
-    .slice(0, 8)
-    .map(([term, count]) => ({
-      count,
-      listName:
-        activeWordListsWithEntries.find((wordList) =>
-          wordList.entries.some((entry) => entry.term === term),
-        )?.name ?? null,
-      term,
-    }));
+  const { matchedWordCount, matchedWords: matchedWordItems } = buildMatchedWords({
+    activeWordLists: activeWordListsWithEntries,
+    highlightMatches: document.highlightMatches,
+    order: READER_MATCHED_WORD_ORDER,
+  });
   const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
   const wordCount = countWords(document.rawMarkdown);
   const readingMinutes = estimateReadingMinutes(wordCount);
+  const initialSelectedAnnotationId = document.annotations.some(
+    (annotation) => annotation.id === resolvedSearchParams.annotation,
+  )
+    ? resolvedSearchParams.annotation
+    : null;
 
   async function createAnnotationAction(formData: FormData) {
     "use server";
@@ -205,7 +219,7 @@ export default async function DocumentPage({
                   readingMinutes: estimateReadingMinutes(countWords(item.rawMarkdown)),
                   isActive: item.id === document.id,
                 }))}
-              storage={{
+                storage={{
                   usedLabel: formatStorageAmount(storageBytes),
                   totalLabel: "10 GB",
                   progress: storageBytes / storageTotalBytes,
@@ -223,9 +237,11 @@ export default async function DocumentPage({
             enableShareAction={enableShareAction}
             highlightMatches={document.highlightMatches}
             matchedWords={matchedWordItems}
+            matchedWordCount={matchedWordCount}
             readingMinutes={readingMinutes}
             revokeShareAction={revokeShareAction}
             share={document.share}
+            initialSelectedAnnotationId={initialSelectedAnnotationId}
             title={document.title}
             updateAction={updateAnnotationAction}
             updatedLabel={formatDateTimeLabel(document.updatedAt)}

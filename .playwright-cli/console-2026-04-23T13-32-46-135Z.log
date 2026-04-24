@@ -1,0 +1,4354 @@
+[     380ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[     389ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  715760ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  715789ms] [LOG] [Fast Refresh] done in 62ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  744136ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  744176ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  751424ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  751461ms] [LOG] [Fast Refresh] done in 16ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  756815ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  756895ms] [LOG] [Fast Refresh] done in 18ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  756897ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        createdAt: "asc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  756950ms] PrismaClientValidationError: 
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        createdAt: "asc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0ltz.n5._.js?73:1287:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:150)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  762460ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  762532ms] [LOG] [Fast Refresh] done in 18ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  762574ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  762588ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  762595ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  762596ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        createdAt: "asc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  762627ms] PrismaClientValidationError: 
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        createdAt: "asc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0ltz.n5._.js?0:1287:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  781162ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  781437ms] [LOG] [Fast Refresh] done in 226ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  781565ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  781579ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  781585ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  781587ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  781620ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  798428ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798545ms] [LOG] [Fast Refresh] done in 44ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798677ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798686ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798762ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  798779ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798786ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798787ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  798814ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  824872ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  825034ms] [LOG] [Fast Refresh] done in 82ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  825178ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  825193ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  825200ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  825203ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  825237ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  848570ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  848886ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:3272
+[  848987ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  849062ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:3272
+[  849119ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  849163ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_react-dom_0.f3s9e._.js:15305
+[  849191ms] Error: ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1186:59)
+    at DevBundlerService.getCompilationError (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/base-server.js:1745:26)
+[  849191ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  849193ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  849245ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  849307ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  849356ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:15:1
+Module not found: Can't resolve '@/components/documents/annotation-editor-panel'
+  13 | ...cide-react";
+  14 | ...seMemo, useState } from "react";
+> 15 | ...nnotationEditorPanel } from "@/components/documents/annotation-edit...
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  16 | ...nnotationPanel } from "@/components/documents/annotation-panel";
+  17 | ...
+  18 | ...otationDraft,
+
+Import map: aliased to relative './src/components/documents/annotation-editor-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  849422ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  900667ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  900821ms] [LOG] [Fast Refresh] done in 71ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  900962ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  900972ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  901285ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  901298ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  901306ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  901308ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  901342ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[  906679ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  906718ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  906732ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_react-dom_0.f3s9e._.js:15305
+[  906739ms] Error: ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  2 | import { notFound, redirect } from "next/navigation";
+  3 | import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
+> 4 | import { AnnotationPanel } from "@/components/documents/annotation-panel";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { DocumentReader } from "@/components/documents/document-reader";
+  6 | import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
+  7 | import { prisma } from "@/lib/db";
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1186:59)
+    at DevBundlerService.getCompilationError (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/erpang/GitHubProjects/eng-copilot/node_modules/next/dist/server/base-server.js:1745:26)
+[  906739ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  906740ms] [ERROR] ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  2 | import { notFound, redirect } from "next/navigation";
+  3 | import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
+> 4 | import { AnnotationPanel } from "@/components/documents/annotation-panel";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { DocumentReader } from "@/components/documents/document-reader";
+  6 | import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
+  7 | import { prisma } from "@/lib/db";
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906740ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:16:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  14 | ...rt { useMemo, useState } from "react";
+  15 | ...rt { AnnotationEditorPanel } from "@/components/documents/annotatio...
+> 16 | ...rt { AnnotationPanel } from "@/components/documents/annotation-panel";
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | ...rt {
+  18 | ...pe AnnotationDraft,
+  19 | ...pe ReaderAnnotation,
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906740ms] [ERROR] ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  2 | import { notFound, redirect } from "next/navigation";
+  3 | import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
+> 4 | import { AnnotationPanel } from "@/components/documents/annotation-panel";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { DocumentReader } from "@/components/documents/document-reader";
+  6 | import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
+  7 | import { prisma } from "@/lib/db";
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906740ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:16:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  14 | ...rt { useMemo, useState } from "react";
+  15 | ...rt { AnnotationEditorPanel } from "@/components/documents/annotatio...
+> 16 | ...rt { AnnotationPanel } from "@/components/documents/annotation-panel";
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | ...rt {
+  18 | ...pe AnnotationDraft,
+  19 | ...pe ReaderAnnotation,
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906773ms] [ERROR] ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  2 | import { notFound, redirect } from "next/navigation";
+  3 | import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
+> 4 | import { AnnotationPanel } from "@/components/documents/annotation-panel";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { DocumentReader } from "@/components/documents/document-reader";
+  6 | import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
+  7 | import { prisma } from "@/lib/db";
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906773ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:16:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  14 | ...rt { useMemo, useState } from "react";
+  15 | ...rt { AnnotationEditorPanel } from "@/components/documents/annotatio...
+> 16 | ...rt { AnnotationPanel } from "@/components/documents/annotation-panel";
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | ...rt {
+  18 | ...pe AnnotationDraft,
+  19 | ...pe ReaderAnnotation,
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906824ms] [ERROR] ./GitHubProjects/eng-copilot/src/app/shared/[token]/page.tsx:4:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  2 | import { notFound, redirect } from "next/navigation";
+  3 | import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
+> 4 | import { AnnotationPanel } from "@/components/documents/annotation-panel";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { DocumentReader } from "@/components/documents/document-reader";
+  6 | import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
+  7 | import { prisma } from "@/lib/db";
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906824ms] [ERROR] ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx:16:1
+Module not found: Can't resolve '@/components/documents/annotation-panel'
+  14 | ...rt { useMemo, useState } from "react";
+  15 | ...rt { AnnotationEditorPanel } from "@/components/documents/annotatio...
+> 16 | ...rt { AnnotationPanel } from "@/components/documents/annotation-panel";
+     |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  17 | ...rt {
+  18 | ...pe AnnotationDraft,
+  19 | ...pe ReaderAnnotation,
+
+Import map: aliased to relative './src/components/documents/annotation-panel' inside of [project]/GitHubProjects/eng-copilot
+
+Import trace:
+  Server Component:
+    ./GitHubProjects/eng-copilot/src/components/documents/document-workspace.tsx
+    ./GitHubProjects/eng-copilot/src/app/(app)/documents/[documentId]/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1945
+[  906891ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  951940ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  952112ms] [LOG] [Fast Refresh] done in 97ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_05m1tac._.js:1226
+[  952270ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[  952282ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  952290ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  952291ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[  952320ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1014194ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014195ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014284ms] [LOG] [Fast Refresh] done in 37ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014330ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1014345ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014353ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014355ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1014387ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1068151ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1068233ms] [LOG] [Fast Refresh] done in 25ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1068287ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1068316ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1068332ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1068337ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1068383ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1080197ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1080267ms] [LOG] [Fast Refresh] done in 20ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1080306ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1080323ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1080330ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1080332ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1080362ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1086354ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1086421ms] [LOG] [Fast Refresh] done in 17ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1086464ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1086474ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1086480ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1086482ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1086518ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1113158ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1113228ms] [LOG] [Fast Refresh] done in 23ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1113294ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1113308ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1113316ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1113318ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1113348ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1120390ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1120444ms] [LOG] [Fast Refresh] done in 16ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1120504ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1120521ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1120528ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1120530ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1120559ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1130813ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1130896ms] [LOG] [Fast Refresh] done in 25ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1130953ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1130966ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1130972ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1130974ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1131010ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1345164ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1345257ms] [LOG] [Fast Refresh] done in 21ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1345307ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1345322ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1345328ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1345331ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1345367ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%5Broot-of-the-server%5D__0fvj8~~._.js?0:1325:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1355257ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1355311ms] [LOG] [Fast Refresh] done in 27ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1355344ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1355359ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1355366ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1355368ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1355400ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1364414ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1364466ms] [LOG] [Fast Refresh] done in 21ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1364499ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1364508ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1364514ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1364515ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1364547ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1374469ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1374532ms] [LOG] [Fast Refresh] done in 57ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1374574ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1374582ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1374589ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1374590ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1374629ms] PrismaClientValidationError: 
+Invalid `input.prisma.document.findFirst()` invocation in
+/Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/[root-of-the-server]__0fvj8~~._.js:283:34
+
+  280     ()=>getOwnerDocument
+  281 ]);
+  282 async function getOwnerDocument(input) {
+→ 283     return input.prisma.document.findFirst({
+            where: {
+              id: "cmo8mbf840006zs9my842vwae",
+              ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+            },
+            select: {
+              id: true,
+              title: true,
+              originalName: true,
+              rawMarkdown: true,
+              createdAt: true,
+              updatedAt: true,
+              share: {
+                select: {
+                  token: true,
+                  isActive: true
+                }
+              },
+              activeLists: {
+                select: {
+                  wordList: {
+                    select: {
+                      id: true,
+                      slug: true,
+                      name: true
+                    }
+                  }
+                }
+              },
+              blocks: {
+                orderBy: {
+                  sortOrder: "asc"
+                },
+                select: {
+                  id: true,
+                  blockKey: true,
+                  sortOrder: true,
+                  kind: true,
+                  text: true
+                }
+              },
+              highlightMatches: {
+                orderBy: [
+                  {
+                    blockKey: "asc"
+                  },
+                  {
+                    startOffset: "asc"
+                  }
+                ],
+                select: {
+                  id: true,
+                  blockKey: true,
+                  startOffset: true,
+                  endOffset: true,
+                  term: true
+                }
+              },
+              annotations: {
+                orderBy: {
+                  createdAt: "asc"
+                },
+                select: {
+                  id: true,
+                  startBlockKey: true,
+                  startOffset: true,
+                  endBlockKey: true,
+                  endOffset: true,
+                  quote: true,
+                  note: true,
+                  tags: true,
+                  ~~~~
+                  color: true,
+                  createdAt: true,
+                  updatedAt: true,
+          ?       documentId?: true,
+          ?       ownerId?: true,
+          ?       document?: true,
+          ?       owner?: true
+                }
+              }
+            }
+          })
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1423285ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1423337ms] [LOG] [Fast Refresh] done in 20ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1423408ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1423428ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1423436ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1423438ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1423469ms] PrismaClientValidationError: 
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1495053ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1495121ms] [LOG] [Fast Refresh] done in 23ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1495170ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1495184ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1495193ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1495194ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1495230ms] PrismaClientValidationError: 
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1509485ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1509540ms] [LOG] [Fast Refresh] done in 21ms @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1509578ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/documents/cmo8mbf840006zs9my842vwae:0
+[ 1509592ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1509599ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1509601ms] [LOG] %c%s%c prisma:error background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?. @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_0gr3.u-._.js:2431
+[ 1509630ms] PrismaClientValidationError: 
+Invalid `prisma.document.findFirst()` invocation:
+
+{
+  where: {
+    id: "cmo8mbf840006zs9my842vwae",
+    ownerId: "cmo8m8lux0000zs9mqzpwftr4"
+  },
+  select: {
+    id: true,
+    title: true,
+    originalName: true,
+    rawMarkdown: true,
+    createdAt: true,
+    updatedAt: true,
+    share: {
+      select: {
+        token: true,
+        isActive: true
+      }
+    },
+    activeLists: {
+      select: {
+        wordList: {
+          select: {
+            id: true,
+            slug: true,
+            name: true
+          }
+        }
+      }
+    },
+    blocks: {
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        blockKey: true,
+        sortOrder: true,
+        kind: true,
+        text: true
+      }
+    },
+    highlightMatches: {
+      orderBy: [
+        {
+          blockKey: "asc"
+        },
+        {
+          startOffset: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        blockKey: true,
+        startOffset: true,
+        endOffset: true,
+        term: true
+      }
+    },
+    annotations: {
+      orderBy: {
+        updatedAt: "desc"
+      },
+      select: {
+        id: true,
+        startBlockKey: true,
+        startOffset: true,
+        endBlockKey: true,
+        endOffset: true,
+        quote: true,
+        note: true,
+        tags: true,
+        ~~~~
+        color: true,
+        createdAt: true,
+        updatedAt: true,
+?       documentId?: true,
+?       ownerId?: true,
+?       document?: true,
+?       owner?: true
+      }
+    }
+  }
+}
+
+Unknown field `tags` for select statement on model `Annotation`. Available options are marked with ?.
+    at DocumentPage (about://React/Server/file:///Users/erpang/GitHubProjects/eng-copilot/.next/dev/server/chunks/ssr/%255Broot-of-the-server%255D__0fvj8%257E%257E._.js?id=%255Bproject%255D%252FGitHubProjects%252Feng-copilot%252Fsrc%252Fapp%252F%2528app%2529%252Fdocuments%252F%255BdocumentId%255D%252Fpage.tsx+%255Bapp-rsc%255D+%2528ecmascript%2529?0:124:22)
+    at resolveErrorDev (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:1919:105)
+    at processFullStringRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2434:29)
+    at processFullBinaryRow (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2393:9)
+    at processBinaryChunk (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2502:221)
+    at progress (http://localhost:3000/_next/static/chunks/0d9s_next_dist_compiled_react-server-dom-turbopack_0iwqz2o._.js:2689:13)
+[ 1551081ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1552085ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1553089ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1554091ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1555095ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1560100ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1565104ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1570108ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1575112ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1580115ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1585118ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299
+[ 1590121ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=qCMPktnnkuBtbH7cV5jYY' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/0d9s_next_dist_client_0w.5c4i._.js:13299

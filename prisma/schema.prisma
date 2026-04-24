@@ -63,6 +63,7 @@ model Document {
   title            String
   originalName     String
   rawMarkdown      String             @db.Text
+  trashedAt        DateTime?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   owner            User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -73,6 +74,7 @@ model Document {
   share            DocumentShare?
 
   @@index([ownerId, createdAt])
+  @@index([ownerId, trashedAt, updatedAt])
 }
 
 model DocumentBlock {

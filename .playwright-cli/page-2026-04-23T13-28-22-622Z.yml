@@ -1,0 +1,332 @@
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "eng-copilot" [ref=e6] [cursor=pointer]:
+          - /url: /documents
+        - generic [ref=e7]:
+          - button "Search" [ref=e8]:
+            - img [ref=e9]
+          - link "Documents" [ref=e12] [cursor=pointer]:
+            - /url: /documents
+            - text: Documents
+          - link "Word Lists" [ref=e14] [cursor=pointer]:
+            - /url: /word-lists
+            - text: Word Lists
+          - generic [ref=e16]: Annotations
+          - generic [ref=e17]: R
+      - generic [ref=e18]:
+        - complementary [ref=e19]:
+          - generic [ref=e20]:
+            - button "Upload Markdown" [ref=e21]:
+              - img [ref=e22]
+              - text: Upload Markdown
+            - button "Drop .md files here or click to browse Supports Markdown files up to 512 KB" [ref=e24]:
+              - img [ref=e26]
+              - paragraph [ref=e28]:
+                - text: Drop .md files here
+                - text: or click to browse
+              - paragraph [ref=e29]: Supports Markdown files up to 512 KB
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - heading "My Documents" [level=2] [ref=e33]
+              - link "test-eng-copilot.md Apr 21 • 25 min read" [ref=e35] [cursor=pointer]:
+                - /url: /documents/cmo8mbf840006zs9my842vwae
+                - img [ref=e37]
+                - generic [ref=e40]:
+                  - paragraph [ref=e41]: test-eng-copilot.md
+                  - paragraph [ref=e42]: Apr 21 • 25 min read
+            - link "View all documents" [ref=e43] [cursor=pointer]:
+              - /url: /documents
+            - generic [ref=e44]:
+              - heading "Storage" [level=3] [ref=e45]
+              - paragraph [ref=e46]: 36.9 KB of 10 GB used
+              - button "Upgrade plan" [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - button "Reading" [ref=e53]:
+                - img [ref=e54]
+                - text: Reading
+                - img [ref=e56]
+              - generic [ref=e58]:
+                - img
+                - searchbox "Search in document..." [ref=e59]
+                - generic: ⌘K
+              - generic [ref=e60]:
+                - button [ref=e61]:
+                  - img [ref=e62]
+                - button [ref=e64]:
+                  - img [ref=e65]
+              - button "Share enabled" [ref=e67]:
+                - img [ref=e68]
+                - text: Share enabled
+              - button [ref=e71]:
+                - img [ref=e72]
+            - region "Document reader" [ref=e77]:
+              - generic [ref=e78]:
+                - heading "test-eng-copilot" [level=1] [ref=e79]
+                - heading "##Introduction to Identity Verification" [level=2] [ref=e80]
+                - heading "##Verify the identity of your users for global KYC and anti-fraud." [level=2] [ref=e81]
+                - paragraph [ref=e82]: Get started with Identity Verification
+                - paragraph [ref=e83]: API Reference Request Access Quickstart Demo
+                - heading "##Overview" [level=2] [ref=e84]
+                - paragraph [ref=e85]: Plaid Identity Verification (IDV) lets you verify the identity of your customers and seamlessly stitches together verification methods. Using Identity Verification, you can verify identification documents, phone numbers, name, date of birth, ID numbers, addresses, and more. Identity Verification also integrates directly with Monitor for an end-to-end verification and KYC solution, allowing you to check for the presence of a user on watchlists and PEP lists, in addition to verifying identity.
+                - paragraph [ref=e86]: The user starts the Identity Verification process...
+                - paragraph [ref=e87]: (An image of "The user starts the Identity Verification process...")
+                - paragraph [ref=e88]: (An image of "...selects their country from a configurable list...")
+                - paragraph [ref=e89]: (An image of "...enters their phone number...")
+                - paragraph [ref=e90]: (An image of "...and, if you've enabled SMS-verification, verifies it.")
+                - paragraph [ref=e91]: (An image of "They provide their full name...")
+                - paragraph [ref=e92]: (An image of "...address...")
+                - paragraph [ref=e93]: (An image of "...date of birth...")
+                - paragraph [ref=e94]: (An image of "...and, if you've enabled Data Source Verification, an ID number.")
+                - paragraph [ref=e95]: (An image of "With Document Verification enabled, they pick a document from a configurable list...")
+                - paragraph [ref=e96]: (An image of "...and photograph the front...")
+                - paragraph [ref=e97]: (An image of "...and the back.")
+                - paragraph [ref=e98]: (An image of "With Selfie Check enabled, the user grants camera access...")
+                - paragraph [ref=e99]: (An image of "...takes a selfie...")
+                - paragraph [ref=e100]: (An image of "...decides whether to save their profile with Plaid...")
+                - paragraph [ref=e101]: (An image of "...and the flow is done.")
+                - paragraph [ref=e102]: Plaid Identity Verification can also be used together with Plaid Identity in a single workflow to provide full identity verification and fraud reduction. Identity Verification is used to verify that the user of your app is the person they claim to be, while Identity is used to confirm that the ownership information on their linked bank or credit card account matches this verified identity.
+                - paragraph [ref=e103]: Identity Verification can be used to verify end users in nearly 190 countries. To integrate with Identity Verification, your company must be based in the US, Canada, or UK.
+                - paragraph [ref=e104]: Watch video
+                - heading "##Identity Verification checks" [level=2] [ref=e105]
+                - paragraph [ref=e106]: Plaid offers a variety of verification checks to choose from. You can combine multiple verification checks within a single Identity Verification template via the Workflow Management editor, and even run certain checks conditionally, such as only running a particular verification if another verification fails or indicates a high-risk session, or running different checks based on your user's country of origin.
+                - paragraph [ref=e107]: After running your selected checks, Identity Verification will also display a set of granular risk assessments (email risk, phone risk, etc.) in the Dashboard for each session, along with an overall risk score, helping you to understand which factors contributed to the session passing or failing and which sessions have been identified as the highest risk.
+                - paragraph [ref=e108]: When configuring your checks, it is typically recommended to start with the default templates and risk rules, then fine-tune them as needed based on your results.
+                - heading "##SMS Verification" [level=2] [ref=e109]
+                - paragraph [ref=e110]: SMS Verification verifies a user's phone number by asking them to enter a code sent via SMS.
+                - heading "##Data Source Verification" [level=2] [ref=e111]
+                - paragraph [ref=e112]: Data Source Verification (formerly known as Lightning Verification) verifies a user's name, address, date of birth, phone number, and ID number (such as SSN) against available records. These records are sourced from high-quality, trusted databases such as voter and driver registration records, property records, and credit bureau records. You can configure the level of matching required for each field in your template’s Identity Rules. The results of this check will be summarized in the kyc_check object in the API.
+                - paragraph [ref=e113]: Note that certain end user segments, such as recent immigrants and end users aged 18-21, are less likely to pass data source verification, due to having a "thin file" (i.e., fewer data source records available to verify against). If these groups constitute a substantial portion of the audience you will be verifying, you may wish to enable Document Verification as a backup verification method.
+                - heading "##Document Verification" [level=2] [ref=e114]
+                - paragraph [ref=e115]: Document Verification prompts the user to upload an image of an identity document. Plaid will use anti-fraud checks to verify that the document appears to be legitimate and is unexpired. Plaid will also verify the date of birth and name on the document against the data provided by the user (other fields that may be present on the document, such as address or national ID number, will not be verified). Plaid supports a wide range of documents; you can review and configure which document types are supported for each country. You can also require certain classes of document types, e.g. only photo IDs.
+                - paragraph [ref=e116]: If the user is on a non-mobile device, Plaid will display a QR code that they can use to perform Document Verification on mobile. They will resume the computer-based flow once the Document Verification upload is complete. This handoff process is automatic and does not require any integration work on your part.
+                - paragraph [ref=e117]: Document Verification can be used as a potential fallback for Data Source Verification (e.g. for verifying thin file customers) or as a step-up method of verification for customers with a lower Trust Index Score . It can also be used as a primary method of verification, especially in countries where Data Source Verification is not supported.
+                - heading "##AAMVA Check (beta, US only)" [level=2] [ref=e118]
+                - paragraph [ref=e119]: AAMVA (American Association of Motor Vehicle Administrators) checks can optionally be enabled as part of Document Verification. When enabled, if the end user uploads an image of a drivers license from a participating US state , Identity Verification will compare the text on the uploaded drivers license with the AAMVA's records. Fields compared include name, gender, height, eye color, address, date of birth, and drivers license number.
+                - heading "##Selfie Check" [level=2] [ref=e120]
+                - paragraph [ref=e121]: When Selfie Check is enabled, the user will be asked to take a selfie on their mobile device as part of the verification process. Plaid will verify that the selfie submitted is a genuine, live video of a real human. If Document Verification is enabled, Selfie Check will also verify that the selfie matches the photo in the document.
+                - paragraph [ref=e122]: If the user is on a non-mobile device, Plaid will display a QR code that they can use to perform the Selfie Check on mobile. They will resume the computer-based flow once the Selfie Check is complete. This handoff process is automatic and does not require any integration work on your part.
+                - paragraph [ref=e123]: After the end user has passed a Selfie Check, you can issue additional on-demand liveness checks at any time as a form of step-up verification. These checks will check both for liveness and for a match to the previous Selfie Check.
+                - heading "##Age verification" [level=2] [ref=e124]
+                - paragraph [ref=e125]: If both Selfie Checks and Document Verification are enabled, an age verification check will automatically be run. Identity Verification will check that the user's photos appear consistent with the date of birth the user has provided.
+                - heading "##AML Screening" [level=2] [ref=e126]
+                - paragraph [ref=e127]: If you're also using Monitor , AML Screening allows you to screen a user against government watchlists during an IDV session by incorporating one of your Monitor screening programs into an IDV template.
+                - heading "##Address requirements" [level=2] [ref=e128]
+                - paragraph [ref=e129]: Within the workflow configuration, you can set a number of address requirements. You can optionally require that the user provide a residential address and/or a physical address (i.e., block PO box addresses). You can also require that any ID documents presented in the Document Verification check are issued by the same country as the country in the user's address.
+                - heading "##Risk Check" [level=2] [ref=e130]
+                - paragraph [ref=e131]: Plaid automatically runs anti-fraud checks in the background of a user’s verification session and summarizes the results into several categories. The data collected in each category is analyzed and assigned a risk level. Whether the overall risk check passes or fails is determined by the template’s Risk Rules, which you can configure. For more details on the risk check process and what each check represents, see Risk checks .
+                - heading "##Trust Index Scores (US only)" [level=2] [ref=e132]
+                - paragraph [ref=e133]: For verifications of US users, Identity Verification will calculate a Trust Index Score, which provides an overall holistic risk assessment based on the Risk Check results. Via the Dashboard, you can view the primary drivers of the Trust Index Score for any given verification. You can also configure a minimum Trust Index Threshold in addition to your template's Risk Rules. The Dashboard will display several recommended thresholds, as well as what percentage of your traffic would be blocked at each score threshold, once you have enough traffic assessed.
+                - paragraph [ref=e134]: You can also configure conditional step-up verifications based on the Trust Index Score. For example, you can allow users with a high Trust Index Score to bypass documentary verification, while requiring for users with a lower score.
+                - heading "##Checks not performed by Identity Verification" [level=2] [ref=e135]
+                - paragraph [ref=e136]: Identity Verification is not a background check tool; it will not report whether an end user has a criminal record.
+                - paragraph [ref=e137]: Identity Verification does not check citizenship, immigration status, or residency status, although you may be able to build your own business logic to determine this supported by Identity Verification results. For example, a valid passport from a country will typically indicate that the end user is a citizen of that country.
+                - paragraph [ref=e138]: Identity Verification does not check for duplicate user submissions based on identity data such as phone number or national ID number (although multiple submissions from the same device, or multiple submissions using different names but the same ostensibly unique PII such as phone number, are tracked and will increase the risk score). Instead, it checks for duplicates using the client_user_id provided when calling /link/token/create ; for more details, see Client user ID .
+                - paragraph [ref=e139]: Per Plaid's terms and policies , Identity Verification is not intended to be used by end users under the age of 18.
+                - heading "##Identity Verification integration process" [level=2] [ref=e140]
+                - paragraph [ref=e141]: Watch video
+                - paragraph [ref=e142]: Identity Verification is not available by default in the Sandbox environment. To obtain Sandbox access, request full Production access for Identity Verification , which will automatically grant Sandbox access, or, if you are not ready for Production access, contact Sales . To obtain Sandbox access for Identity Verification if you are already using another Plaid product, you can also contact your account manager or submit an access request ticket .
+                - paragraph [ref=e143]: The steps below explain how to set up the standard Identity Verification flow. For details on other flow options, including the backend-only flow and hosted UI flow, see Integration options for Identity Verification .
+                - paragraph [ref=e144]: Note that unlike other Plaid products, which are configured primarily via the API, most options for Identity Verification are configured on the web, via the Template Editor within the Identity Verification Dashboard. Detailed documentation on configuring Identity Verification templates is available via in-app help within the Template Editor. To request access to the Template Editor and Identity Verification Dashboard, contact your Plaid Account Manager, or file a Product Access request .
+                - paragraph [ref=e145]:
+                  - generic [ref=e146]: "1."
+                  - generic [ref=e147]: Visit the Plaid Dashboard and select Identity Verification from the left sidebar. If you don't see this option, you may need to talk to your Plaid Account Manager and ask them to enable this product for you, or file a Product access request .
+                - paragraph [ref=e148]:
+                  - generic [ref=e149]: "2."
+                  - generic [ref=e150]: Select or create the template you want to use, click the Integration button, and copy the template_id.
+                - paragraph [ref=e151]:
+                  - generic [ref=e152]: "3."
+                  - generic [ref=e153]: (Optional) If you plan to integrate with Monitor , make sure to enable the AML Screening option and select the appropriate Monitor program within the IDV template editor.
+                - paragraph [ref=e154]:
+                  - generic [ref=e155]: "4."
+                  - generic [ref=e156]: (Optional) Call /identity_verification/create if you already have information about your user that you can fill out on their behalf. See pre-populating user information for more details.
+                - paragraph [ref=e157]:
+                  - generic [ref=e158]: "5."
+                  - generic [ref=e159]: "Call /link/token/create . In addition to the required parameters, you will need to provide the following:"
+                - paragraph [ref=e160]:
+                  - generic [ref=e161]: "6."
+                  - generic [ref=e162]: For identity_verification.template_id, use the template_id you copied in step 2.
+                - paragraph [ref=e163]:
+                  - generic [ref=e164]: "7."
+                  - generic [ref=e165]: For products, use ["identity_verification"]. Identity Verification is mutually exclusive with other products.
+                - paragraph [ref=e166]:
+                  - generic [ref=e167]: "8."
+                  - generic [ref=e168]: Provide user.client_user_id and optionally user.email_address. See below for details on these fields.
+                - paragraph [ref=e169]:
+                  - generic [ref=e170]: "9."
+                  - generic [ref=e171]: On your web or mobile client, create an instance of Link using the link_token returned by /link/token/create ; for more details, see the Link documentation .
+                - paragraph [ref=e172]:
+                  - generic [ref=e173]: "10."
+                  - generic [ref=e174]: When the user has successfully completed the client-side Link flow, you will receive an onSuccess callback and be able to review the session in the Dashboard. The onSuccess callback will return a Link session ID that can be used as the identity_verification_id in the next step. Note that onSuccess does not indicate that the user has passed the Identity Verification checks, but simply that they have submitted all the information requested in the Link flow. Unlike some other Plaid products, Identity Verification will not return a public token in onSuccess.
+                - paragraph [ref=e175]:
+                  - generic [ref=e176]: "11."
+                  - generic [ref=e177]: To retrieve the status of your user's verification attempt, make a call to /identity_verification/get , passing in the verification session ID. You can retrieve this session ID from the metadata in the Link callbacks, from the /identity_verification/create response, or from the Identity Verification webhooks that Plaid sends during the process.
+                - paragraph [ref=e178]:
+                  - generic [ref=e179]: "12."
+                  - generic [ref=e180]: You can retrieve a list of all of your user's verification attempts by making a call to /identity_verification/list , passing in the client_user_id and the template_id.
+                - heading "##Events and callbacks" [level=2] [ref=e181]
+                - paragraph [ref=e182]: You can optionally track the progress of users through the Link flow via client-side callbacks and events. For more information, see Link callbacks .
+                - heading "##Mobile support" [level=2] [ref=e183]
+                - paragraph [ref=e184]: Identity Verification is fully supported by Plaid's mobile SDKs. Because the end user may need to use the camera during the Identity Verification flow, your app must request certain permissions in order to fully support Identity Verification flows on mobile. For more details, see the documentation for the Android and iOS SDKs.
+                - heading "##Client User Id" [level=2] [ref=e185]
+                - paragraph [ref=e186]: The mandatory client_user_id field should be a unique and persistent identifier for your customer, such as the id field on your users table.
+                - paragraph [ref=e187]: Identity Verification intelligently handles sessions being started with the same client_user_id multiple times. If your customer starts a Link session, closes it, reopens it, and reopens your Link integration, their session will resume from where they left off. Likewise, if your customer has completed their Link session in the past (by either failing verification or passing), Plaid will not serve them another session unless you've manually authorized another attempt from the Dashboard or made a call to /identity_verification/retry .
+                - paragraph [ref=e188]: Plaid indexes the client_user_id you provide, allowing you to look up users using your internal id.
+                - paragraph [ref=e189]: If you do not want to expose your internal id to Plaid directly, you can symmetrically encrypt the identifier with a secret key that only your servers know.
+                - heading "##Supplementing with email" [level=2] [ref=e190]
+                - paragraph [ref=e191]: During /link/token/create or /identity_verification/create , Identity Verification accepts email_address as an optional additional parameter. While the field is optional, we highly recommend providing it. Identity Verification will include the user's email in the Link session and perform a number of anti-fraud related checks, including analyzing social networks, abusive emails, and email address trustworthiness.
+                - heading "##Integration options for Identity Verification" [level=2] [ref=e192]
+                - paragraph [ref=e193]: Identity Verification offers several options for streamlined flows.
+                - paragraph [ref=e194]: The Plaid Link flow is designed to collect high quality user data, through an optimized UI and input validation. If you are bypassing the Link data entry UI and are instead passing user data via API, be sure you are providing data in the correct format expected by the API and have taken steps to avoid issues such as typos or incorrect data entry (e.g. an end user entering a date of birth using a different date format than your app expects). Providing unvalidated or malformatted data via the API will result in degraded success rates for Data Source Verification.
+                - paragraph [ref=e195]: For more details on data formatting requirements and validation rules you can use for input you collect, see input validation .
+                - heading "##Streamlining Link by pre-populating user information (hybrid Link flow)" [level=2] [ref=e196]
+                - paragraph [ref=e197]: If you already know some information about your user (such as their name, phone number, or address), you can simplify the verification process by making a call to /identity_verification/create , passing in any information you know about your user, including their client_user_id. When you open up a Link session against this same client_user_id, Identity Verification can make use of the information that you passed in. Any fields or screens requesting information you already provided will be skipped (not shown) in the UI. This means that an end user will not be able to override or change pre-populated user information during the Link flow. For data format specifications, see Input Validation .
+                - heading "##Data Source Checks without UI (backend flow)" [level=2] [ref=e198]
+                - paragraph [ref=e199]: "If you have already obtained a user's information and their consent to share it with Plaid, and do not need interactive capabilities such as Document Check, Selfie Check, or SMS verification, you can bypass the Identity Verification UI entirely and run an entirely programmatic verification:"
+                - paragraph [ref=e200]:
+                  - generic [ref=e201]: "1."
+                  - generic [ref=e202]: Create a template that requires only Data Source (KYC) check and does not use SMS verification.
+                - paragraph [ref=e203]:
+                  - generic [ref=e204]: "2."
+                  - generic [ref=e205]: "Call /identity_verification/create with all the user data required by this template and gave_consent: true."
+                - paragraph [ref=e206]:
+                  - generic [ref=e207]: "3."
+                  - generic [ref=e208]: Wait for the STATUS_UPDATED webhook to fire for the id returned by /identity_verification/create . Alternatively, you can poll /identity_verification/get with this id until the status is no longer active.
+                - paragraph [ref=e209]:
+                  - generic [ref=e210]: "4."
+                  - generic [ref=e211]: Call /identity_verification/get with the id returned by /identity_verification/create to retrieve the status of the verification.
+                - paragraph [ref=e212]: When using the backend-only flow, the Network Risk, Device and IP Address, and Behavioral Analytics checks will be unavailable, as they require client-side input.
+                - heading "##Verification links (hosted flow)" [level=2] [ref=e213]
+                - paragraph [ref=e214]: "Identity Verification offers the option to generate Plaid-hosted verification links. These links can be used in scenarios where your user signed up for your service outside of an app or website -- for example if a user is opening a bank account or applying for a loan in person at a brick-and-mortar retail location. To generate a verification link, click Create verification from the Identity Verification template view in the Dashboard. Alternatively, you can call /identity_verification/create with is_shareable: true; a verification link will be returned in the shareable_url field of the response. Once you have shared the verification link, the user can open the link and complete the verification on their phone or other device. Unlike Plaid Hosted Links , Identity Verification links do not expire."
+                - paragraph [ref=e215]: Note that verification links are intended to be sent directly to your users; hosting verification links via iframe will be blocked.
+                - heading "##Auto-fill" [level=2] [ref=e216]
+                - paragraph [ref=e217]: When auto-fill is enabled, Plaid will use the user's phone number and date of birth to attempt to auto-fill other fields. The user will be asked to confirm their auto-filled information is accurate before submitting. Auto-fill can only be enabled when using SMS Verification and Data Source Verification and is only available for US verifications.
+                - paragraph [ref=e218]: Enabling auto-fill when possible is strongly recommended, as it has a substantial positive impact on Link flow conversion.
+                - paragraph [ref=e219]: When auto-fill is enabled, full SSN collection cannot be guaranteed; in some cases, 4 digits of the SSN may be returned, even if you have enabled collecting the 9 digit SSN. If it is critical that you collect the end user's full SSN within the Identity Verification flow, you should not enable auto-fill.
+                - paragraph [ref=e220]: Note that auto-fill is not the same as the Plaid Returning User Experience . The Returning User Experience is an automatic experience within Link, based on the end user's saved profile that they created during a previous Link session, while auto-fill is a configurable setting and uses Data Source Verification records for auto-filling data.
+                - heading "##Hiding verification outcome" [level=2] [ref=e221]
+                - paragraph [ref=e222]: You can customize many aspects of the Identity Verification flow, including the final pane shown to the end user. If you have a more complex user risk evaluation model that uses Identity Verification as one of multiple inputs, you should select the option in the Workflow pane to "Remove Final Status Screen", preventing the user from seeing a result that may not reflect the true outcome of your verification process.
+                - heading "##Overrides" [level=2] [ref=e223]
+                - paragraph [ref=e224]: If you believe the result of an Identity Verification step was incorrect, you can manually override the result via the Dashboard by clicking the Override result button next to the specific step on the verification detail page. It is not possible to override a result via the API. Only the result of failed steps can be overridden; you cannot override the result of a step that has passed verification. You cannot override the result of the session as a whole, but overriding a step's result will cause the verification logic to be re-evaluated for that session, which may cause the session to pass.
+                - heading "##Retries" [level=2] [ref=e225]
+                - paragraph [ref=e226]: If you want to give a user another attempt to verify their identity -- for example, if they failed verification due to a typo -- you can issue them a retry. This can be done from the Dashboard when reviewing a verification by clicking Actions > Request retry from this user and selecting the steps to include, or via API by calling /identity_verification/retry with their client_user_id, template_id, and the strategy you want to use.
+                - paragraph [ref=e227]: Retries can be issued from any verification check. Any steps included in the retry will be reset and cleared of any PII entered by the user or passed via API in previous verification attempts. Data Source data can be passed programmatically for a retry by calling /identity_verification/retry and passing the user’s data in the user object. /identity_verification/create should only be used to create an initial session for users who have never been verified before.
+                - paragraph [ref=e228]: Each retry will generate a new session_id, with the same client_user_id and template_id used in the original session. Retries will use the most recent version of the template, which may be different from the version used in the original verification session. Retries are billed at the same rate as regular sessions.
+                - paragraph [ref=e229]: While allowing retries is useful to help users who have legitimately made an error, allowing too many retry attempts can attract fraud. We recommend starting with no more than two retry attempts allowed per user.
+                - paragraph [ref=e230]: "You can also issue retries for successful verifications. In addition to retrying steps, successful verifications allow you to issue a liveness retry, which prompts the user to take a new selfie and both tests it for liveness and compares it against their previous selfie. To use this approach, select Actions > Request retry from this user > Authenticate User > Start Re-authentication or call /identity_verification/retry with steps.liveness: true."
+                - heading "##Step-up verification" [level=2] [ref=e231]
+                - paragraph [ref=e232]: Retries can also be used as part of a "step-up" verification process. To use retries in this way, send the user through Identity Verification, and examine the results via the Dashboard or /identity_verification/get . If their risk results meet your criteria for requiring a step-up, you can issue a retry using a different template_id. For example, you might send users through a template that doesn't require documentary verification, but if their risk check failed, you might step them up to a new template that does require documentary verification.
+                - heading "##Financial Account Matching" [level=2] [ref=e233]
+                - paragraph [ref=e234]: If you are a customer of Identity or Assets , you can seamlessly compare a user's financial accounts with their Identity Verification profile. When a user verifies their identity and links their accounts with Plaid, we detect if they are linking a bank account that belongs to them. In the Plaid Dashboard, you’ll see "match" scores against the account owner’s name, email, phone number, and address.
+                - paragraph [ref=e235]: To turn on this feature, you will need to enable it in the template editor and call /identity/get , /identity/match , or /asset_report/create with the same client_user_id that was used for Identity Verification. Financial Account Matching will only run if the client_user_id is associated with a successful (passed) Identity Verification session.
+                - heading "##Fraud labeling" [level=2] [ref=e236]
+                - paragraph [ref=e237]: Identity Verification offers the ability to flag a session as fraudulent via the Dashboard, using the Mark as fraud or Mark as not fraud buttons. Labeling fraudulent sessions will allow Identity Verification to refine its fraud model, resulting in higher fraud detection accuracy for your integration. If necessary, you can also perform a one-time bulk upload of fraud labels; contact your Account Manager for more details. Fraud labeling a session does not change its pass/fail outcome.
+                - heading "##Supported languages" [level=2] [ref=e238]
+                - paragraph [ref=e239]: Identity Verification currently supports flows in English, French, Spanish, Japanese, and Portuguese. Link will attempt to auto-detect the correct language based on the user's browser settings. Users can also manually change the language of their session through a dropdown in the Link UI. Unlike other Plaid products, Identity Verification does not use the language setting in /link/token/create .
+                - heading "##Supported countries" [level=2] [ref=e240]
+                - paragraph [ref=e241]: Identity Verification supports end users in all countries, with the exception of North Korea, Libya, DR Congo, Iran, Cuba, and Syria.
+                - paragraph [ref=e242]: "Data Source checks are available in the following countries: Argentina, Australia, Austria, Belgium, Brazil, Canada, Chile, China, Colombia, Czechia, Denmark, Finland, France, Germany, Gibraltar, Hong Kong, India, Ireland, Italy, Japan, Kenya, Luxembourg, Malaysia, Mexico, Netherlands, New Zealand, Nigeria, Norway, Philippines, Poland, Portugal, Singapore, Slovakia, Spain, Sweden, Switzerland, Turkey, United Kingdom, United States."
+                - paragraph [ref=e243]: Note that Data Source Verification success rates vary by country. For more details on a specific country, contact your account manager. If you are running Data Source Verification checks on users outside the US, you may wish to use Documentary Verification as a fallback method in order to increase verification success rates.
+                - paragraph [ref=e244]: Selfie Checks and Documentary Verification are available in all supported countries.
+                - heading "##Supported documents" [level=2] [ref=e245]
+                - paragraph [ref=e246]: Document Verification supports over 16,000 distinct government-issued identification document types. You can check which document types are supported in a specific country from the Dashboard. From the Template Editor, under the Workflow tab, click Assign Countries and either add a new country or select one of the countries you've already configured for the template. Click Physical Document Collection Options to see which document types are supported for this country.
+                - heading "##Data retention and redaction" [level=2] [ref=e247]
+                - paragraph [ref=e248]: Identity Verification will retain data about user sessions as long as you maintain an active Identity Verification contract with Plaid. To request that user personally identifiable information (PII) be redacted on a rolling basis, such as after 90 days, contact support or your Plaid Account Manager to request a custom retention period. Redaction is permanent, and once you have set up a custom retention period, you cannot regain access to redacted data. You can also redact data on an ad-hoc basis via the Dashboard.
+                - paragraph [ref=e249]: If you end your contract with Plaid, you will lose access to the Identity Verification Dashboard and API, including access to information about previous sessions. If your use case requires that you retain user session data after your contract ends, use the API (via /identity_verification/list and /identity_verification/get ) to export the data prior to the end of your contract.
+                - heading "##Protect Dashboard" [level=2] [ref=e250]
+                - paragraph [ref=e251]: The Protect Dashboard is an alternative UI for managing Identity Verification rules and viewing activity.
+                - paragraph [ref=e252]: (An image of "no description available")
+                - paragraph [ref=e253]: Example Protect Dashboard main page
+                - paragraph [ref=e254]: The Protect Dashboard provides capabilities not available in the Identity Verification Dashboard, including configurable workflows and approval logic based on custom rule groups. Rule groups can reference over 100 user attributes, including Trust Index score, location, age, and email domain.
+                - paragraph [ref=e255]: You can query this data directly using custom filters. For example, creating a filter such as "Trust Index < 30" or "more than 5 unique IP addresses" immediately returns matching live and historical sessions.
+                - paragraph [ref=e256]: These same filter criteria and user attributes can also be used to create rule groups, which you can then use in your approval logic via the "Configure" tab. For example, a rule group can be used to create a workflow that rejects users under a specified age or requires a higher Trust Index score for sessions originating from a specific country. Running a search shows which historical sessions would have matched the rule group, effectively backtesting the logic against production traffic.
+                - paragraph [ref=e257]: From any aggregated view, you can drill into an individual session to see the full event timeline and signal values used in decisioning. Data can be exported for audits, compliance, or downstream analysis.
+                - paragraph [ref=e258]: To access the Protect Dashboard, click the "Protect" icon on the left hand navigation pane of the Dashboard. The Protect Dashboard is available for all Identity Verification customers based in the US or UK.
+                - paragraph [ref=e259]: "Identity Verification customers will have the following limitations when using the Protect Dashboard:"
+                - paragraph [ref=e260]:
+                  - generic [ref=e261]: "1."
+                  - generic [ref=e262]: Only two weeks of history is available to search or visualize
+                - paragraph [ref=e263]:
+                  - generic [ref=e264]: "2."
+                  - generic [ref=e265]: Only two custom rule groups can be created
+                - paragraph [ref=e266]: To upgrade to two years of history and unlimited ruleset groups, Contact Sales or your Account Manager to learn more about Protect.
+                - heading "##Testing Identity Verification" [level=2] [ref=e267]
+                - paragraph [ref=e268]: For more information about testing Identity Verification in Sandbox, see Testing Identity Verification .
+                - heading "##Sample app and additional resources" [level=2] [ref=e269]
+                - paragraph [ref=e270]: For a sample integration, see the Identity Verification Quickstart on GitHub.
+                - paragraph [ref=e271]: The PDF resources below provide an in-depth view of IDV integration and configuration options. Note that they are not updated as frequently as the docs and may not reflect the most recent updates to Identity Verification capabilities.
+                - paragraph [ref=e272]:
+                  - generic [ref=e273]: "1."
+                  - generic [ref=e274]: "Identity Verification and Monitor no-code guide : A walkthrough of setting up a Identity Verification and Monitor integration with no code, using the verification links option. This demo flow can help you quickly work with Identity Verification and Monitor and try out the end-user and admin experiences."
+                - heading "##Identity Verification pricing" [level=2] [ref=e275]
+                - paragraph [ref=e276]: Identity Verification has a base fee for every verification attempted, as well as separate fees for Data Source verification, Selfie checks, and Document checks. For more details, see the Identity Verification fee model . To view the exact pricing you may be eligible for, apply for Production access or contact Sales .
+                - heading "##Next steps" [level=2] [ref=e277]
+                - paragraph [ref=e278]: To learn more about building with Identity Verification, see the Identity Verification API Reference .
+                - paragraph [ref=e279]: If you're ready to launch to Production, see the Launch Center.
+                - heading "##Launch Center" [level=2] [ref=e280]
+                - paragraph [ref=e281]: See next steps to launch in Production
+                - paragraph [ref=e282]: Launch
+              - generic [ref=e283]:
+                - generic [ref=e284]:
+                  - generic [ref=e285]: 4,907 words
+                  - generic [ref=e286]: •
+                  - generic [ref=e287]: 25 min read
+                  - generic [ref=e288]: •
+                  - generic [ref=e289]: Last edited Apr 21, 8:46 PM
+                - button "</> Open raw Markdown" [ref=e290]:
+                  - generic [ref=e291]: </>
+                  - text: Open raw Markdown
+          - complementary [ref=e292]:
+            - generic [ref=e293]:
+              - heading "Word Lists" [level=2] [ref=e294]
+              - paragraph [ref=e295]: Highlight words from your selected lists.
+              - generic [ref=e296]:
+                - generic [ref=e297]: CET4
+                - generic [ref=e298]: CET6
+              - link "Manage word lists →" [ref=e299] [cursor=pointer]:
+                - /url: /word-lists
+                - text: Manage word lists
+                - generic [ref=e300]: →
+            - generic [ref=e301]:
+              - generic [ref=e302]:
+                - heading "Matched Words" [level=2] [ref=e303]
+                - generic [ref=e304]: "3"
+              - paragraph [ref=e305]: Words in this document from selected lists.
+              - generic [ref=e306]:
+                - generic [ref=e307]:
+                  - generic [ref=e308]:
+                    - paragraph [ref=e309]: starts
+                    - generic [ref=e310]: CET4
+                  - generic [ref=e311]: "3"
+                - generic [ref=e312]:
+                  - generic [ref=e313]:
+                    - paragraph [ref=e314]: ability
+                    - generic [ref=e315]: CET4
+                  - generic [ref=e316]: "1"
+                - generic [ref=e317]:
+                  - generic [ref=e318]:
+                    - paragraph [ref=e319]: photograph
+                    - generic [ref=e320]: CET4
+                  - generic [ref=e321]: "1"
+            - generic [ref=e323]:
+              - generic [ref=e324]:
+                - heading "Annotations" [level=2] [ref=e325]
+                - generic [ref=e326]: "1"
+              - generic [ref=e327]:
+                - combobox [ref=e328]:
+                  - option "All annotations" [selected]
+                - button "≣" [ref=e329]
+              - generic [ref=e331]:
+                - paragraph [ref=e332]: Today
+                - button "test Apr 23, 7:21 PM ···" [ref=e334]:
+                  - generic [ref=e335]:
+                    - generic [ref=e337]:
+                      - paragraph [ref=e338]: test
+                      - paragraph [ref=e339]: Apr 23, 7:21 PM
+                    - generic [ref=e340]: ···
+              - button "View all annotations" [ref=e341]
+  - button "Open Next.js Dev Tools" [ref=e347] [cursor=pointer]:
+    - img [ref=e348]

@@ -29,6 +29,16 @@ export function formatRelativeDayLabel(date: Date, now = new Date()) {
 }
 
 export function formatDateTimeLabel(date: Date) {
+  const relativeLabel = formatRelativeDayLabel(date);
+  const timeLabel = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+
+  if (relativeLabel === "Today" || relativeLabel === "Yesterday") {
+    return `${relativeLabel} at ${timeLabel}`;
+  }
+
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",

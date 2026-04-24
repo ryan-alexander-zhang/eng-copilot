@@ -1,0 +1,13 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - heading "Sign in to continue" [level=1] [ref=e5]
+        - paragraph [ref=e6]: Use Google to open your reading library and pick up where you left off.
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - paragraph [ref=e9]: One secure sign-in
+          - paragraph [ref=e10]: Your documents, notes, and shared pages stay connected to the same account.
+        - button "Continue with Google" [ref=e11] [cursor=pointer]
+        - paragraph [ref=e12]: This workspace uses Google sign-in.
+  - alert [ref=e13]

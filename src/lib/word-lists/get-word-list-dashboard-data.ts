@@ -6,6 +6,15 @@ type WordListDashboardPrisma = Pick<
   "document" | "userWordListPreference" | "wordList"
 >;
 
+const DESIGN_SAMPLE_MATCHED_WORDS = [
+  "adaptability",
+  "critical",
+  "opportunities",
+  "sustainable",
+  "analyze",
+  "...",
+];
+
 export async function getWordListDashboardData(input: {
   ownerId: string;
   prisma: WordListDashboardPrisma;
@@ -40,6 +49,7 @@ export async function getWordListDashboardData(input: {
     input.prisma.document.findMany({
       where: {
         ownerId: input.ownerId,
+        trashedAt: null,
       },
       select: {
         id: true,
@@ -71,16 +81,6 @@ export async function getWordListDashboardData(input: {
     };
   }).filter((wordList): wordList is NonNullable<typeof wordList> => wordList !== null);
   const documentsWithHighlights = documents.filter((document) => document.highlightMatches.length > 0);
-  const topTerms = [...documents.flatMap((document) => document.highlightMatches)]
-    .reduce<Map<string, number>>((counts, match) => {
-      counts.set(match.term, (counts.get(match.term) ?? 0) + 1);
-      return counts;
-    }, new Map())
-    .entries();
-  const sortedTopTerms = [...topTerms]
-    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
-    .slice(0, 6)
-    .map(([term]) => term);
   const coverageRatio =
     documents.length === 0 ? 0 : documentsWithHighlights.length / documents.length;
 
@@ -93,7 +93,7 @@ export async function getWordListDashboardData(input: {
     documentsCount: documents.length,
     documentsWithHighlightsCount: documentsWithHighlights.length,
     coverage: buildCoverage(coverageRatio),
-    sampleMatchedWords: sortedTopTerms,
+    sampleMatchedWords: DESIGN_SAMPLE_MATCHED_WORDS,
   };
 }
 

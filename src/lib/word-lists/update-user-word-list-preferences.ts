@@ -61,6 +61,7 @@ export async function updateUserWordListPreferences(
   const ownedDocuments = await input.prisma.document.findMany({
     where: {
       ownerId: input.ownerId,
+      trashedAt: null,
     },
     select: {
       id: true,

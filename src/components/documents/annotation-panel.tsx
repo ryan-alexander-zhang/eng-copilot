@@ -1,6 +1,6 @@
 "use client";
 
-import { PenLine } from "lucide-react";
+import { PenLine, SlidersHorizontal } from "lucide-react";
 import {
   formatLongDateLabel,
   formatRelativeDayLabel,
@@ -49,7 +49,7 @@ export function AnnotationPanel({
             className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#6B7280]"
             type="button"
           >
-            ≣
+            <SlidersHorizontal className="h-4 w-4" strokeWidth={2} />
           </button>
         </div>
       ) : null}

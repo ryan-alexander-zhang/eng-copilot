@@ -1,0 +1,167 @@
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "eng-copilot" [ref=e6] [cursor=pointer]:
+          - /url: /documents
+        - generic [ref=e7]:
+          - button "Search" [ref=e8]:
+            - img [ref=e9]
+          - link "Documents" [ref=e12] [cursor=pointer]:
+            - /url: /documents
+            - text: Documents
+          - link "Word Lists" [ref=e14] [cursor=pointer]:
+            - /url: /word-lists
+            - text: Word Lists
+          - generic [ref=e16]: Annotations
+          - generic [ref=e17]: R
+      - generic [ref=e18]:
+        - complementary [ref=e19]:
+          - generic [ref=e20]:
+            - button "Upload Markdown" [ref=e21]:
+              - img [ref=e22]
+              - text: Upload Markdown
+            - button "Drop .md files here or click to browse Supports Markdown files up to 512 KB" [ref=e24]:
+              - img [ref=e26]
+              - paragraph [ref=e28]:
+                - text: Drop .md files here
+                - text: or click to browse
+              - paragraph [ref=e29]: Supports Markdown files up to 512 KB
+          - generic [ref=e31]:
+            - heading "My Library" [level=2] [ref=e32]
+            - generic [ref=e33]:
+              - link "Documents 1" [ref=e34] [cursor=pointer]:
+                - /url: /documents
+                - generic [ref=e35]:
+                  - img [ref=e37]
+                  - text: Documents
+                - generic [ref=e40]: "1"
+              - link "Word Lists 5" [ref=e41] [cursor=pointer]:
+                - /url: /word-lists
+                - generic [ref=e42]:
+                  - img [ref=e44]
+                  - text: Word Lists
+                - generic [ref=e46]: "5"
+              - generic [ref=e47]:
+                - generic [ref=e48]:
+                  - img [ref=e50]
+                  - text: Annotations
+                - generic [ref=e52]: "1"
+              - generic [ref=e53]:
+                - generic [ref=e54]:
+                  - img [ref=e56]
+                  - text: Shared with Me
+                - generic [ref=e62]: "0"
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - img [ref=e66]
+                  - text: Read-Only Links
+                - generic [ref=e69]: "1"
+              - generic [ref=e70]:
+                - generic [ref=e71]:
+                  - img [ref=e73]
+                  - text: Trash
+                - generic [ref=e76]: "0"
+            - generic [ref=e77]:
+              - heading "Storage" [level=3] [ref=e78]
+              - paragraph [ref=e79]: 36.9 KB of 10 GB used
+              - button "Upgrade plan" [ref=e82]
+            - generic [ref=e83]:
+              - paragraph [ref=e84]: Learn more, together.
+              - paragraph [ref=e85]: Share read-only links so others can learn without editing.
+              - button "See how it works" [ref=e86]
+        - generic [ref=e88]:
+          - heading "Documents" [level=1] [ref=e89]
+          - paragraph [ref=e90]: Manage your Markdown reading files, annotations, and sharing settings.
+          - generic [ref=e91]:
+            - article [ref=e92]:
+              - img [ref=e94]
+              - paragraph [ref=e96]: "1"
+              - paragraph [ref=e97]: Total documents
+            - article [ref=e98]:
+              - img [ref=e100]
+              - paragraph [ref=e102]: "1"
+              - paragraph [ref=e103]: Total annotations
+            - article [ref=e104]:
+              - img [ref=e106]
+              - paragraph [ref=e109]: "1"
+              - paragraph [ref=e110]: Read-only links active
+            - article [ref=e111]:
+              - img [ref=e113]
+              - paragraph [ref=e116]: "2"
+              - paragraph [ref=e117]: Word lists used
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e120]:
+                - img
+                - searchbox "Search documents..." [ref=e121]
+                - generic: ⌘K
+              - generic [ref=e122]:
+                - link "All" [ref=e123] [cursor=pointer]:
+                  - /url: /documents
+                - link "Recent" [ref=e124] [cursor=pointer]:
+                  - /url: /documents?tab=recent
+                - link "Shared" [ref=e125] [cursor=pointer]:
+                  - /url: /documents?tab=shared
+                - link "Annotated" [ref=e126] [cursor=pointer]:
+                  - /url: /documents?tab=annotated
+            - generic [ref=e127]:
+              - button "Filter" [ref=e128]:
+                - img [ref=e129]
+                - text: Filter
+              - generic [ref=e131]:
+                - combobox [ref=e132]:
+                  - 'option "Sort: Last edited" [selected]'
+                  - 'option "Sort: Created"'
+                  - 'option "Sort: Title"'
+                - img
+          - table [ref=e134]:
+            - rowgroup [ref=e135]:
+              - row "Document Words Last edited Word lists Annotations Sharing Actions" [ref=e136]:
+                - columnheader [ref=e137]:
+                  - checkbox [ref=e138]
+                - columnheader "Document" [ref=e139]
+                - columnheader "Words" [ref=e140]
+                - columnheader "Last edited" [ref=e141]
+                - columnheader "Word lists" [ref=e142]
+                - columnheader "Annotations" [ref=e143]
+                - columnheader "Sharing" [ref=e144]
+                - columnheader "Actions" [ref=e145]
+            - rowgroup [ref=e146]:
+              - row "test-eng-copilot.md Introduction to Identity Verification 4,907 Apr 21, 8:46 PM CET4 CET6 1 Read-only link active Open test-eng-copilot Copy test-eng-copilot Open shared view for test-eng-copilot More actions for test-eng-copilot" [ref=e147]:
+                - cell [ref=e148]:
+                  - checkbox [ref=e149]
+                - cell "test-eng-copilot.md Introduction to Identity Verification" [ref=e150]:
+                  - link "test-eng-copilot.md Introduction to Identity Verification" [ref=e151] [cursor=pointer]:
+                    - /url: /documents/cmo8mbf840006zs9my842vwae
+                    - paragraph [ref=e152]: test-eng-copilot.md
+                    - paragraph [ref=e153]: Introduction to Identity Verification
+                - cell "4,907" [ref=e154]
+                - cell "Apr 21, 8:46 PM" [ref=e155]
+                - cell "CET4 CET6" [ref=e156]:
+                  - generic [ref=e157]:
+                    - generic [ref=e158]: CET4
+                    - generic [ref=e159]: CET6
+                - cell "1" [ref=e160]
+                - cell "Read-only link active" [ref=e161]:
+                  - generic [ref=e162]: Read-only link active
+                - cell "Open test-eng-copilot Copy test-eng-copilot Open shared view for test-eng-copilot More actions for test-eng-copilot" [ref=e163]:
+                  - generic [ref=e164]:
+                    - link "Open test-eng-copilot" [ref=e165] [cursor=pointer]:
+                      - /url: /documents/cmo8mbf840006zs9my842vwae
+                      - img [ref=e166]
+                    - button "Copy test-eng-copilot" [ref=e169]:
+                      - img [ref=e170]
+                    - link "Open shared view for test-eng-copilot" [ref=e173] [cursor=pointer]:
+                      - /url: /shared/c6537835f999714c4a3ee7d3f6a20b79d061ccbf91690c50
+                      - img [ref=e174]
+                    - button "More actions for test-eng-copilot" [ref=e177]:
+                      - img [ref=e178]
+          - generic [ref=e182]:
+            - paragraph [ref=e183]: 1-1 of 1 documents
+            - generic [ref=e184]:
+              - img [ref=e186]
+              - generic [ref=e188]: "1"
+              - img [ref=e190]
+  - button "Open Next.js Dev Tools" [ref=e197] [cursor=pointer]:
+    - img [ref=e198]

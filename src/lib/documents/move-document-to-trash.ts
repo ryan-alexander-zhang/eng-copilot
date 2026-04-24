@@ -1,12 +1,12 @@
 import type { PrismaClient } from "@prisma/client";
 
-type RevokeDocumentShareInput = {
+type MoveDocumentToTrashInput = {
   documentId: string;
   ownerId: string;
-  prisma: Pick<PrismaClient, "document" | "documentShare">;
+  prisma: Pick<PrismaClient, "document">;
 };
 
-export async function revokeDocumentShare(input: RevokeDocumentShareInput) {
+export async function moveDocumentToTrash(input: MoveDocumentToTrashInput) {
   const document = await input.prisma.document.findFirst({
     where: {
       id: input.documentId,
@@ -15,6 +15,11 @@ export async function revokeDocumentShare(input: RevokeDocumentShareInput) {
     },
     select: {
       id: true,
+      share: {
+        select: {
+          token: true,
+        },
+      },
     },
   });
 
@@ -22,12 +27,17 @@ export async function revokeDocumentShare(input: RevokeDocumentShareInput) {
     throw new Error("Document not found");
   }
 
-  return input.prisma.documentShare.updateMany({
+  await input.prisma.document.update({
     where: {
-      documentId: input.documentId,
+      id: input.documentId,
     },
     data: {
-      isActive: false,
+      trashedAt: new Date(),
     },
   });
+
+  return {
+    id: document.id,
+    shareToken: document.share?.token ?? null,
+  };
 }

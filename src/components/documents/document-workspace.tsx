@@ -6,12 +6,13 @@ import {
   BookOpenText,
   Check,
   ChevronDown,
+  Lightbulb,
   Link2,
   List,
   MoreHorizontal,
   Search,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AnnotationEditorPanel } from "@/components/documents/annotation-editor-panel";
 import { AnnotationPanel } from "@/components/documents/annotation-panel";
 import {
@@ -38,6 +39,8 @@ export function DocumentWorkspace({
   deleteAction,
   enableShareAction,
   highlightMatches,
+  initialSelectedAnnotationId = null,
+  matchedWordCount,
   matchedWords,
   readingMinutes,
   revokeShareAction,
@@ -54,6 +57,8 @@ export function DocumentWorkspace({
   deleteAction: (formData: FormData) => Promise<void>;
   enableShareAction: () => Promise<void>;
   highlightMatches: ReaderHighlightMatch[];
+  initialSelectedAnnotationId?: string | null;
+  matchedWordCount: number;
   matchedWords: Array<{
     count: number;
     listName: string | null;
@@ -85,17 +90,20 @@ export function DocumentWorkspace({
         mode: "edit";
       }
     | null
-  >(null);
+  >(
+    initialSelectedAnnotationId
+      ? {
+          annotationId: initialSelectedAnnotationId,
+          mode: "edit",
+        }
+      : null,
+  );
   const selectedAnnotation =
     editorState?.mode === "edit"
       ? annotations.find((annotation) => annotation.id === editorState.annotationId) ?? null
       : null;
   const selectedAnnotationId = selectedAnnotation?.id ?? null;
-  const uniqueMatchedWordCount = useMemo(
-    () => new Set(matchedWords.map((match) => match.term)).size,
-    [matchedWords],
-  );
-
+  const isAnnotationEditorOpen = editorState !== null;
   return (
     <section className="flex min-w-0 flex-1">
       <div className="min-w-0 flex-1 px-7 py-6">
@@ -181,88 +189,133 @@ export function DocumentWorkspace({
       ) : null}
 
       <aside className="w-full max-w-[300px] border-l border-[#E8EBF0] bg-[#FBFCFE] px-5 py-6">
-        <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
-          <h2 className="text-[16px] font-semibold text-[#111827]">Word Lists</h2>
-          <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
-            Highlight words from your selected lists.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {wordLists.length > 0 ? (
-              wordLists.map((wordList) => (
-                <span
-                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-medium ${
-                    wordList.isSelected
-                      ? "border-[#DCE8FF] bg-[#F5F9FF] text-[#3B82F6]"
-                      : "border-[#E5E7EB] bg-white text-[#4B5563]"
-                  }`}
-                  key={wordList.id}
-                >
-                  {wordList.name}
-                  {wordList.isSelected ? <Check className="h-3.5 w-3.5" strokeWidth={2.6} /> : null}
+        {isAnnotationEditorOpen ? (
+          <>
+            <AnnotationPanel
+              annotations={annotations}
+              onSelectAnnotation={(annotationId) => {
+                setEditorState({
+                  annotationId,
+                  mode: "edit",
+                });
+              }}
+              selectedAnnotationId={selectedAnnotationId}
+              variant="detailed"
+            />
+            <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+              <div className="flex items-start gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8E7] text-[#B7791F]">
+                  <Lightbulb className="h-5 w-5" strokeWidth={2} />
                 </span>
-              ))
-            ) : (
-              <span className="text-[14px] text-[#9CA3AF]">No active lists</span>
-            )}
-          </div>
-          <Link
-            className="mt-5 inline-flex items-center gap-2 text-[14px] font-medium text-[#3B82F6]"
-            href="/word-lists"
-          >
-            Manage word lists
-            <span>→</span>
-          </Link>
-        </section>
-
-        <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[16px] font-semibold text-[#111827]">Matched Words</h2>
-            <span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[12px] font-semibold text-[#6B7280]">
-              {formatCompactNumber(uniqueMatchedWordCount)}
-            </span>
-          </div>
-          <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
-            Words in this document from selected lists.
-          </p>
-          <div className="mt-4 space-y-3">
-            {matchedWords.length === 0 ? (
-              <div className="rounded-[14px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-[14px] text-[#6B7280]">
-                No matched words in this document.
-              </div>
-            ) : (
-              matchedWords.map((match) => (
-                <div className="flex items-center justify-between gap-3" key={match.term}>
-                  <div className="min-w-0">
-                    <p className="text-[14px] font-medium text-[#374151]">{match.term}</p>
-                    {match.listName ? (
-                      <span className="mt-1 inline-flex rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[11px] font-semibold text-[#3B82F6]">
-                        {match.listName}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex items-center gap-3 text-[#9CA3AF]">
-                    <span className="text-[13px]">{match.count}</span>
-                    <BookOpenText className="h-4 w-4" strokeWidth={1.9} />
-                  </div>
+                <div>
+                  <h2 className="text-[16px] font-semibold text-[#111827]">Tip</h2>
+                  <p className="mt-3 text-[14px] leading-7 text-[#4B5563]">
+                    Right-click any text to add an annotation quickly.
+                  </p>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
+              </div>
+              <button className="mt-5 inline-flex w-full justify-end text-[14px] font-medium text-[#3B82F6]" type="button">
+                Dismiss
+              </button>
+            </section>
+          </>
+        ) : (
+          <>
+            <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+              <h2 className="text-[16px] font-semibold text-[#111827]">Word Lists</h2>
+              <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
+                Highlight words from your selected lists.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {wordLists.length > 0 ? (
+                  wordLists.map((wordList) => (
+                    <span
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-medium ${
+                        wordList.isSelected
+                          ? "border-[#3B82F6] bg-[#3B82F6] text-white"
+                          : "border-[#E5E7EB] bg-white text-[#4B5563]"
+                      }`}
+                      key={wordList.id}
+                    >
+                      {wordList.name}
+                      {wordList.isSelected ? (
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-white/20">
+                          <Check className="h-3 w-3" strokeWidth={2.8} />
+                        </span>
+                      ) : null}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-[14px] text-[#9CA3AF]">No active lists</span>
+                )}
+              </div>
+              <Link
+                className="mt-5 inline-flex items-center gap-2 text-[14px] font-medium text-[#3B82F6]"
+                href="/word-lists"
+              >
+                Manage word lists
+                <span>→</span>
+              </Link>
+            </section>
 
-        <div className="mt-5">
-          <AnnotationPanel
-            annotations={editorState ? annotations : annotations.slice(0, 3)}
-            onSelectAnnotation={(annotationId) => {
-              setEditorState({
-                annotationId,
-                mode: "edit",
-              });
-            }}
-            selectedAnnotationId={selectedAnnotationId}
-            variant={editorState ? "detailed" : "compact"}
-          />
-        </div>
+            <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[16px] font-semibold text-[#111827]">Matched Words</h2>
+                <span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[12px] font-semibold text-[#6B7280]">
+                  {formatCompactNumber(matchedWordCount)}
+                </span>
+              </div>
+              <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
+                Words in this document from selected lists.
+              </p>
+              <div className="mt-4 space-y-3">
+                {matchedWords.length === 0 ? (
+                  <div className="rounded-[14px] border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-4 text-[14px] text-[#6B7280]">
+                    No matched words in this document.
+                  </div>
+                ) : (
+                  matchedWords.map((match) => (
+                    <div className="flex items-center justify-between gap-3" key={match.term}>
+                      <div className="min-w-0">
+                        <p className="text-[14px] font-medium text-[#374151]">{match.term}</p>
+                        {match.listName ? (
+                          <span className="mt-1 inline-flex rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[11px] font-semibold text-[#3B82F6]">
+                            {match.listName}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="flex items-center gap-3 text-[#9CA3AF]">
+                        <span className="text-[13px]">{match.count}</span>
+                        <BookOpenText className="h-4 w-4" strokeWidth={1.9} />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              <button
+                className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
+                type="button"
+              >
+                View all matched words
+                <span className="ml-2">→</span>
+              </button>
+            </section>
+
+            <div className="mt-5">
+              <AnnotationPanel
+                annotations={annotations.slice(0, 3)}
+                onSelectAnnotation={(annotationId) => {
+                  setEditorState({
+                    annotationId,
+                    mode: "edit",
+                  });
+                }}
+                selectedAnnotationId={selectedAnnotationId}
+                variant="compact"
+              />
+            </div>
+          </>
+        )}
       </aside>
     </section>
   );

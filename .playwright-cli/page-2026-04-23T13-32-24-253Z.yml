@@ -1,0 +1,179 @@
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "eng-copilot" [ref=e6] [cursor=pointer]:
+          - /url: /documents
+        - generic [ref=e7]:
+          - button "Search" [ref=e8]:
+            - img [ref=e9]
+          - link "Documents" [ref=e12] [cursor=pointer]:
+            - /url: /documents
+            - text: Documents
+          - link "Word Lists" [ref=e14] [cursor=pointer]:
+            - /url: /word-lists
+            - text: Word Lists
+          - generic [ref=e16]: Annotations
+          - generic [ref=e17]: R
+      - generic [ref=e18]:
+        - complementary [ref=e19]:
+          - generic [ref=e20]:
+            - button "Upload Markdown" [ref=e21]:
+              - img [ref=e22]
+              - text: Upload Markdown
+            - button "Drop .md files here or click to browse Supports Markdown files up to 512 KB" [ref=e24]:
+              - img [ref=e26]
+              - paragraph [ref=e28]:
+                - text: Drop .md files here
+                - text: or click to browse
+              - paragraph [ref=e29]: Supports Markdown files up to 512 KB
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - heading "My Documents" [level=2] [ref=e33]
+              - link "test-eng-copilot.md Apr 21 • 25 min read" [ref=e35] [cursor=pointer]:
+                - /url: /documents/cmo8mbf840006zs9my842vwae
+                - img [ref=e37]
+                - generic [ref=e40]:
+                  - paragraph [ref=e41]: test-eng-copilot.md
+                  - paragraph [ref=e42]: Apr 21 • 25 min read
+            - link "View all documents" [ref=e43] [cursor=pointer]:
+              - /url: /documents
+            - generic [ref=e44]:
+              - heading "Storage" [level=3] [ref=e45]
+              - paragraph [ref=e46]: 36.9 KB of 10 GB used
+              - button "Upgrade plan" [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - heading "Word Lists" [level=1] [ref=e53]
+              - paragraph [ref=e54]: Manage vocabulary lists used for automatic highlighting in your documents.
+              - paragraph [ref=e55]: Lists are loaded from the backend and kept up to date.
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]:
+                  - img
+                  - searchbox "Search lists..." [ref=e59]
+                - generic [ref=e60]:
+                  - combobox [ref=e61]:
+                    - option "All Sources" [selected]
+                  - img
+                - button "Refresh" [ref=e62]:
+                  - img [ref=e63]
+                  - text: Refresh
+              - generic [ref=e68]:
+                - text: Synced from backend
+                - generic [ref=e70]: Just now
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - generic [ref=e73]: 5 lists available
+                - generic [ref=e74]: 0 selected
+              - generic [ref=e75]:
+                - generic [ref=e76] [cursor=pointer]:
+                  - img [ref=e78]
+                  - checkbox "CET4 College English Test Band 4 vocabulary list for undergraduate reading. Words 7 Last synced Apr 23, 9:23 PM" [ref=e80]
+                  - generic [ref=e82]:
+                    - generic [ref=e83]:
+                      - generic [ref=e84]: CET4
+                      - paragraph [ref=e85]: College English Test Band 4 vocabulary list for undergraduate reading.
+                    - generic [ref=e86]:
+                      - generic [ref=e87]:
+                        - term [ref=e88]: Words
+                        - definition [ref=e89]: "7"
+                      - generic [ref=e90]:
+                        - term [ref=e91]: Last synced
+                        - definition [ref=e92]: Apr 23, 9:23 PM
+                - generic [ref=e93] [cursor=pointer]:
+                  - img [ref=e95]
+                  - checkbox "CET6 College English Test Band 6 vocabulary list for advanced academic study. Words 5 Last synced Apr 23, 9:23 PM" [ref=e97]
+                  - generic [ref=e99]:
+                    - generic [ref=e100]:
+                      - generic [ref=e101]: CET6
+                      - paragraph [ref=e102]: College English Test Band 6 vocabulary list for advanced academic study.
+                    - generic [ref=e103]:
+                      - generic [ref=e104]:
+                        - term [ref=e105]: Words
+                        - definition [ref=e106]: "5"
+                      - generic [ref=e107]:
+                        - term [ref=e108]: Last synced
+                        - definition [ref=e109]: Apr 23, 9:23 PM
+                - generic [ref=e110] [cursor=pointer]:
+                  - img [ref=e112]
+                  - checkbox "IELTS High-frequency IELTS vocabulary for academic listening, reading, and writing. Words 7 Last synced Apr 23, 9:23 PM" [ref=e114]
+                  - generic [ref=e116]:
+                    - generic [ref=e117]:
+                      - generic [ref=e118]: IELTS
+                      - paragraph [ref=e119]: High-frequency IELTS vocabulary for academic listening, reading, and writing.
+                    - generic [ref=e120]:
+                      - generic [ref=e121]:
+                        - term [ref=e122]: Words
+                        - definition [ref=e123]: "7"
+                      - generic [ref=e124]:
+                        - term [ref=e125]: Last synced
+                        - definition [ref=e126]: Apr 23, 9:23 PM
+                - generic [ref=e127] [cursor=pointer]:
+                  - img [ref=e129]
+                  - checkbox "TOEFL Essential TOEFL iBT vocabulary used in campus and lecture contexts. Words 7 Last synced Apr 23, 9:23 PM" [ref=e131]
+                  - generic [ref=e133]:
+                    - generic [ref=e134]:
+                      - generic [ref=e135]: TOEFL
+                      - paragraph [ref=e136]: Essential TOEFL iBT vocabulary used in campus and lecture contexts.
+                    - generic [ref=e137]:
+                      - generic [ref=e138]:
+                        - term [ref=e139]: Words
+                        - definition [ref=e140]: "7"
+                      - generic [ref=e141]:
+                        - term [ref=e142]: Last synced
+                        - definition [ref=e143]: Apr 23, 9:23 PM
+                - generic [ref=e144] [cursor=pointer]:
+                  - img [ref=e146]
+                  - checkbox "GRE Academic vocabulary commonly seen in GRE verbal preparation materials. Words 7 Last synced Apr 23, 9:23 PM" [ref=e148]
+                  - generic [ref=e150]:
+                    - generic [ref=e151]:
+                      - generic [ref=e152]: GRE
+                      - paragraph [ref=e153]: Academic vocabulary commonly seen in GRE verbal preparation materials.
+                    - generic [ref=e154]:
+                      - generic [ref=e155]:
+                        - term [ref=e156]: Words
+                        - definition [ref=e157]: "7"
+                      - generic [ref=e158]:
+                        - term [ref=e159]: Last synced
+                        - definition [ref=e160]: Apr 23, 9:23 PM
+          - complementary [ref=e161]:
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - heading "Selected for highlighting" [level=2] [ref=e164]
+                - generic [ref=e165]: "0"
+              - paragraph [ref=e166]: These lists will be used to automatically highlight words in your documents.
+              - generic [ref=e168]: No lists selected yet.
+              - generic [ref=e169]:
+                - paragraph [ref=e170]: Total words
+                - paragraph [ref=e171]: "0"
+                - paragraph [ref=e172]: Across 0 lists
+              - generic [ref=e173]:
+                - generic [ref=e174]: Estimated highlight coverage
+                - paragraph [ref=e175]: High
+                - paragraph [ref=e176]: Great coverage across your uploaded library.
+                - generic [ref=e179]:
+                  - generic [ref=e180]: Low
+                  - generic [ref=e181]: Medium
+                  - generic [ref=e182]: High
+              - generic [ref=e183]:
+                - paragraph [ref=e184]: Sample matched words
+                - generic [ref=e185]:
+                  - generic [ref=e186]: starts
+                  - generic [ref=e187]: ability
+                  - generic [ref=e188]: photograph
+              - link "Preview in a document" [ref=e189] [cursor=pointer]:
+                - /url: /documents/cmo8mbf840006zs9my842vwae
+            - generic [ref=e190]:
+              - generic [ref=e191]:
+                - heading "Backend status" [level=2] [ref=e192]
+                - generic [ref=e193]: Healthy
+              - paragraph [ref=e194]:
+                - text: All word lists are up to date.
+                - text: "API response time: 20ms"
+              - button "Sync now" [ref=e195]:
+                - img [ref=e196]
+                - text: Sync now
+  - button "Open Next.js Dev Tools" [ref=e206] [cursor=pointer]:
+    - img [ref=e207]

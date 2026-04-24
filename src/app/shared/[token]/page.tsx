@@ -8,7 +8,6 @@ import { prisma } from "@/lib/db";
 import {
   countWords,
   estimateReadingMinutes,
-  formatDateTimeLabel,
   formatLongDateLabel,
 } from "@/lib/documents/metrics";
 import { getSharedDocument } from "@/lib/documents/get-shared-document";
@@ -20,7 +19,7 @@ export default async function SharedDocumentPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  let sessionUserId: string;
+  let sessionUserId = "";
 
   try {
     const session = await getRequiredSession();
@@ -50,6 +49,7 @@ export default async function SharedDocumentPage({
   const wordCount = countWords(document.rawMarkdown);
   const readingMinutes = estimateReadingMinutes(wordCount);
   const ownerLabel = document.owner.name?.trim() || extractOwnerName(document.owner.email);
+  const ownerInitials = getUserInitials(ownerLabel);
   const userWordListPrefs = await prisma.userWordListPreference.findMany({
     where: {
       userId: sessionUserId,
@@ -97,16 +97,26 @@ export default async function SharedDocumentPage({
                   </h1>
                   <p className="mt-4 flex flex-wrap items-center gap-3 text-[18px] text-[#6B7280]">
                     <span>Shared by {ownerLabel}</span>
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#F4F8F4] text-[14px] font-medium text-[#5E6B6B]">
+                      {ownerInitials}
+                    </span>
                     <span>•</span>
                     <span>{formatLongDateLabel(document.updatedAt)}</span>
                   </p>
                   <div className="mt-7 rounded-[16px] border border-[#DDEAFE] bg-[#F5F9FF] px-5 py-5">
-                    <p className="text-[15px] font-semibold text-[#374151]">
-                      This is a read-only shared document.
-                    </p>
-                    <p className="mt-2 text-[14px] leading-7 text-[#6B7280]">
-                      You can view highlights and annotations, but cannot edit this document.
-                    </p>
+                    <div className="flex items-start gap-4">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#E8F1FF] text-[#2563EB]">
+                        <Lock className="h-5 w-5" strokeWidth={2} />
+                      </span>
+                      <div>
+                        <p className="text-[15px] font-semibold text-[#374151]">
+                          This is a read-only shared document.
+                        </p>
+                        <p className="mt-2 text-[14px] leading-7 text-[#6B7280]">
+                          You can view highlights and annotations, but cannot edit this document.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -125,6 +135,8 @@ export default async function SharedDocumentPage({
                 blocks={document.blocks}
                 footer={undefined}
                 highlightMatches={document.highlightMatches}
+                showTitle={false}
+                title={document.title}
               />
             </div>
 
@@ -154,13 +166,13 @@ export default async function SharedDocumentPage({
                   <span
                     className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-medium ${
                       wordList.isSelected
-                        ? "border-[#DCE8FF] bg-[#F5F9FF] text-[#3B82F6]"
+                        ? "border-[#3B82F6] bg-[#3B82F6] text-white"
                         : "border-[#E5E7EB] bg-white text-[#4B5563]"
                     }`}
                     key={wordList.id}
                   >
                     {wordList.name}
-                    {wordList.isSelected ? <span className="text-[11px]">●</span> : null}
+                    {wordList.isSelected ? <span className="text-[10px]">●</span> : null}
                   </span>
                 ))}
               </div>
@@ -226,4 +238,14 @@ function buildReaderWordLists(selectedSlugs: string[]) {
     name: list.name,
     isSelected: selectedSlugSet.has(list.slug),
   }));
+}
+
+function getUserInitials(value: string) {
+  const parts = value
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
+    .slice(0, 2);
+
+  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("") || "U";
 }

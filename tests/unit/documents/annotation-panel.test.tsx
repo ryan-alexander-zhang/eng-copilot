@@ -44,7 +44,7 @@ describe("AnnotationPanel", () => {
     );
 
     expect(screen.getByText("Owner note for shared viewer.")).toBeInTheDocument();
-    expect(screen.getByText("Yesterday")).toBeInTheDocument();
+    expect(screen.getByText("Apr 22")).toBeInTheDocument();
     screen.getByRole("button", { name: /Owner note for shared viewer\./ }).click();
     expect(onSelectAnnotation).toHaveBeenCalledWith("annotation-1");
   });

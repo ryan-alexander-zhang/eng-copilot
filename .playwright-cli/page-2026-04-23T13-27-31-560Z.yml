@@ -1,0 +1,63 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - link "Eng Copilot" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e7]:
+          - link "Sign in" [ref=e8] [cursor=pointer]:
+            - /url: /sign-in
+          - link "Workspace" [ref=e9] [cursor=pointer]:
+            - /url: /documents
+      - generic [ref=e10]:
+        - paragraph [ref=e11]: Focused reading for study notes and long-form docs
+        - heading "Make long Markdown documents easier to read, review, and share." [level=1] [ref=e12]
+        - paragraph [ref=e13]: Upload one document, keep notes beside the exact passage, and send someone the same reading view when you are ready to share it.
+        - generic [ref=e14]:
+          - link "Open your workspace" [ref=e15] [cursor=pointer]:
+            - /url: /documents
+          - link "Sign in with Google" [ref=e16] [cursor=pointer]:
+            - /url: /sign-in
+      - generic [ref=e17]:
+        - heading "Built for focused study and review." [level=2] [ref=e18]
+        - generic [ref=e19]:
+          - generic [ref=e20]: Read in context
+          - generic [ref=e21]: Catch key vocabulary
+          - generic [ref=e22]: Save notes beside the text
+          - generic [ref=e23]: Share a clean view
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - paragraph [ref=e27]: Your library
+            - paragraph [ref=e28]: recent files
+          - generic [ref=e29]:
+            - generic [ref=e30]: Find a document
+            - generic [ref=e32]:
+              - paragraph [ref=e33]: "# Reading Notes"
+              - paragraph [ref=e34]: "> \"Well begun is half done.\""
+              - paragraph [ref=e35]: "> Aristotle"
+              - paragraph [ref=e36]: "## Keep in mind"
+              - paragraph [ref=e37]: "- \"Simplify, simplify.\""
+              - paragraph [ref=e38]: "- Henry David Thoreau"
+              - paragraph [ref=e39]: "- \"The only way to have a"
+              - paragraph [ref=e40]: good friend is to be one."
+              - paragraph [ref=e41]: "- Ralph Waldo Emerson"
+            - paragraph [ref=e42]: Pick a page and continue where you left off.
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: study-notes.md
+          - paragraph [ref=e45]: Keep your reading surface clean, then save notes exactly where they matter.
+          - generic [ref=e46]:
+            - generic [ref=e47]: vocabulary
+            - generic [ref=e48]: note
+          - generic [ref=e50]:
+            - paragraph [ref=e51]: "## Marginalia"
+            - paragraph [ref=e52]: "> \"The only way to have a"
+            - paragraph [ref=e53]: "> good friend is to be one.\""
+            - paragraph [ref=e54]: "> Ralph Waldo Emerson"
+            - paragraph [ref=e55]: "- highlight: ability"
+            - paragraph [ref=e56]: "- note: ties action to character"
+            - paragraph [ref=e57]: "### Reminder"
+            - paragraph [ref=e58]: Keep the language simple,
+            - paragraph [ref=e59]: precise, and easy to review.
+  - button "Open Next.js Dev Tools" [ref=e65] [cursor=pointer]:
+    - img [ref=e66]

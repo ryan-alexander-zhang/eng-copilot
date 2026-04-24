@@ -169,4 +169,27 @@ describe("DocumentReader", () => {
     expect(screen.getByText("New annotation")).toBeInTheDocument();
     expect(screen.getByText("“bcd”")).toBeInTheDocument();
   });
+
+  it("can strip the markdown title without rendering a duplicate page heading", () => {
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[
+          { blockKey: "heading:1", kind: "heading", text: "The Value of Lifelong Learning" },
+          { blockKey: "paragraph:1", text: "A paragraph after the title." },
+        ]}
+        highlightMatches={[]}
+        showTitle={false}
+        title="The Value of Lifelong Learning"
+      />,
+    );
+
+    expect(
+      screen.queryByRole("heading", { level: 1, name: "The Value of Lifelong Learning" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { level: 2, name: "## The Value of Lifelong Learning" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("A paragraph after the title.")).toBeInTheDocument();
+  });
 });

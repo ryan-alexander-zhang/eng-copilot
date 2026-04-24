@@ -18,6 +18,7 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
           title: true,
           originalName: true,
           rawMarkdown: true,
+          trashedAt: true,
           createdAt: true,
           updatedAt: true,
           owner: {
@@ -86,5 +87,11 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
     throw new Error("SHARE_NOT_FOUND");
   }
 
-  return share.document;
+  if (share.document.trashedAt) {
+    throw new Error("SHARE_NOT_FOUND");
+  }
+
+  const { trashedAt: _trashedAt, ...document } = share.document;
+
+  return document;
 }

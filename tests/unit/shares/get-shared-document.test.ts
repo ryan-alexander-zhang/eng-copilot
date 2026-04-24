@@ -32,6 +32,7 @@ describe("getSharedDocument", () => {
       title: "Shared doc",
       originalName: "shared.md",
       rawMarkdown: "alpha",
+      trashedAt: null,
       createdAt: new Date("2026-04-16T00:00:00.000Z"),
       updatedAt: new Date("2026-04-17T00:00:00.000Z"),
       owner: {
@@ -88,7 +89,9 @@ describe("getSharedDocument", () => {
       token: "live",
     });
 
-    expect(result).toEqual(sharedDocument);
+    const { trashedAt: _trashedAt, ...expectedDocument } = sharedDocument;
+
+    expect(result).toEqual(expectedDocument);
     expect(findUnique).toHaveBeenCalledWith({
       where: {
         token: "live",
@@ -101,6 +104,7 @@ describe("getSharedDocument", () => {
             title: true,
             originalName: true,
             rawMarkdown: true,
+            trashedAt: true,
             createdAt: true,
             updatedAt: true,
             owner: {
@@ -164,5 +168,22 @@ describe("getSharedDocument", () => {
         },
       },
     });
+  });
+
+  it("rejects trashed shared documents", async () => {
+    const prisma = {
+      documentShare: {
+        findUnique: vi.fn().mockResolvedValue({
+          isActive: true,
+          document: {
+            trashedAt: new Date("2026-04-20T00:00:00.000Z"),
+          },
+        }),
+      },
+    } as never;
+
+    await expect(getSharedDocument({ prisma, token: "live" })).rejects.toThrow(
+      "SHARE_NOT_FOUND",
+    );
   });
 });

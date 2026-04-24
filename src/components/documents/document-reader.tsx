@@ -132,6 +132,7 @@ export function DocumentReader({
   highlightMatches,
   onCreateDraft,
   onSelectAnnotation,
+  showTitle = true,
   title,
 }: {
   activeAnnotationId?: string | null;
@@ -146,6 +147,7 @@ export function DocumentReader({
   highlightMatches: ReaderHighlightMatch[];
   onCreateDraft?: (draft: AnnotationDraft) => void;
   onSelectAnnotation?: (annotationId: string) => void;
+  showTitle?: boolean;
   title?: string;
 }) {
   const previewRef = useRef<HTMLDivElement>(null);
@@ -212,10 +214,10 @@ export function DocumentReader({
         onContextMenu={handleContextMenu}
         ref={previewRef}
       >
-        {title ? (
+        {title && showTitle ? (
           <h1 className="text-[58px] font-semibold tracking-[-0.06em] text-[#111827]">{title}</h1>
         ) : null}
-        {title && renderedBlocks.length > 0 ? <div className="mt-8" /> : null}
+        {title && showTitle && renderedBlocks.length > 0 ? <div className="mt-8" /> : null}
         {renderedBlocks.length === 0 ? (
           <p className="text-[15px] text-[#6B7280]">No readable content.</p>
         ) : (
@@ -319,6 +321,7 @@ export function DocumentReader({
               setDialogDraft(contextMenu.draft);
               setContextMenu(null);
             }}
+            quote={contextMenu.draft.quote}
             x={contextMenu.x}
             y={contextMenu.y}
           />
@@ -342,11 +345,13 @@ export function DocumentReader({
 export const DocumentPreview = DocumentReader;
 
 function SelectionContextMenu({
+  quote,
   x,
   y,
   onSelect,
   onClose,
 }: {
+  quote: string;
   x: number;
   y: number;
   onSelect: () => void;
@@ -367,7 +372,7 @@ function SelectionContextMenu({
         initial={{ opacity: 0, scale: 0.96, y: 8 }}
         style={{ left: x, top: y }}
       >
-        <p className="px-3 py-2 text-[12px] text-[#6B7280]">Look up selected text</p>
+        <p className="px-3 py-2 text-[12px] text-[#6B7280]">{`Look up "${truncateText(quote, 34)}"`}</p>
         <button
           className="flex w-full items-center justify-between rounded-[12px] bg-[#F5F9FF] px-4 py-3 text-left text-[14px] font-medium text-[#2563EB] transition hover:bg-[#EEF4FF]"
           onClick={onSelect}
@@ -530,6 +535,14 @@ function buildSliceStyle(
   }
 
   return undefined;
+}
+
+function truncateText(value: string, maxLength: number) {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 3)}...`;
 }
 
 function buildRenderSlices(input: {
