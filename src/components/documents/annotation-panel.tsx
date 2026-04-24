@@ -59,7 +59,7 @@ export function AnnotationPanel({
           No annotations yet.
         </div>
       ) : variant === "compact" ? (
-        <div className="mt-5 space-y-4">
+        <div className="mt-4 space-y-4">
           {annotations.map((annotation, index) => {
             const previewText = annotation.note.trim().length > 0 ? annotation.note : annotation.quote;
 
@@ -123,24 +123,28 @@ function CompactAnnotationCard({
   const card = (
     <div className="flex items-start gap-3">
       <span
-        className="mt-2 inline-flex h-2.5 w-2.5 rounded-full"
+        className="mt-2 inline-flex h-2.5 w-2.5 flex-none rounded-full"
         style={{ backgroundColor: colors[toneIndex % colors.length] }}
       />
       <div className="min-w-0 flex-1">
-        <p className="text-[14px] leading-7 text-[#374151]">{previewText}</p>
-        <p className="mt-2 text-[13px] text-[#9CA3AF]">{formatRelativeDayLabel(annotation.updatedAt)}</p>
+        <p className="overflow-hidden text-[14px] leading-7 text-[#4B5563] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+          {previewText}
+        </p>
+        <p className="mt-1.5 text-[13px] text-[#9CA3AF]">
+          {formatRelativeDayLabel(annotation.updatedAt)}
+        </p>
       </div>
-      {showEllipsis ? <span className="text-[#9CA3AF]">···</span> : null}
+      {showEllipsis ? <span className="mt-0.5 flex-none text-[#9CA3AF]">···</span> : null}
     </div>
   );
 
   if (!onSelectAnnotation) {
-    return <div className="rounded-[14px] border border-[#E8EBF0] bg-white px-4 py-4">{card}</div>;
+    return <div className="rounded-[12px] px-1 py-1">{card}</div>;
   }
 
   return (
     <button
-      className="block w-full rounded-[14px] border border-[#E8EBF0] bg-white px-4 py-4 text-left transition hover:bg-[#FBFCFE]"
+      className="block w-full rounded-[12px] px-1 py-1 text-left transition hover:bg-[#FBFCFE]"
       onClick={() => onSelectAnnotation(annotation.id)}
       type="button"
     >

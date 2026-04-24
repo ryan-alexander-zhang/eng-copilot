@@ -22,12 +22,30 @@ export async function revokeDocumentShare(input: RevokeDocumentShareInput) {
     throw new Error("Document not found");
   }
 
-  return input.prisma.documentShare.updateMany({
+  const share = await input.prisma.documentShare.findUnique({
+    where: {
+      documentId: input.documentId,
+    },
+    select: {
+      token: true,
+      isActive: true,
+    },
+  });
+
+  if (!share) {
+    return null;
+  }
+
+  return input.prisma.documentShare.update({
     where: {
       documentId: input.documentId,
     },
     data: {
       isActive: false,
+    },
+    select: {
+      token: true,
+      isActive: true,
     },
   });
 }

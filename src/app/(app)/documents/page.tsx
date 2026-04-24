@@ -22,6 +22,7 @@ import {
 } from "@/lib/documents/metrics";
 import { moveDocumentToTrash } from "@/lib/documents/move-document-to-trash";
 import { enableDocumentShare } from "@/lib/shares/enable-document-share";
+import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
 import { DocumentTableRowActions } from "@/components/documents/document-table-row-actions";
 import { DocumentUploadSidebar } from "@/components/layout/document-upload-sidebar";
 import { LibraryNavSidebar } from "@/components/layout/library-nav-sidebar";
@@ -201,6 +202,25 @@ export default async function DocumentsPage({
     if (result.shareToken) {
       revalidatePath(`/shared/${result.shareToken}`);
     }
+  }
+
+  async function revokeShareAction(formData: FormData) {
+    "use server";
+
+    const documentId = getRequiredString(formData, "documentId");
+    const share = await revokeDocumentShare({
+      documentId,
+      ownerId: session.user.id,
+      prisma,
+    });
+
+    revalidatePath("/documents");
+
+    if (share?.token) {
+      revalidatePath(`/shared/${share.token}`);
+    }
+
+    return share;
   }
 
   return (
@@ -388,6 +408,7 @@ export default async function DocumentsPage({
                               : null
                           }
                           moveToTrashAction={moveToTrashAction}
+                          revokeShareAction={revokeShareAction}
                           originalName={document.originalName}
                           title={document.title}
                         />

@@ -24,6 +24,7 @@ export function DocumentTableRowActions({
   enableShareAction,
   initialShare,
   moveToTrashAction,
+  revokeShareAction,
   originalName,
   title,
 }: {
@@ -31,6 +32,7 @@ export function DocumentTableRowActions({
   enableShareAction: (formData: FormData) => Promise<ShareState>;
   initialShare: ShareState;
   moveToTrashAction: (formData: FormData) => Promise<void>;
+  revokeShareAction: (formData: FormData) => Promise<ShareState>;
   originalName: string;
   title: string;
 }) {
@@ -48,6 +50,8 @@ export function DocumentTableRowActions({
       : share?.token
         ? `/shared/${share.token}`
         : "";
+  const isShareActive = share?.isActive ?? false;
+  const visibleShareUrl = isShareActive ? shareUrl : "";
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -88,24 +92,9 @@ export function DocumentTableRowActions({
     return formData;
   }
 
-  function handleEnableSharing() {
+  function handleOpenShareModal() {
     setIsMenuOpen(false);
-
-    if (share?.isActive && share.token) {
-      setIsShareModalOpen(true);
-      return;
-    }
-
-    startTransition(() => {
-      void (async () => {
-        const nextShare = await enableShareAction(buildFormData());
-
-        if (nextShare?.token) {
-          setShare(nextShare);
-          setIsShareModalOpen(true);
-        }
-      })();
-    });
+    setIsShareModalOpen(true);
   }
 
   function handleMoveToTrash() {
@@ -120,16 +109,38 @@ export function DocumentTableRowActions({
   }
 
   async function handleCopyLink() {
-    if (!shareUrl) {
+    if (!visibleShareUrl) {
       return;
     }
 
-    await navigator.clipboard.writeText(shareUrl);
+    await navigator.clipboard.writeText(visibleShareUrl);
     setIsCopied(true);
   }
 
   async function handleCopyTitle() {
     await navigator.clipboard.writeText(shareLabel);
+  }
+
+  function handleToggleShare() {
+    startTransition(() => {
+      void (async () => {
+        if (isShareActive) {
+          const nextShare = await revokeShareAction(buildFormData());
+
+          setShare(
+            nextShare ?? (share ? { ...share, isActive: false } : null),
+          );
+        } else {
+          const nextShare = await enableShareAction(buildFormData());
+
+          if (nextShare) {
+            setShare(nextShare);
+          }
+        }
+
+        router.refresh();
+      })();
+    });
   }
 
   return (
@@ -185,11 +196,11 @@ export function DocumentTableRowActions({
               <button
                 className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[14px] font-medium text-[#374151] transition hover:bg-[#F8FAFC]"
                 disabled={isPending}
-                onClick={handleEnableSharing}
+                onClick={handleOpenShareModal}
                 type="button"
               >
                 <Share2 className="h-4 w-4 text-[#667085]" strokeWidth={2} />
-                Enable sharing
+                Sharing
               </button>
               <button
                 className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[14px] font-medium text-[#E14D45] transition hover:bg-[#FFF5F5]"
@@ -219,10 +230,11 @@ export function DocumentTableRowActions({
                     <input
                       className="h-11 flex-1 border-0 bg-transparent px-4 text-[13px] text-[#667085] outline-none"
                       readOnly
-                      value={shareUrl}
+                      value={visibleShareUrl}
                     />
                     <button
-                      className="inline-flex h-11 items-center justify-center border-l border-[#E5E7EB] bg-[#F8FAFC] px-4 text-[13px] font-medium text-[#4B5563] transition hover:bg-[#F3F4F6]"
+                      className="inline-flex h-11 items-center justify-center border-l border-[#E5E7EB] bg-[#F8FAFC] px-4 text-[13px] font-medium text-[#4B5563] transition hover:bg-[#F3F4F6] disabled:cursor-not-allowed disabled:text-[#9CA3AF]"
+                      disabled={!visibleShareUrl || isPending}
                       onClick={() => {
                         void handleCopyLink();
                       }}
@@ -248,9 +260,23 @@ export function DocumentTableRowActions({
                         </p>
                       </div>
                     </div>
-                    <span className="relative mt-0.5 inline-flex h-6 w-11 rounded-full bg-[#4F9CF9]">
-                      <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
-                    </span>
+                    <button
+                      aria-checked={isShareActive}
+                      aria-label="Read-only"
+                      className={`relative mt-0.5 inline-flex h-6 w-11 rounded-full transition ${
+                        isShareActive ? "bg-[#4F9CF9]" : "bg-[#D0D5DD]"
+                      }`}
+                      disabled={isPending}
+                      onClick={handleToggleShare}
+                      role="switch"
+                      type="button"
+                    >
+                      <span
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition ${
+                          isShareActive ? "right-1" : "left-1"
+                        }`}
+                      />
+                    </button>
                   </div>
                 </div>
 

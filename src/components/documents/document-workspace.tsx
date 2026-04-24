@@ -188,7 +188,7 @@ export function DocumentWorkspace({
         />
       ) : null}
 
-      <aside className="w-full max-w-[300px] border-l border-[#E8EBF0] bg-[#FBFCFE] px-5 py-6">
+      <aside className="w-full max-w-[292px] border-l border-[#E8EBF0] bg-white px-5 py-5">
         {isAnnotationEditorOpen ? (
           <>
             <AnnotationPanel
@@ -223,7 +223,7 @@ export function DocumentWorkspace({
           <>
             <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
               <h2 className="text-[16px] font-semibold text-[#111827]">Word Lists</h2>
-              <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
+              <p className="mt-3 text-[13px] leading-6 text-[#6B7280]">
                 Highlight words from your selected lists.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -265,7 +265,7 @@ export function DocumentWorkspace({
                   {formatCompactNumber(matchedWordCount)}
                 </span>
               </div>
-              <p className="mt-3 text-[14px] leading-7 text-[#6B7280]">
+              <p className="mt-3 text-[13px] leading-6 text-[#6B7280]">
                 Words in this document from selected lists.
               </p>
               <div className="mt-4 space-y-3">
@@ -276,15 +276,17 @@ export function DocumentWorkspace({
                 ) : (
                   matchedWords.map((match) => (
                     <div className="flex items-center justify-between gap-3" key={match.term}>
-                      <div className="min-w-0">
-                        <p className="text-[14px] font-medium text-[#374151]">{match.term}</p>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <p className="truncate text-[14px] font-medium text-[#374151]">
+                          {match.term}
+                        </p>
                         {match.listName ? (
-                          <span className="mt-1 inline-flex rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[11px] font-semibold text-[#3B82F6]">
+                          <span className="inline-flex flex-none rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[11px] font-semibold text-[#3B82F6]">
                             {match.listName}
                           </span>
                         ) : null}
                       </div>
-                      <div className="flex items-center gap-3 text-[#9CA3AF]">
+                      <div className="flex flex-none items-center gap-3 text-[#9CA3AF]">
                         <span className="text-[13px]">{match.count}</span>
                         <BookOpenText className="h-4 w-4" strokeWidth={1.9} />
                       </div>
