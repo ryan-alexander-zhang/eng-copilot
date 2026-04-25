@@ -41,7 +41,7 @@ export function DocumentTableRowActions({
   const [isPending, startTransition] = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const [copiedTarget, setCopiedTarget] = useState<"link" | "title" | null>(null);
   const [share, setShare] = useState<ShareState>(initialShare);
   const shareLabel = originalName || `${title}.md`;
   const shareUrl =
@@ -72,18 +72,18 @@ export function DocumentTableRowActions({
   }, [isMenuOpen]);
 
   useEffect(() => {
-    if (!isCopied) {
+    if (!copiedTarget) {
       return;
     }
 
     const timeoutId = window.setTimeout(() => {
-      setIsCopied(false);
+      setCopiedTarget(null);
     }, 1600);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [isCopied]);
+  }, [copiedTarget]);
 
   function buildFormData() {
     const formData = new FormData();
@@ -114,11 +114,12 @@ export function DocumentTableRowActions({
     }
 
     await navigator.clipboard.writeText(visibleShareUrl);
-    setIsCopied(true);
+    setCopiedTarget("link");
   }
 
   async function handleCopyTitle() {
     await navigator.clipboard.writeText(shareLabel);
+    setCopiedTarget("title");
   }
 
   function handleToggleShare() {
@@ -156,6 +157,14 @@ export function DocumentTableRowActions({
       </td>
       <td className="px-4 py-5">
         <div className="relative flex items-center gap-1 text-[#6B7280]" ref={menuRef}>
+          {copiedTarget === "title" ? (
+            <div
+              className="pointer-events-none absolute right-10 top-[-40px] rounded-[10px] bg-[#111827] px-3 py-1.5 text-[12px] font-medium text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)]"
+              role="status"
+            >
+              Copied
+            </div>
+          ) : null}
           <Link
             aria-label={`Open ${title}`}
             className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
@@ -240,7 +249,7 @@ export function DocumentTableRowActions({
                       }}
                       type="button"
                     >
-                      {isCopied ? "Copied" : "Copy link"}
+                      {copiedTarget === "link" ? "Copied" : "Copy link"}
                     </button>
                   </div>
                 </div>

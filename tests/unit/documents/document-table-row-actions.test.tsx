@@ -34,9 +34,41 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.useRealTimers();
 });
 
 describe("DocumentTableRowActions", () => {
+  it("copies the document file name and shows transient feedback", async () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <DocumentTableRowActions
+              documentId="doc_123"
+              enableShareAction={vi.fn().mockResolvedValue(null)}
+              initialShare={null}
+              moveToTrashAction={vi.fn().mockResolvedValue(undefined)}
+              revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+              originalName="study-notes.md"
+              title="The Value of Lifelong Learning"
+            />
+          </tr>
+        </tbody>
+      </table>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Copy The Value of Lifelong Learning/i }));
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("study-notes.md");
+    });
+    expect(screen.getByText("Copied")).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText("Copied")).not.toBeInTheDocument();
+    }, { timeout: 2500 });
+  });
+
   it("opens the share modal without enabling sharing and reflects the current off state", async () => {
     const enableShareAction = vi.fn().mockResolvedValue({
       isActive: true,
