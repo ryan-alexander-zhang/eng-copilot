@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { UserMenu } from "./user-menu";
 
 type OwnerTopBarProps = {
   activeTab: "annotations" | "documents" | "word-lists";
@@ -30,9 +31,7 @@ export function OwnerTopBar({ activeTab, userInitial }: OwnerTopBarProps) {
         <TopBarLink active={activeTab === "annotations"} href="/annotations">
           Annotations
         </TopBarLink>
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F3F4F6] text-[16px] font-medium text-[#374151]">
-          {userInitial}
-        </div>
+        <UserMenu userInitial={userInitial} />
       </div>
     </header>
   );

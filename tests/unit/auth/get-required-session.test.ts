@@ -8,8 +8,25 @@ import {
 } from "@/lib/auth-config";
 import { getRequiredSession } from "@/lib/auth";
 
+const { cookiesMock, sessionFindUniqueMock } = vi.hoisted(() => ({
+  cookiesMock: vi.fn(),
+  sessionFindUniqueMock: vi.fn(),
+}));
+
 vi.mock("@/auth", () => ({
   auth: vi.fn(),
+}));
+
+vi.mock("next/headers", () => ({
+  cookies: cookiesMock,
+}));
+
+vi.mock("@/lib/db", () => ({
+  prisma: {
+    session: {
+      findUnique: sessionFindUniqueMock,
+    },
+  },
 }));
 
 describe("getRequiredSession", () => {
@@ -17,10 +34,15 @@ describe("getRequiredSession", () => {
 
   afterEach(() => {
     authMock.mockReset();
+    cookiesMock.mockReset();
+    sessionFindUniqueMock.mockReset();
   });
 
   it("throws when the request is unauthenticated", async () => {
     authMock.mockResolvedValue(null);
+    cookiesMock.mockResolvedValue({
+      get: () => undefined,
+    });
 
     await expect(getRequiredSession()).rejects.toThrow("UNAUTHENTICATED");
   });
@@ -31,6 +53,9 @@ describe("getRequiredSession", () => {
         email: "owner@example.com",
       },
       expires: "2099-01-01T00:00:00.000Z",
+    });
+    cookiesMock.mockResolvedValue({
+      get: () => undefined,
     });
 
     await expect(getRequiredSession()).rejects.toThrow("UNAUTHENTICATED");
@@ -48,6 +73,33 @@ describe("getRequiredSession", () => {
     authMock.mockResolvedValue(session);
 
     await expect(getRequiredSession()).resolves.toEqual(session);
+  });
+
+  it("falls back to the database session when the auth helper returns null", async () => {
+    authMock.mockResolvedValue(null);
+    cookiesMock.mockResolvedValue({
+      get: (name: string) =>
+        name === "authjs.session-token" ? { value: "token_123" } : undefined,
+    });
+    sessionFindUniqueMock.mockResolvedValue({
+      expires: new Date("2099-01-01T00:00:00.000Z"),
+      user: {
+        email: "owner@example.com",
+        id: "user_123",
+        image: null,
+        name: "Owner",
+      },
+    });
+
+    await expect(getRequiredSession()).resolves.toEqual({
+      expires: "2099-01-01T00:00:00.000Z",
+      user: {
+        email: "owner@example.com",
+        id: "user_123",
+        image: null,
+        name: "Owner",
+      },
+    });
   });
 
   it("adds the owner id to the session in the NextAuth callback", async () => {

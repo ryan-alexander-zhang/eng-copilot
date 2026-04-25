@@ -31,18 +31,20 @@ describe("LandingPage", () => {
 });
 
 describe("SignInButton", () => {
-  it("renders the Google sign-in prompt", async () => {
+  it("renders the redesigned sign-in page", async () => {
     render(await SignInPage({ searchParams: Promise.resolve({}) }));
 
     expect(
       screen.getByRole("heading", {
-        name: "Sign in to continue",
+        name: "Welcome back",
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Use Google to open your reading library and pick up where you left off."),
+      screen.getByText("Sign in to access your documents, annotations, and shared reading workspace."),
     ).toBeInTheDocument();
-    expect(screen.getByText("This workspace uses Google sign-in.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email or username")).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Continue with Google" }),
     ).toBeInTheDocument();
@@ -65,7 +67,7 @@ describe("SignInButton", () => {
 
     render(await SignInPage({ searchParams: Promise.resolve({ callbackUrl: "/shared/token" }) }));
 
-    expect(screen.getByRole("heading", { name: "Open the shared document" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
 
     expect(signInMock).toHaveBeenCalledWith("google", {
