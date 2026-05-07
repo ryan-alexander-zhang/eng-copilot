@@ -1,20 +1,22 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
-  BookOpen,
   FileText,
   Link2,
-  MessageSquareText,
   Share2,
   Trash2,
 } from "lucide-react";
 
+export type LibraryNavItem =
+  | "documents"
+  | "read-only-links"
+  | "shared-with-me"
+  | "trash";
+
 type LibraryNavSidebarProps = {
-  activeItem: "documents";
+  activeItem: LibraryNavItem;
   counts: {
     documents: number;
-    wordLists: number;
-    annotations: number;
     sharedWithMe: number;
     readOnlyLinks: number;
     trash: number;
@@ -43,32 +45,23 @@ export function LibraryNavSidebar({
           label="Documents"
         />
         <NavItem
-          count={counts.wordLists}
-          href="/word-lists"
-          icon={<BookOpen className="h-4 w-4" strokeWidth={2} />}
-          label="Word Lists"
-        />
-        <NavItem
-          count={counts.annotations}
-          disabled
-          icon={<MessageSquareText className="h-4 w-4" strokeWidth={2} />}
-          label="Annotations"
-        />
-        <NavItem
+          active={activeItem === "shared-with-me"}
           count={counts.sharedWithMe}
-          disabled
+          href="/shared-with-me"
           icon={<Share2 className="h-4 w-4" strokeWidth={2} />}
           label="Shared with Me"
         />
         <NavItem
+          active={activeItem === "read-only-links"}
           count={counts.readOnlyLinks}
-          disabled
+          href="/read-only-links"
           icon={<Link2 className="h-4 w-4" strokeWidth={2} />}
           label="Read-Only Links"
         />
         <NavItem
+          active={activeItem === "trash"}
           count={counts.trash}
-          disabled
+          href="/trash"
           icon={<Trash2 className="h-4 w-4" strokeWidth={2} />}
           label="Trash"
         />
