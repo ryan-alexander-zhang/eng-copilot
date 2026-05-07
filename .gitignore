@@ -12,3 +12,4 @@ playwright-report/
 .env.*.local
 test-results/
 tsconfig.tsbuildinfo
+next-env.d.ts
