@@ -133,7 +133,7 @@ export function SharedAnnotationsPageContent({
         />
       </div>
 
-      <div className="mt-7 grid gap-6 xl:grid-cols-[236px_minmax(0,1fr)]">
+      <div className="mt-7 grid gap-6 xl:grid-cols-[274px_minmax(0,1fr)]">
         <aside className="space-y-6">
           <section className="rounded-[16px] border border-[#E8EBF0] bg-white p-5">
             <h2 className="text-[15px] font-semibold text-[#111827]">About this shared document</h2>

@@ -92,5 +92,8 @@ describe("SharedAnnotationsPageContent", () => {
     const summarySection = screen.getByText("Total annotations").closest("section");
     expect(summarySection).not.toBeNull();
     expect(within(summarySection as HTMLElement).getAllByText("1")).toHaveLength(2);
+    expect(summarySection?.parentElement?.parentElement).toHaveClass(
+      "xl:grid-cols-[274px_minmax(0,1fr)]",
+    );
   });
 });

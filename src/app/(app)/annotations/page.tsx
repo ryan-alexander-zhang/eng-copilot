@@ -141,7 +141,7 @@ export default async function AnnotationsPage({
             />
           </div>
 
-          <div className="mt-7 grid gap-6 xl:grid-cols-[250px_minmax(0,1fr)]">
+          <div className="mt-7 grid gap-6 xl:grid-cols-[274px_minmax(0,1fr)]">
             <aside className="space-y-6">
               <section className="rounded-[16px] border border-[#E8EBF0] bg-white p-5">
                 <p className="text-[15px] text-[#667085]">Total</p>
