@@ -140,6 +140,10 @@ describe("Library pages", () => {
       "href",
       "/shared/readonly-token",
     );
+    expect(screen.getByRole("link", { name: "/shared/readonly-token" })).toHaveAttribute(
+      "href",
+      "/shared/readonly-token",
+    );
   });
 
   it("renders the trash page", async () => {

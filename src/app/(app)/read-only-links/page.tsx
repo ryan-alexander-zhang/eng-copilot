@@ -115,9 +115,12 @@ export default async function ReadOnlyLinksPage() {
                     <p className="mt-1 text-[14px] text-[#7B8594]">{document.originalName}</p>
                   </td>
                   <td className="px-4 py-5">
-                    <p className="text-[15px] font-medium text-[#2563EB]">
+                    <Link
+                      className="block text-[15px] font-medium text-[#2563EB] transition hover:text-[#1D4ED8]"
+                      href={`/shared/${document.share?.token}`}
+                    >
                       {`/shared/${document.share?.token ?? ""}`}
-                    </p>
+                    </Link>
                     <p className="mt-1 text-[13px] text-[#98A2B3]">Status: Active</p>
                   </td>
                   <td className="px-4 py-5 text-[15px] text-[#4B5563]">
