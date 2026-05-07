@@ -88,7 +88,7 @@ export function WordListSelectionForm({
                     </p>
                   </div>
 
-                  <dl className="grid grid-cols-2 gap-x-8 gap-y-4 text-[14px] text-[#6B7280] xl:min-w-[260px]">
+                  <dl className="grid grid-cols-2 gap-x-[18px] gap-y-4 text-[14px] text-[#6B7280] xl:w-[298px] xl:flex-none xl:grid-cols-[110px_170px]">
                     <div>
                       <dt className="text-[#9CA3AF]">Words</dt>
                       <dd className="mt-1 text-[18px] font-semibold text-[#111827]">
