@@ -1,18 +1,28 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CircleHelp, Lock, ShieldCheck } from "lucide-react";
-import { SharedDocumentShell } from "@/components/documents/shared-document-shell";
+import { SharedAnnotationsPageContent } from "@/components/documents/shared-annotations-page-content";
 import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { countWords, estimateReadingMinutes } from "@/lib/documents/metrics";
+import {
+  countWords,
+  estimateReadingMinutes,
+} from "@/lib/documents/metrics";
 import { getSharedDocument } from "@/lib/documents/get-shared-document";
 
-export default async function SharedDocumentPage({
+export default async function SharedAnnotationsPage({
   params,
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ annotation?: string }>;
+  searchParams: Promise<{
+    color?: string;
+    page?: string;
+    q?: string;
+    sort?: string;
+    type?: string;
+    wordList?: string;
+  }>;
 }) {
   const { token } = await params;
   const resolvedSearchParams = await searchParams;
@@ -24,7 +34,7 @@ export default async function SharedDocumentPage({
       throw error;
     }
 
-    redirect(`/sign-in?callbackUrl=${encodeURIComponent(`/shared/${token}`)}`);
+    redirect(`/sign-in?callbackUrl=${encodeURIComponent(`/shared/${token}/annotations`)}`);
   }
 
   let document: Awaited<ReturnType<typeof getSharedDocument>>;
@@ -44,7 +54,6 @@ export default async function SharedDocumentPage({
   const wordCount = countWords(document.rawMarkdown);
   const readingMinutes = estimateReadingMinutes(wordCount);
   const ownerLabel = document.owner.name?.trim() || extractOwnerName(document.owner.email);
-  const ownerInitials = getUserInitials(ownerLabel);
 
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
@@ -70,22 +79,24 @@ export default async function SharedDocumentPage({
           </div>
         </header>
 
-        <SharedDocumentShell
+        <SharedAnnotationsPageContent
           activeWordLists={document.activeLists.map((list) => list.wordList)}
           annotations={document.annotations}
           blocks={document.blocks}
-          createdAt={document.createdAt}
+          color={resolvedSearchParams.color ?? "all"}
           highlightMatches={document.highlightMatches}
-          initialSelectedAnnotationId={resolvedSearchParams.annotation ?? null}
-          key={resolvedSearchParams.annotation ?? "shared-document"}
           originalName={document.originalName}
-          ownerInitials={ownerInitials}
-          ownerLabel={ownerLabel}
+          page={getPageNumber(resolvedSearchParams.page)}
+          q={resolvedSearchParams.q ?? ""}
           readingMinutes={readingMinutes}
+          sharedBy={ownerLabel}
+          sharedOn={document.updatedAt}
+          sort={resolvedSearchParams.sort ?? "newest"}
           title={document.title}
           token={token}
-          updatedAt={document.updatedAt}
-          wordCount={wordCount}
+          totalWords={wordCount}
+          type={resolvedSearchParams.type ?? "all"}
+          wordList={resolvedSearchParams.wordList ?? "all"}
         />
       </div>
     </main>
@@ -99,12 +110,17 @@ function extractOwnerName(email: string | null) {
 
   return email.split("@")[0];
 }
-function getUserInitials(value: string) {
-  const parts = value
-    .split(/\s+/)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0)
-    .slice(0, 2);
 
-  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("") || "U";
+function getPageNumber(value?: string) {
+  if (!value) {
+    return 1;
+  }
+
+  const parsedValue = Number.parseInt(value, 10);
+
+  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+    return 1;
+  }
+
+  return parsedValue;
 }

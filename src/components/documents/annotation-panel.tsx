@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PenLine, SlidersHorizontal } from "lucide-react";
 import {
   formatLongDateLabel,
@@ -24,12 +25,14 @@ export function AnnotationPanel({
   readOnly = false,
   selectedAnnotationId,
   variant = "detailed",
+  viewAllHref,
 }: {
   annotations: AnnotationPanelAnnotation[];
   onSelectAnnotation?: (annotationId: string) => void;
   readOnly?: boolean;
   selectedAnnotationId?: string | null;
   variant?: "compact" | "detailed";
+  viewAllHref?: string;
 }) {
   return (
     <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
@@ -96,12 +99,21 @@ export function AnnotationPanel({
         </div>
       )}
 
-      <button
-        className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
-        type="button"
-      >
-        View all annotations
-      </button>
+      {viewAllHref ? (
+        <Link
+          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
+          href={viewAllHref}
+        >
+          View all annotations
+        </Link>
+      ) : (
+        <button
+          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
+          type="button"
+        >
+          View all annotations
+        </button>
+      )}
     </section>
   );
 }

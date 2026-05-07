@@ -31,6 +31,11 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
             select: {
               wordList: {
                 select: {
+                  entries: {
+                    select: {
+                      term: true,
+                    },
+                  },
                   id: true,
                   slug: true,
                   name: true,
