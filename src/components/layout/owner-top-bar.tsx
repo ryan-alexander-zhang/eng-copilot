@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { UserMenu } from "./user-menu";
 
 type OwnerTopBarProps = {
-  activeTab: "annotations" | "documents" | "word-lists";
+  activeTab: "annotations" | "documents" | "vocabulary" | "word-lists";
   userInitial: string;
 };
 
@@ -27,6 +27,9 @@ export function OwnerTopBar({ activeTab, userInitial }: OwnerTopBarProps) {
         </TopBarLink>
         <TopBarLink active={activeTab === "word-lists"} href="/word-lists">
           Word Lists
+        </TopBarLink>
+        <TopBarLink active={activeTab === "vocabulary"} href="/vocabulary">
+          Vocabulary
         </TopBarLink>
         <TopBarLink active={activeTab === "annotations"} href="/annotations">
           Annotations

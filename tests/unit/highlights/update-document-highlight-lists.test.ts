@@ -144,6 +144,38 @@ describe("updateDocumentHighlightLists", () => {
       prisma: prisma.transactionClient,
     });
   });
+
+  it("includes owner vocabulary terms attached to selected lists", async () => {
+    const prisma = createPrismaMock({
+      ownedDocument: { id: "doc_123" },
+      selectableBuiltInLists: [
+        {
+          id: "list_beta",
+          entries: [{ term: "beta" }],
+        },
+      ],
+      exclusionList: {
+        entries: [],
+      },
+      vocabularyEntries: [{ word: "observability" }],
+    });
+    const recomputeHighlights = vi.fn();
+
+    await updateDocumentHighlightLists({
+      documentId: "doc_123",
+      ownerId: "user_123",
+      selectedWordListIds: ["list_beta"],
+      prisma: prisma as never,
+      recomputeHighlights,
+    });
+
+    expect(recomputeHighlights).toHaveBeenCalledWith({
+      documentId: "doc_123",
+      activeTerms: new Set(["beta", "observability"]),
+      excludedTerms: new Set<string>(),
+      prisma: prisma.transactionClient,
+    });
+  });
 });
 
 function createPrismaMock(input: {
@@ -153,6 +185,7 @@ function createPrismaMock(input: {
     entries: Array<{ term: string }>;
   }>;
   exclusionList: { entries: Array<{ term: string }> } | null;
+  vocabularyEntries?: Array<{ word: string }>;
 }) {
   const transactionDocumentWordList = {
     deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
@@ -169,6 +202,9 @@ function createPrismaMock(input: {
     wordList: {
       findMany: vi.fn().mockResolvedValue(input.selectableBuiltInLists),
       findUnique: vi.fn().mockResolvedValue(input.exclusionList),
+    },
+    vocabularyEntry: {
+      findMany: vi.fn().mockResolvedValue(input.vocabularyEntries ?? []),
     },
     $transaction: vi.fn(async (callback: (tx: typeof transactionClient) => Promise<unknown>) =>
       callback(transactionClient),

@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String                   @id @default(cuid())
   name          String?
-  username      String?         @unique
-  email         String?         @unique
+  username      String?                  @unique
+  email         String?                  @unique
   emailVerified DateTime?
   image         String?
-  passwordHash  String?         @db.Text
+  passwordHash  String?                  @db.Text
   accounts      Account[]
   sessions      Session[]
   documents     Document[]
   annotations   Annotation[]
   wordListPrefs UserWordListPreference[]
+  vocabulary    VocabularyEntry[]
 }
 
 model Account {
@@ -103,15 +104,16 @@ model DocumentWordList {
 }
 
 model WordList {
-  id         String             @id @default(cuid())
-  slug       String             @unique
-  name       String
-  kind       WordListKind
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @default(now()) @updatedAt
-  entries    WordListEntry[]
-  documents  DocumentWordList[]
-  userPrefs  UserWordListPreference[]
+  id                String                    @id @default(cuid())
+  slug              String                    @unique
+  name              String
+  kind              WordListKind
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @default(now()) @updatedAt
+  entries           WordListEntry[]
+  documents         DocumentWordList[]
+  userPrefs         UserWordListPreference[]
+  vocabularyEntries VocabularyEntryWordList[]
 }
 
 model WordListEntry {
@@ -132,6 +134,31 @@ model UserWordListPreference {
 
   @@unique([userId, wordListId])
   @@index([userId])
+}
+
+model VocabularyEntry {
+  id        String                    @id @default(cuid())
+  ownerId   String
+  word      String
+  source    String                    @default("manual")
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+  owner     User                      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  wordLists VocabularyEntryWordList[]
+
+  @@unique([ownerId, word])
+  @@index([ownerId, createdAt])
+}
+
+model VocabularyEntryWordList {
+  id                String          @id @default(cuid())
+  vocabularyEntryId String
+  wordListId        String
+  vocabularyEntry   VocabularyEntry @relation(fields: [vocabularyEntryId], references: [id], onDelete: Cascade)
+  wordList          WordList        @relation(fields: [wordListId], references: [id], onDelete: Cascade)
+
+  @@unique([vocabularyEntryId, wordListId])
+  @@index([wordListId])
 }
 
 enum WordListKind {

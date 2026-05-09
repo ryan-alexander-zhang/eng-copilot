@@ -1,7 +1,7 @@
-import { WordListKind, type PrismaClient } from "@prisma/client";
+import { type PrismaClient } from "@prisma/client";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
+import { getOwnerActiveTerms } from "@/lib/highlights/get-owner-active-terms";
 import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
-import { BUILT_IN_EXCLUSION_SLUG, BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
 
 const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
 const MARKDOWN_FILE_EXTENSIONS = [".md", ".markdown", ".mdown", ".mkd"];
@@ -14,7 +14,8 @@ const MARKDOWN_CONTENT_TYPES = new Set([
 type CreateDocumentFromUploadInput = {
   ownerId: string;
   file: File;
-  prisma: Pick<PrismaClient, "document" | "wordList" | "userWordListPreference">;
+  prisma: Pick<PrismaClient, "document"> &
+    Partial<Pick<PrismaClient, "wordList" | "userWordListPreference" | "vocabularyEntry">>;
 };
 
 export class DocumentUploadValidationError extends Error {
@@ -110,7 +111,7 @@ function getDocumentTitle(fileName: string) {
 
 async function getOwnerWordListSelection(input: {
   ownerId: string;
-  prisma: Pick<PrismaClient, "wordList" | "userWordListPreference">;
+  prisma: Partial<Pick<PrismaClient, "wordList" | "userWordListPreference" | "vocabularyEntry">>;
 }) {
   if (!("userWordListPreference" in input.prisma) || !("wordList" in input.prisma)) {
     return {
@@ -120,63 +121,9 @@ async function getOwnerWordListSelection(input: {
     };
   }
 
-  const [preferredLists, selectableLists, exclusionList] = await Promise.all([
-    input.prisma.userWordListPreference.findMany({
-      where: {
-        userId: input.ownerId,
-      },
-      select: {
-        wordListId: true,
-      },
-    }),
-    input.prisma.wordList.findMany({
-      where: {
-        kind: WordListKind.POSITIVE,
-        slug: {
-          in: BUILT_IN_LISTS.map((list) => list.slug),
-        },
-      },
-      select: {
-        id: true,
-        entries: {
-          select: {
-            term: true,
-          },
-        },
-      },
-    }),
-    input.prisma.wordList.findUnique({
-      where: {
-        slug: BUILT_IN_EXCLUSION_SLUG,
-      },
-      select: {
-        entries: {
-          select: {
-            term: true,
-          },
-        },
-      },
-    }),
-  ]);
-
-  if (!exclusionList) {
-    throw new Error("Built-in exclusion list not found");
-  }
-
-  const selectedWordListIds = preferredLists
-    .map((preference) => preference.wordListId)
-    .filter((wordListId) => selectableLists.some((list) => list.id === wordListId));
-  const selectedWordListIdSet = new Set(selectedWordListIds);
-
-  return {
-    selectedWordListIds,
-    activeTerms: new Set(
-      selectableLists.flatMap((wordList) =>
-        selectedWordListIdSet.has(wordList.id)
-          ? wordList.entries.map((entry) => entry.term)
-          : [],
-      ),
-    ),
-    excludedTerms: new Set(exclusionList.entries.map((entry) => entry.term)),
-  };
+  return getOwnerActiveTerms({
+    ownerId: input.ownerId,
+    prisma: input.prisma as Pick<PrismaClient, "wordList" | "userWordListPreference"> &
+      Partial<Pick<PrismaClient, "vocabularyEntry">>,
+  });
 }

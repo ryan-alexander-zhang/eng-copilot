@@ -89,8 +89,9 @@ describe("getSharedDocument", () => {
       token: "live",
     });
 
-    const { trashedAt: _trashedAt, ...expectedDocument } = sharedDocument;
+    const { trashedAt, ...expectedDocument } = sharedDocument;
 
+    expect(trashedAt).toBeNull();
     expect(result).toEqual(expectedDocument);
     expect(findUnique).toHaveBeenCalledWith({
       where: {
@@ -117,6 +118,11 @@ describe("getSharedDocument", () => {
               select: {
                 wordList: {
                   select: {
+                    entries: {
+                      select: {
+                        term: true,
+                      },
+                    },
                     id: true,
                     slug: true,
                     name: true,

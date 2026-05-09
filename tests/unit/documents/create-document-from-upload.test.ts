@@ -86,6 +86,49 @@ describe("createDocumentFromUpload", () => {
     });
     expect(create.mock.calls[0][0].data.highlightMatches).toBeUndefined();
   });
+
+  it("includes owner vocabulary terms from selected word lists when uploading", async () => {
+    const file = createFile("Observability improves systems", "systems.md", "text/markdown");
+    const create = vi.fn().mockResolvedValue({ id: "doc_789" });
+
+    await createDocumentFromUpload({
+      ownerId: "user_123",
+      file,
+      prisma: {
+        document: {
+          create,
+        },
+        userWordListPreference: {
+          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_cet6" }]),
+        },
+        vocabularyEntry: {
+          findMany: vi.fn().mockResolvedValue([{ word: "observability" }]),
+        },
+        wordList: {
+          findMany: vi.fn().mockResolvedValue([
+            {
+              id: "list_cet6",
+              entries: [],
+            },
+          ]),
+          findUnique: vi.fn().mockResolvedValue({
+            entries: [],
+          }),
+        },
+      } as never,
+    });
+
+    expect(create.mock.calls[0][0].data.highlightMatches).toEqual({
+      create: [
+        {
+          blockKey: expect.stringMatching(/^paragraph:[0-9a-f]{8}$/),
+          startOffset: 0,
+          endOffset: 13,
+          term: "observability",
+        },
+      ],
+    });
+  });
 });
 
 function createFile(contents: string, name: string, type: string) {
