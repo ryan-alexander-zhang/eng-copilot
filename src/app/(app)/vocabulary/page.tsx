@@ -207,8 +207,8 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
   }
 
   return (
-    <main className="min-h-screen bg-[#F4F7FB] px-3 py-3 md:px-5 md:py-5">
-      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E6EBF2] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+    <main className="min-h-screen bg-[#F8FAFC]">
+      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
         <OwnerTopBar activeTab="vocabulary" showSearch={false} userInitial={userInitial} />
 
         <section className="px-6 py-8 md:px-8 md:py-10 xl:px-12">

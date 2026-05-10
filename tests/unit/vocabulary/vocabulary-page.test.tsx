@@ -137,4 +137,15 @@ describe("VocabularyPage", () => {
     );
     expect(screen.getByRole("table").closest("section")).not.toHaveClass("overflow-hidden");
   });
+
+  it("uses the same outer page shell spacing as annotations", async () => {
+    const { container } = render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
+
+    expect(container.querySelector("main")).toHaveClass("min-h-screen", "bg-[#F8FAFC]");
+    expect(container.querySelector("main")).not.toHaveClass("px-3", "py-3", "md:px-5", "md:py-5");
+    expect(screen.getByText("Top bar").parentElement).toHaveClass(
+      "border-[#E8EBF0]",
+      "shadow-[0_12px_36px_rgba(15,23,42,0.06)]",
+    );
+  });
 });
