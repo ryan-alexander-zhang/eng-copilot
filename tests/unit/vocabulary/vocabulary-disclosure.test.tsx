@@ -27,7 +27,7 @@ describe("VocabularyDisclosure", () => {
     expect(saveButton.closest("form")?.parentElement).toHaveStyle({ position: "fixed" });
   });
 
-  it("closes when a nested form submits", () => {
+  it("keeps nested form content mounted during submit events", () => {
     render(
       <VocabularyDisclosure className="relative" trigger="Edit" triggerClassName="button">
         <form>
@@ -42,6 +42,6 @@ describe("VocabularyDisclosure", () => {
 
     fireEvent.submit(screen.getByRole("button", { name: "Save changes" }).closest("form")!);
 
-    expect(screen.queryByRole("button", { name: "Save changes" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeInTheDocument();
   });
 });

@@ -124,6 +124,13 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
+  const currentViewHref = createVocabularyPageHref({
+    page: currentPage,
+    q: resolvedSearchParams.q,
+    sort: selectedSort,
+    source: selectedSource,
+    wordList: selectedWordListSlug,
+  });
   const inWordListsCount = entries.filter((entry) => entry.wordLists.length > 0).length;
   const addedThisWeekCount = entries.filter((entry) => isAddedThisWeek(entry.createdAt)).length;
   const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
@@ -162,6 +169,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
       prisma,
     });
     revalidatePath("/vocabulary");
+    redirect(currentViewHref);
   }
 
   async function updateVocabularyWordListsAction(formData: FormData) {
@@ -177,6 +185,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
       prisma,
     });
     revalidatePath("/vocabulary");
+    redirect(currentViewHref);
   }
 
   async function importVocabularyAction(formData: FormData) {
@@ -194,6 +203,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
       prisma,
     });
     revalidatePath("/vocabulary");
+    redirect(currentViewHref);
   }
 
   return (

@@ -95,7 +95,7 @@ test("vocabulary page header and add panel smoke", async ({ browser, baseURL }) 
     await page.getByRole("button", { name: "Save word" }).click();
 
     await expect(page.getByPlaceholder("Add a word...")).toBeHidden();
-    await expect(page.getByRole("cell", { name: "smokeword" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "smokeword", exact: true })).toBeVisible();
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
   } finally {

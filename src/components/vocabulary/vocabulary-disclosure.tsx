@@ -99,7 +99,6 @@ export function VocabularyDisclosure({
         ? createPortal(
             <div
               className={wrapperClassName}
-              onSubmitCapture={() => setIsOpen(false)}
               ref={panelRef}
               style={panelStyle}
             >
