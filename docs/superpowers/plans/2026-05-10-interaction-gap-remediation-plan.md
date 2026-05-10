@@ -182,10 +182,17 @@ For every backlog item below, use this checklist:
 
 ### P1
 
-- [ ] `IG-P1-01` Dead `Filter` button on `/documents`.
+- [x] `IG-P1-01` Dead `Filter` button on `/documents`.
   - Files: `src/app/(app)/documents/page.tsx`
   - Preferred fix: remove the button unless a real filter model is added in the same pass.
   - Minimum validation: page-level render test plus documents library regression tests.
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/documents/documents-page.test.tsx`
+    - asserts the documents page does not render a `Filter` button
+  - Tests run:
+    - `npm test -- tests/unit/documents/documents-page.test.tsx`
+    - `npm test -- tests/unit/documents/library-pages.test.tsx`
 
 - [ ] `IG-P1-02` Non-submitting sort control on `/documents`.
   - Files: `src/app/(app)/documents/page.tsx`

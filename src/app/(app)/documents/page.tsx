@@ -7,7 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   FileSearch,
-  Filter,
   FolderOpen,
   Link2,
   MessageSquareText,
@@ -277,13 +276,6 @@ export default async function DocumentsPage({
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              className="inline-flex h-11 items-center gap-2 rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#4B5563]"
-              type="button"
-            >
-              <Filter className="h-4 w-4" strokeWidth={2} />
-              Filter
-            </button>
             <div className="relative">
               <select
                 className="h-11 appearance-none rounded-[12px] border border-[#E5E7EB] bg-white pl-4 pr-10 text-[14px] font-medium text-[#4B5563] outline-none"
