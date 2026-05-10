@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DocumentReader } from "@/components/documents/document-reader";
 
@@ -194,6 +194,80 @@ describe("DocumentReader", () => {
 
     expect(screen.getByText("New annotation")).toBeInTheDocument();
     expect(screen.getByText("“bcd”")).toBeInTheDocument();
+  });
+
+  it("copies selected text from the context menu", async () => {
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+    });
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        searchMatches={[]}
+      />,
+    );
+
+    const textSpan = screen.getByText("abcdef");
+    const textNode = textSpan.firstChild;
+    const range = document.createRange();
+
+    range.setStart(textNode as Node, 1);
+    range.setEnd(textNode as Node, 4);
+
+    vi.spyOn(window, "getSelection").mockReturnValue({
+      rangeCount: 1,
+      isCollapsed: false,
+      getRangeAt: () => range,
+      toString: () => "bcd",
+    } as unknown as Selection);
+
+    fireEvent.contextMenu(textSpan);
+    fireEvent.click(screen.getByRole("button", { name: /Copy/ }));
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("bcd");
+    });
+  });
+
+  it("opens a new tab for web search", () => {
+    const open = vi.spyOn(window, "open").mockReturnValue(null);
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        searchMatches={[]}
+      />,
+    );
+
+    const textSpan = screen.getByText("abcdef");
+    const textNode = textSpan.firstChild;
+    const range = document.createRange();
+
+    range.setStart(textNode as Node, 1);
+    range.setEnd(textNode as Node, 4);
+
+    vi.spyOn(window, "getSelection").mockReturnValue({
+      rangeCount: 1,
+      isCollapsed: false,
+      getRangeAt: () => range,
+      toString: () => "bcd",
+    } as unknown as Selection);
+
+    fireEvent.contextMenu(textSpan);
+    fireEvent.click(screen.getByRole("button", { name: "Search the web" }));
+
+    expect(open).toHaveBeenCalledWith(
+      "https://www.google.com/search?q=bcd",
+      "_blank",
+      "noopener,noreferrer",
+    );
   });
 
   it("can strip the markdown title without rendering a duplicate page heading", () => {

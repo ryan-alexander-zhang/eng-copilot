@@ -335,7 +335,7 @@ git commit -m "feat(documents): add in-document workspace search"
 - Modify: `src/components/documents/document-reader.tsx`
 - Modify: `tests/unit/documents/document-reader.test.tsx`
 
-- [ ] **Step 1: Write failing selection-action tests**
+- [x] **Step 1: Write failing selection-action tests**
 
 ```ts
 it("copies selected text from the context menu", async () => {
@@ -409,13 +409,13 @@ it("opens a new tab for web search", () => {
 });
 ```
 
-- [ ] **Step 2: Run the document-reader test and verify it fails**
+- [x] **Step 2: Run the document-reader test and verify it fails**
 
 Run: `npm test -- tests/unit/documents/document-reader.test.tsx`
 
 Expected: FAIL because the buttons have no handlers.
 
-- [ ] **Step 3: Implement the handlers**
+- [x] **Step 3: Implement the handlers**
 
 ```tsx
 <SelectionContextMenu
@@ -442,18 +442,26 @@ Expected: FAIL because the buttons have no handlers.
 />
 ```
 
-- [ ] **Step 4: Re-run the document-reader test and verify it passes**
+- [x] **Step 4: Re-run the document-reader test and verify it passes**
 
 Run: `npm test -- tests/unit/documents/document-reader.test.tsx`
 
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/documents/document-reader.tsx tests/unit/documents/document-reader.test.tsx
 git commit -m "feat(documents): add reader copy and web search actions"
 ```
+
+**Execution Notes**
+
+- Red verification completed: `npm test -- tests/unit/documents/document-reader.test.tsx`
+- The test failure was corrected once for an accessible-name mismatch (`Copy` vs `Copy ⌘C`), then re-run until the only remaining failures were the missing `Copy` and `Search the web` handlers.
+- Green verification completed with the same focused command after wiring clipboard and `window.open` handlers.
+- Regression coverage added:
+  - `npm test -- tests/unit/documents/build-reader-search-matches.test.ts tests/unit/documents/document-workspace.test.tsx tests/unit/documents/document-reader.test.tsx`
 
 ## Task 4: Implement Owner Workspace Navigation And Raw Markdown View
 

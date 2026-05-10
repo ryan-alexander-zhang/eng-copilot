@@ -334,6 +334,18 @@ export function DocumentReader({
           <SelectionContextMenu
             key="selection-menu"
             onClose={() => setContextMenu(null)}
+            onCopy={() => {
+              void copyText(contextMenu.draft.quote);
+              setContextMenu(null);
+            }}
+            onSearchWeb={() => {
+              const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(
+                contextMenu.draft.quote,
+              )}`;
+
+              window.open(searchUrl, "_blank", "noopener,noreferrer");
+              setContextMenu(null);
+            }}
             onSelect={() => {
               if (onCreateDraft) {
                 onCreateDraft(contextMenu.draft);
@@ -368,13 +380,17 @@ export function DocumentReader({
 export const DocumentPreview = DocumentReader;
 
 function SelectionContextMenu({
+  onCopy,
   quote,
+  onSearchWeb,
   x,
   y,
   onSelect,
   onClose,
 }: {
+  onCopy: () => void;
   quote: string;
+  onSearchWeb: () => void;
   x: number;
   y: number;
   onSelect: () => void;
@@ -404,11 +420,19 @@ function SelectionContextMenu({
           <span>Add annotation</span>
           <span className="text-[#9CA3AF]">›</span>
         </button>
-        <button className="flex w-full items-center justify-between rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]" type="button">
+        <button
+          className="flex w-full items-center justify-between rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]"
+          onClick={onCopy}
+          type="button"
+        >
           <span>Copy</span>
           <span className="text-[#9CA3AF]">⌘C</span>
         </button>
-        <button className="flex w-full items-center rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]" type="button">
+        <button
+          className="flex w-full items-center rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]"
+          onClick={onSearchWeb}
+          type="button"
+        >
           Search the web
         </button>
         <button className="flex w-full items-center rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]" type="button">
@@ -728,6 +752,10 @@ function getSelectionDraft(root: HTMLDivElement | null): AnnotationDraft | null 
     endBlockKey: end.blockKey,
     endOffset: end.offset,
   };
+}
+
+async function copyText(value: string) {
+  await navigator.clipboard?.writeText(value);
 }
 
 function resolveSelectionPoint(node: Node, offset: number): SelectionPoint | null {
