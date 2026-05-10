@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { getAnnotationColor } from "@/lib/annotations/presentation";
+import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
 
 export type ReaderBlock = {
   blockKey: string;
@@ -125,6 +126,7 @@ export function buildAnnotationSegments(input: {
 
 export function DocumentReader({
   activeAnnotationId,
+  activeSearchMatchId,
   annotations,
   blocks,
   createAction,
@@ -132,10 +134,12 @@ export function DocumentReader({
   highlightMatches,
   onCreateDraft,
   onSelectAnnotation,
+  searchMatches = [],
   showTitle = true,
   title,
 }: {
   activeAnnotationId?: string | null;
+  activeSearchMatchId?: string | null;
   annotations: ReaderAnnotation[];
   blocks: ReaderBlock[];
   createAction?: (formData: FormData) => Promise<void>;
@@ -147,6 +151,7 @@ export function DocumentReader({
   highlightMatches: ReaderHighlightMatch[];
   onCreateDraft?: (draft: AnnotationDraft) => void;
   onSelectAnnotation?: (annotationId: string) => void;
+  searchMatches?: ReaderSearchMatch[];
   showTitle?: boolean;
   title?: string;
 }) {
@@ -155,12 +160,28 @@ export function DocumentReader({
   const [dialogDraft, setDialogDraft] = useState<AnnotationDraft | null>(null);
   const annotationSegments = buildAnnotationSegments({ blocks, annotations });
   const highlightMatchesByBlock = groupByBlock(highlightMatches);
+  const searchMatchesByBlock = groupByBlock(searchMatches);
   const renderedBlocks =
     title &&
     blocks[0]?.kind === "heading" &&
     blocks[0].text.trim().toLowerCase() === title.trim().toLowerCase()
       ? blocks.slice(1)
       : blocks;
+
+  useEffect(() => {
+    if (!activeSearchMatchId) {
+      return;
+    }
+
+    const activeSearchHit = [
+      ...(previewRef.current?.querySelectorAll<HTMLElement>("[data-search-match-id]") ?? []),
+    ].find((element) => element.dataset.searchMatchId === activeSearchMatchId);
+
+    activeSearchHit?.scrollIntoView?.({
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeSearchMatchId]);
 
   useEffect(() => {
     if (!contextMenu && !dialogDraft) {
@@ -224,10 +245,12 @@ export function DocumentReader({
           renderedBlocks.map((block, index) => {
             const inlineContent = renderInlineContent({
               activeAnnotationId,
+              activeSearchMatchId,
               annotationSegments: annotationSegments[block.blockKey] ?? [],
               blockKey: block.blockKey,
               highlightMatches: highlightMatchesByBlock[block.blockKey] ?? [],
               onSelectAnnotation,
+              searchMatches: searchMatchesByBlock[block.blockKey] ?? [],
               text: block.text,
             });
             const listItemIndex = getListItemIndex(renderedBlocks, index);
@@ -460,10 +483,12 @@ function CreateAnnotationDialog({
 
 function renderInlineContent(input: {
   activeAnnotationId?: string | null;
+  activeSearchMatchId?: string | null;
   annotationSegments: AnnotationSegment[];
   blockKey: string;
   highlightMatches: ReaderHighlightMatch[];
   onSelectAnnotation?: (annotationId: string) => void;
+  searchMatches: ReaderSearchMatch[];
   text: string;
 }) {
   const slices = buildRenderSlices(input);
@@ -474,6 +499,12 @@ function renderInlineContent(input: {
 
   return slices.map((slice, index) => {
     const isInteractive = slice.annotationIds.length > 0 && !!input.onSelectAnnotation;
+    const isActiveSearchHit =
+      !!input.activeSearchMatchId && slice.searchMatchIds.includes(input.activeSearchMatchId);
+    const previousSliceIncludesActiveSearchHit =
+      !!input.activeSearchMatchId &&
+      !!slices[index - 1]?.searchMatchIds.includes(input.activeSearchMatchId);
+    const searchMatchId = slice.searchMatchIds[0];
 
     return (
       <span
@@ -487,8 +518,14 @@ function renderInlineContent(input: {
         data-highlight-terms={
           slice.highlightTerms.length > 0 ? slice.highlightTerms.join(",") : undefined
         }
+        data-search-match-id={searchMatchId}
         data-slice-end={slice.endOffset}
         data-slice-start={slice.startOffset}
+        data-testid={
+          isActiveSearchHit && !previousSliceIncludesActiveSearchHit
+            ? "search-hit-active"
+            : undefined
+        }
         key={`${slice.startOffset}-${slice.endOffset}-${index}`}
         onClick={
           isInteractive
@@ -497,7 +534,7 @@ function renderInlineContent(input: {
               }
             : undefined
         }
-        style={buildSliceStyle(slice, input.activeAnnotationId)}
+        style={buildSliceStyle(slice, input.activeAnnotationId, input.activeSearchMatchId)}
         title={buildSliceTitle(slice.highlightTerms, slice.annotationIds) ?? undefined}
       >
         {slice.text}
@@ -511,8 +548,10 @@ function buildSliceStyle(
     highlightTerms: string[];
     annotationIds: string[];
     annotationColor?: string;
+    searchMatchIds: string[];
   },
   activeAnnotationId?: string | null,
+  activeSearchMatchId?: string | null,
 ): CSSProperties | undefined {
   if (slice.annotationIds.length > 0) {
     const isActive = !!activeAnnotationId && slice.annotationIds.includes(activeAnnotationId);
@@ -524,6 +563,21 @@ function buildSliceStyle(
       boxShadow: isActive
         ? `inset 0 0 0 1px ${color.activeRing}`
         : `inset 0 0 0 1px ${color.ring}`,
+    };
+  }
+
+  if (activeSearchMatchId && slice.searchMatchIds.includes(activeSearchMatchId)) {
+    return {
+      backgroundColor: "#FDE68A",
+      color: "#92400E",
+      boxShadow: "inset 0 0 0 1px #F59E0B",
+    };
+  }
+
+  if (slice.searchMatchIds.length > 0) {
+    return {
+      backgroundColor: "#FEF3C7",
+      color: "#92400E",
     };
   }
 
@@ -549,6 +603,7 @@ function buildRenderSlices(input: {
   text: string;
   highlightMatches: ReaderHighlightMatch[];
   annotationSegments: AnnotationSegment[];
+  searchMatches: ReaderSearchMatch[];
 }) {
   if (input.text.length === 0) {
     return [];
@@ -560,9 +615,20 @@ function buildRenderSlices(input: {
       isValidRange(match.endOffset, input.text.length) &&
       match.startOffset < match.endOffset,
   );
+  const validSearchMatches = input.searchMatches.filter(
+    (match) =>
+      isValidRange(match.startOffset, input.text.length) &&
+      isValidRange(match.endOffset, input.text.length) &&
+      match.startOffset < match.endOffset,
+  );
   const boundaries = new Set([0, input.text.length]);
 
   for (const match of validHighlightMatches) {
+    boundaries.add(match.startOffset);
+    boundaries.add(match.endOffset);
+  }
+
+  for (const match of validSearchMatches) {
     boundaries.add(match.startOffset);
     boundaries.add(match.endOffset);
   }
@@ -586,6 +652,7 @@ function buildRenderSlices(input: {
     startOffset: number;
     endOffset: number;
     highlightTerms: string[];
+    searchMatchIds: string[];
     annotationIds: string[];
     annotationColor?: string;
   }> = [];
@@ -605,6 +672,9 @@ function buildRenderSlices(input: {
       highlightTerms: validHighlightMatches
         .filter((match) => match.startOffset <= startOffset && endOffset <= match.endOffset)
         .map((match) => match.term),
+      searchMatchIds: validSearchMatches
+        .filter((match) => match.startOffset <= startOffset && endOffset <= match.endOffset)
+        .map((match) => match.id),
       annotationIds: input.annotationSegments
         .filter((segment) => segment.startOffset <= startOffset && endOffset <= segment.endOffset)
         .map((segment) => segment.annotationId),

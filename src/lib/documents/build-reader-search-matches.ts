@@ -1,3 +1,11 @@
+export type ReaderSearchMatch = {
+  id: string;
+  blockKey: string;
+  startOffset: number;
+  endOffset: number;
+  text: string;
+};
+
 export function buildReaderSearchMatches(input: {
   blocks: Array<{ blockKey: string; text: string }>;
   query: string;
@@ -12,13 +20,7 @@ export function buildReaderSearchMatches(input: {
   }
 
   const matches = input.blocks.flatMap((block) => {
-    const results: Array<{
-      id: string;
-      blockKey: string;
-      startOffset: number;
-      endOffset: number;
-      text: string;
-    }> = [];
+    const results: ReaderSearchMatch[] = [];
     const haystack = block.text.toLowerCase();
     let fromIndex = 0;
 

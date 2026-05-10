@@ -21,6 +21,46 @@ afterEach(() => {
 });
 
 describe("DocumentWorkspace", () => {
+  it("shows search result count and next-result navigation in the workspace", () => {
+    render(
+      <DocumentWorkspace
+        annotations={[]}
+        annotationIndexHref="/annotations?document=doc_1"
+        blocks={[
+          { blockKey: "paragraph:1", text: "Learning is valuable." },
+          { blockKey: "paragraph:2", text: "Valuable habits compound." },
+        ]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
+        enableShareAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        matchedWordCount={0}
+        matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Learning\n\nLearning is valuable."
+        readingMinutes={1}
+        revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+        share={null}
+        title="Learning"
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        updatedLabel="Today at 10:24 AM"
+        wordCount={6}
+        wordLists={[]}
+      />,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Search in document..."), {
+      target: { value: "valuable" },
+    });
+
+    expect(screen.getByText("1 / 2")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Next search result" }));
+
+    expect(screen.getByText("2 / 2")).toBeInTheDocument();
+  });
+
   it("switches the right sidebar into edit mode after selecting an annotation", () => {
     render(
       <DocumentWorkspace
@@ -39,13 +79,17 @@ describe("DocumentWorkspace", () => {
             updatedAt: new Date("2026-04-24T10:24:00.000Z"),
           },
         ]}
+        annotationIndexHref="/annotations?document=doc_1"
         blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
         enableShareAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
         matchedWordCount={0}
         matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Test document\n\nLearning is valuable."
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}
@@ -92,14 +136,18 @@ describe("DocumentWorkspace", () => {
             updatedAt: new Date("2026-04-24T10:24:00.000Z"),
           },
         ]}
+        annotationIndexHref="/annotations?document=doc_1"
         blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
         enableShareAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
         initialSelectedAnnotationId="annotation-1"
         matchedWordCount={0}
         matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Test document\n\nLearning is valuable."
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}

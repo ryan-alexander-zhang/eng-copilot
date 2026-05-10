@@ -22,6 +22,7 @@ import {
   type ReaderHighlightMatch,
   DocumentReader,
 } from "@/components/documents/document-reader";
+import { buildReaderSearchMatches } from "@/lib/documents/build-reader-search-matches";
 import { formatCompactNumber } from "@/lib/documents/metrics";
 
 type WorkspaceAnnotation = ReaderAnnotation & {
@@ -32,29 +33,13 @@ type WorkspaceAnnotation = ReaderAnnotation & {
   updatedAt: Date;
 };
 
-export function DocumentWorkspace({
-  annotations,
-  blocks,
-  createAction,
-  deleteAction,
-  enableShareAction,
-  highlightMatches,
-  initialSelectedAnnotationId = null,
-  matchedWordCount,
-  matchedWords,
-  readingMinutes,
-  revokeShareAction,
-  share,
-  title,
-  updateAction,
-  updatedLabel,
-  wordLists,
-  wordCount,
-}: {
+type DocumentWorkspaceProps = {
+  annotationIndexHref: string;
   annotations: WorkspaceAnnotation[];
   blocks: ReaderBlock[];
   createAction: (formData: FormData) => Promise<void>;
   deleteAction: (formData: FormData) => Promise<void>;
+  documentId: string;
   enableShareAction: () => Promise<void>;
   highlightMatches: ReaderHighlightMatch[];
   initialSelectedAnnotationId?: string | null;
@@ -64,6 +49,8 @@ export function DocumentWorkspace({
     listName: string | null;
     term: string;
   }>;
+  matchedWordsHref: string;
+  rawMarkdown: string;
   readingMinutes: number;
   revokeShareAction: () => Promise<void>;
   share: {
@@ -79,7 +66,39 @@ export function DocumentWorkspace({
     name: string;
   }>;
   wordCount: number;
-}) {
+};
+
+export function DocumentWorkspace(props: DocumentWorkspaceProps) {
+  const {
+    annotations,
+    blocks,
+    createAction,
+    deleteAction,
+    enableShareAction,
+    highlightMatches,
+    initialSelectedAnnotationId = null,
+    matchedWordCount,
+    matchedWords,
+    readingMinutes,
+    revokeShareAction,
+    share,
+    title,
+    updateAction,
+    updatedLabel,
+    wordLists,
+    wordCount,
+  } = props;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearchMatchIndex, setActiveSearchMatchIndex] = useState(0);
+  const searchResult = buildReaderSearchMatches({
+    blocks,
+    query: searchQuery,
+  });
+  const activeSearchMatch =
+    searchResult.totalCount > 0
+      ? searchResult.matches[activeSearchMatchIndex % searchResult.totalCount]
+      : null;
+  const hasSearchQuery = searchQuery.trim().length > 0;
   const [editorState, setEditorState] = useState<
     | {
         draft: AnnotationDraft;
@@ -117,13 +136,65 @@ export function DocumentWorkspace({
           <div className="relative min-w-[240px] flex-1">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" strokeWidth={2} />
             <input
-              className="h-10 w-full rounded-[12px] border border-[#E5E7EB] bg-white pl-11 pr-12 text-[14px] text-[#111827] outline-none"
+              className="h-10 w-full rounded-[12px] border border-[#E5E7EB] bg-white pl-11 pr-32 text-[14px] text-[#111827] outline-none"
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+                setActiveSearchMatchIndex(0);
+              }}
               placeholder="Search in document..."
               type="search"
+              value={searchQuery}
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-[#9CA3AF]">
-              ⌘K
-            </span>
+            {hasSearchQuery ? (
+              <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                {searchResult.totalCount > 0 ? (
+                  <>
+                    <span className="min-w-10 text-center text-[12px] font-medium text-[#6B7280]">
+                      {`${activeSearchMatchIndex + 1} / ${searchResult.totalCount}`}
+                    </span>
+                    <button
+                      aria-label="Previous search result"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] text-[#6B7280] transition hover:bg-[#F3F4F6]"
+                      onClick={() => {
+                        if (searchResult.totalCount === 0) {
+                          return;
+                        }
+
+                        setActiveSearchMatchIndex(
+                          (currentIndex) =>
+                            (currentIndex - 1 + searchResult.totalCount) % searchResult.totalCount,
+                        );
+                      }}
+                      type="button"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      aria-label="Next search result"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] text-[#6B7280] transition hover:bg-[#F3F4F6]"
+                      onClick={() => {
+                        if (searchResult.totalCount === 0) {
+                          return;
+                        }
+
+                        setActiveSearchMatchIndex(
+                          (currentIndex) => (currentIndex + 1) % searchResult.totalCount,
+                        );
+                      }}
+                      type="button"
+                    >
+                      ›
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[12px] text-[#9CA3AF]">0 results</span>
+                )}
+              </div>
+            ) : (
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-[#9CA3AF]">
+                ⌘K
+              </span>
+            )}
           </div>
 
           <div className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-white p-1">
@@ -159,6 +230,7 @@ export function DocumentWorkspace({
               wordCount,
             }}
             highlightMatches={highlightMatches}
+            activeSearchMatchId={activeSearchMatch?.id ?? null}
             onCreateDraft={(draft) => {
               setEditorState({
                 draft,
@@ -171,6 +243,7 @@ export function DocumentWorkspace({
                 mode: "edit",
               });
             }}
+            searchMatches={searchResult.matches}
             title={title}
           />
         </div>

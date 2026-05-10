@@ -9,6 +9,28 @@ afterEach(() => {
 });
 
 describe("DocumentReader", () => {
+  it("renders active search hits in the reader", () => {
+    render(
+      <DocumentReader
+        activeSearchMatchId="paragraph:1:12-20"
+        annotations={[]}
+        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        highlightMatches={[]}
+        searchMatches={[
+          {
+            id: "paragraph:1:12-20",
+            blockKey: "paragraph:1",
+            startOffset: 12,
+            endOffset: 20,
+            text: "valuable",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId("search-hit-active")).toBeInTheDocument();
+  });
+
   it("renders separate spans when highlights and annotations overlap", () => {
     render(
       <DocumentReader
@@ -30,6 +52,7 @@ describe("DocumentReader", () => {
             term: "match",
           },
         ]}
+        searchMatches={[]}
       />,
     );
 
@@ -90,6 +113,7 @@ describe("DocumentReader", () => {
             term: "out-of-bounds",
           },
         ]}
+        searchMatches={[]}
       />,
     );
 
@@ -129,6 +153,7 @@ describe("DocumentReader", () => {
             term: "Heading",
           },
         ]}
+        searchMatches={[]}
       />,
     );
 
@@ -145,6 +170,7 @@ describe("DocumentReader", () => {
         blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
+        searchMatches={[]}
       />,
     );
 
@@ -179,6 +205,7 @@ describe("DocumentReader", () => {
           { blockKey: "paragraph:1", text: "A paragraph after the title." },
         ]}
         highlightMatches={[]}
+        searchMatches={[]}
         showTitle={false}
         title="The Value of Lifelong Learning"
       />,

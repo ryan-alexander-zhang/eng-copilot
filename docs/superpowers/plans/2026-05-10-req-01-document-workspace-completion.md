@@ -54,7 +54,7 @@
 - Create: `src/lib/documents/build-reader-search-matches.ts`
 - Test: `tests/unit/documents/build-reader-search-matches.test.ts`
 
-- [ ] **Step 1: Write the failing search-helper test**
+- [x] **Step 1: Write the failing search-helper test**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -79,13 +79,13 @@ describe("buildReaderSearchMatches", () => {
 });
 ```
 
-- [ ] **Step 2: Run the helper test and verify it fails**
+- [x] **Step 2: Run the helper test and verify it fails**
 
 Run: `npm test -- tests/unit/documents/build-reader-search-matches.test.ts`
 
 Expected: FAIL because `buildReaderSearchMatches` does not exist yet.
 
-- [ ] **Step 3: Implement the minimal helper**
+- [x] **Step 3: Implement the minimal helper**
 
 ```ts
 export function buildReaderSearchMatches(input: {
@@ -137,18 +137,23 @@ export function buildReaderSearchMatches(input: {
 }
 ```
 
-- [ ] **Step 4: Run the helper test and verify it passes**
+- [x] **Step 4: Run the helper test and verify it passes**
 
 Run: `npm test -- tests/unit/documents/build-reader-search-matches.test.ts`
 
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/documents/build-reader-search-matches.ts tests/unit/documents/build-reader-search-matches.test.ts
 git commit -m "feat(documents): add reader search match helper"
 ```
+
+**Execution Notes**
+
+- Red verification completed: `npm test -- tests/unit/documents/build-reader-search-matches.test.ts` failed because `buildReaderSearchMatches` did not exist yet.
+- Green verification completed: `npm test -- tests/unit/documents/build-reader-search-matches.test.ts` passed after adding the helper.
 
 ## Task 2: Wire Real In-Document Search Through Workspace And Reader
 
@@ -158,7 +163,7 @@ git commit -m "feat(documents): add reader search match helper"
 - Modify: `tests/unit/documents/document-workspace.test.tsx`
 - Modify: `tests/unit/documents/document-reader.test.tsx`
 
-- [ ] **Step 1: Write failing search UX tests**
+- [x] **Step 1: Write failing search UX tests**
 
 ```ts
 it("shows search result count and next-result navigation in the workspace", () => {
@@ -221,7 +226,7 @@ it("renders active search hits in the reader", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused reader/workspace tests and verify they fail**
+- [x] **Step 2: Run the focused reader/workspace tests and verify they fail**
 
 Run:
 
@@ -232,7 +237,7 @@ npm test -- tests/unit/documents/document-reader.test.tsx
 
 Expected: FAIL because the workspace has no search state and the reader has no search-hit rendering.
 
-- [ ] **Step 3: Implement the search state and rendering**
+- [x] **Step 3: Implement the search state and rendering**
 
 ```tsx
 const [searchQuery, setSearchQuery] = useState("");
@@ -296,7 +301,7 @@ function buildRenderSlices(input: {
 }
 ```
 
-- [ ] **Step 4: Re-run the focused tests and verify they pass**
+- [x] **Step 4: Re-run the focused tests and verify they pass**
 
 Run:
 
@@ -307,12 +312,22 @@ npm test -- tests/unit/documents/document-reader.test.tsx
 
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/documents/document-workspace.tsx src/components/documents/document-reader.tsx tests/unit/documents/document-workspace.test.tsx tests/unit/documents/document-reader.test.tsx
 git commit -m "feat(documents): add in-document workspace search"
 ```
+
+**Execution Notes**
+
+- Red verification completed:
+  - `npm test -- tests/unit/documents/document-workspace.test.tsx`
+  - `npm test -- tests/unit/documents/document-reader.test.tsx`
+- The failures matched the missing behavior: workspace had no `1 / 2` result state, and reader had no `search-hit-active` rendering.
+- Green verification completed with the same two focused commands after wiring search state and search slice rendering.
+- Regression coverage added:
+  - `npm test -- tests/unit/documents/build-reader-search-matches.test.ts tests/unit/documents/document-workspace.test.tsx tests/unit/documents/document-reader.test.tsx`
 
 ## Task 3: Implement Selection Copy And Web Search Actions
 
