@@ -27,17 +27,6 @@ import { DocumentTableRowActions } from "@/components/documents/document-table-r
 import { LibraryPageShell } from "@/components/layout/library-page-shell";
 
 const PAGE_SIZE = 8;
-const DESIGN_TOTAL_ANNOTATIONS = 389;
-const DESIGN_ANNOTATION_COUNT_BY_TITLE = new Map([
-  ["The Value of Lifelong Learning", 3],
-  ["How to Build Good Habits", 2],
-  ["The Power of Small Changes", 1],
-  ["Effective Communication", 1],
-  ["Mindset and Success", 1],
-  ["The Art of Focus", 4],
-  ["Digital Minimalism", 0],
-  ["Atomic Habits – Notes", 2],
-]);
 
 export default async function DocumentsPage({
   searchParams,
@@ -225,7 +214,7 @@ export default async function DocumentsPage({
             icon={<MessageSquareText className="h-5 w-5" strokeWidth={2} />}
             label="Total annotations"
             tint="green"
-            value={formatCompactNumber(Math.max(totalAnnotations, DESIGN_TOTAL_ANNOTATIONS))}
+            value={formatCompactNumber(totalAnnotations)}
           />
           <StatCard
             icon={<Link2 className="h-5 w-5" strokeWidth={2} />}
@@ -380,7 +369,7 @@ export default async function DocumentsPage({
                     </div>
                   </td>
                   <td className="px-4 py-5 text-[15px] text-[#4B5563]">
-                    {DESIGN_ANNOTATION_COUNT_BY_TITLE.get(document.title) ?? document._count.annotations}
+                    {document._count.annotations}
                   </td>
                   <DocumentTableRowActions
                     documentId={document.id}
