@@ -10,6 +10,8 @@
 
 ---
 
+> **Review note (2026-05-10):** Completed items in this file remain valid. The remaining unchecked items are now reprioritized by product value in [Remaining Interaction Capability Requirements](../specs/2026-05-10-remaining-interaction-requirements.md). Future implementation should follow that requirements document instead of the remove-first default in this plan.
+
 ## Scope
 
 This plan covers:
