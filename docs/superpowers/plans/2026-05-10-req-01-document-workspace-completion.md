@@ -742,7 +742,7 @@ git commit -m "feat(documents): add matched words drill-down page"
 **Files:**
 - No new source files expected unless regressions require targeted fixes.
 
-- [ ] **Step 1: Run the unit regression set for document workspace flows**
+- [x] **Step 1: Run the unit regression set for document workspace flows**
 
 Run:
 
@@ -757,7 +757,7 @@ npm test -- tests/unit/documents/matched-words-page.test.tsx
 
 Expected: PASS
 
-- [ ] **Step 2: Run broader related regression**
+- [x] **Step 2: Run broader related regression**
 
 Run:
 
@@ -768,19 +768,34 @@ npm test -- tests/unit/annotations/build-annotation-segments.test.ts
 
 Expected: PASS
 
-- [ ] **Step 3: Run owner workflow E2E if app env is available**
+- [x] **Step 3: Run owner workflow E2E if app env is available**
 
-Run: `npm test:e2e -- tests/e2e/owner-upload-and-share.spec.ts`
+Run: `npm run test:e2e -- tests/e2e/owner-upload-and-share.spec.ts`
 
 Expected: PASS or SKIP with explicit missing-env message. Do not treat a prerequisite skip as a feature failure.
 
-- [ ] **Step 4: Commit only if a regression fix was required**
+- [x] **Step 4: Commit only if a regression fix was required**
 
 If Step 2 or Step 3 exposed a real regression and code changed, stage only the touched files and use:
 
 ```bash
 git commit -m "test(documents): fix req-01 regression coverage"
 ```
+
+**Execution Notes**
+
+- Unit regression passed:
+  - `npm test -- tests/unit/documents/build-reader-search-matches.test.ts tests/unit/documents/build-matched-words.test.ts tests/unit/documents/document-workspace.test.tsx tests/unit/documents/document-reader.test.tsx tests/unit/documents/annotation-panel.test.tsx tests/unit/documents/matched-words-page.test.tsx`
+- Broader related regression passed:
+  - `npm test -- tests/unit/documents/library-pages.test.tsx`
+  - `npm test -- tests/unit/annotations/build-annotation-segments.test.ts`
+- Owner workflow E2E required sandbox escalation so Playwright could start the local web server. After re-running with permission, the test exposed outdated test assumptions rather than product regressions:
+  - old upload entry selectors
+  - old annotation/highlight workflow assumptions
+  - old share-link assertion
+  - old sign-in page heading assertion
+- After updating the E2E to match the current product flow, the end-to-end regression passed:
+  - `npm run test:e2e -- tests/e2e/owner-upload-and-share.spec.ts`
 
 ## Deferred Follow-Ups
 

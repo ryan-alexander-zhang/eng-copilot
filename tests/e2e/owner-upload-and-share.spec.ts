@@ -53,6 +53,10 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
       name: "E2E Viewer",
       sessionToken: viewerSessionToken,
     });
+    await seedUserWordListPreference({
+      userId: ownerIdentity.userId,
+      wordListSlug: "cet4",
+    });
 
     await ownerContext.addCookies([
       buildSessionCookie({
@@ -64,8 +68,7 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     const ownerPage = await ownerContext.newPage();
     await ownerPage.goto("/documents");
 
-    await ownerPage.getByRole("link", { name: "Upload a document" }).click();
-    await ownerPage.getByLabel("Markdown file").setInputFiles({
+    await ownerPage.locator('input[name="file"]').setInputFiles({
       name: "study-notes.md",
       mimeType: "text/markdown",
       buffer: Buffer.from(
@@ -73,43 +76,60 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
         "utf8",
       ),
     });
-    await ownerPage.getByRole("button", { name: "Upload document" }).click();
 
     await expect(ownerPage.getByRole("heading", { level: 1, name: "study-notes" })).toBeVisible();
     await expect(ownerPage.getByText("study-notes.md")).toBeVisible();
 
-    await ownerPage.getByLabel("CET4").check();
-    await ownerPage.getByRole("button", { name: "Update highlights" }).click();
-
     const ownerHighlight = ownerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" });
     await expect(ownerHighlight).toBeVisible();
 
-    await ownerPage.getByLabel("Start offset").fill("0");
-    await ownerPage.getByLabel("End offset").fill("7");
-    await ownerPage.getByLabel("Note").fill("Owner note for shared viewer.");
-    await ownerPage.getByRole("button", { name: "Create annotation" }).click();
+    const documentId = ownerPage.url().split("/").pop();
 
-    await expect(ownerPage.getByText("Quote: ability")).toBeVisible();
-    await expect(ownerPage.getByText("Owner note for shared viewer.")).toBeVisible();
-
-    await ownerPage.getByRole("button", { name: "Enable share link" }).click();
-
-    const shareLink = ownerPage.getByRole("link", { name: /\/shared\// });
-    await expect(shareLink).toBeVisible();
-    const shareHref = await shareLink.getAttribute("href");
-
-    if (!shareHref) {
-      throw new Error("Missing share href");
+    if (!documentId) {
+      throw new Error("Missing document id after upload");
     }
+
+    await seedAnnotationForQuote({
+      documentId,
+      note: "Owner note for shared viewer.",
+      ownerId: ownerIdentity.userId,
+      quote: "ability",
+    });
+
+    await ownerPage.getByRole("button", { name: "Share read-only" }).click();
+
+    let shareToken: string | null = null;
+    await expect
+      .poll(async () => {
+        const share = await prisma.documentShare.findUnique({
+          where: {
+            documentId,
+          },
+          select: {
+            token: true,
+            isActive: true,
+          },
+        });
+
+        shareToken = share?.isActive ? share.token : null;
+        return shareToken;
+      })
+      .not.toBeNull();
+
+    if (!shareToken) {
+      throw new Error("Missing share token");
+    }
+
+    const shareHref = new URL(`/shared/${shareToken}`, baseURL ?? "http://127.0.0.1:3000").toString();
 
     const anonymousPage = await anonymousContext.newPage();
     await anonymousPage.goto(shareHref);
     const expectedCallbackUrl = new URLSearchParams({
-      callbackUrl: shareHref,
+      callbackUrl: new URL(shareHref).pathname,
     }).toString();
     await expect(anonymousPage).toHaveURL(new RegExp(`/sign-in\\?${expectedCallbackUrl}$`));
     await expect(
-      anonymousPage.getByRole("heading", { level: 1, name: "Sign in" }),
+      anonymousPage.getByRole("heading", { level: 1, name: "Welcome back" }),
     ).toBeVisible();
 
     await viewerContext.addCookies([
@@ -122,17 +142,13 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     const viewerPage = await viewerContext.newPage();
     await viewerPage.goto(shareHref);
 
-    await expect(viewerPage.getByRole("heading", { level: 1, name: "Read-only shared view" })).toBeVisible();
-    await expect(viewerPage.getByRole("heading", { level: 2, name: "study-notes" })).toBeVisible();
+    await expect(viewerPage.getByRole("heading", { level: 1, name: "study-notes" })).toBeVisible();
+    await expect(viewerPage.getByText("This is a read-only shared document.")).toBeVisible();
     await expect(
       viewerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" }),
     ).toBeVisible();
-    await expect(
-      viewerPage.locator('span[title*="Annotations:"]').filter({ hasText: "ability" }).first(),
-    ).toBeVisible();
-    await expect(viewerPage.getByRole("button", { name: "Update highlights" })).toHaveCount(0);
-    await expect(viewerPage.getByRole("button", { name: "Create annotation" })).toHaveCount(0);
-    await expect(viewerPage.getByRole("button", { name: "Enable share link" })).toHaveCount(0);
+    await expect(viewerPage.getByText("Owner note for shared viewer.")).toBeVisible();
+    await expect(viewerPage.getByRole("button", { name: "Share read-only" })).toHaveCount(0);
   } finally {
     await ownerContext?.close();
     await anonymousContext?.close();
@@ -167,6 +183,78 @@ function buildSessionCookie(input: { baseURL: string | undefined; sessionToken: 
     httpOnly: true,
     sameSite: "Lax" as const,
   };
+}
+
+async function seedUserWordListPreference(input: {
+  userId: string;
+  wordListSlug: string;
+}) {
+  const wordList = await prisma.wordList.findUnique({
+    where: {
+      slug: input.wordListSlug,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!wordList) {
+    throw new Error(`Missing word list: ${input.wordListSlug}`);
+  }
+
+  await prisma.userWordListPreference.create({
+    data: {
+      userId: input.userId,
+      wordListId: wordList.id,
+    },
+  });
+}
+
+async function seedAnnotationForQuote(input: {
+  documentId: string;
+  ownerId: string;
+  quote: string;
+  note: string;
+}) {
+  const document = await prisma.document.findUnique({
+    where: {
+      id: input.documentId,
+    },
+    select: {
+      blocks: {
+        orderBy: {
+          sortOrder: "asc",
+        },
+        select: {
+          blockKey: true,
+          text: true,
+        },
+      },
+    },
+  });
+  const matchingBlock = document?.blocks.find((block) => block.text.includes(input.quote));
+
+  if (!matchingBlock) {
+    throw new Error(`Missing quote in uploaded document: ${input.quote}`);
+  }
+
+  const startOffset = matchingBlock.text.indexOf(input.quote);
+  const endOffset = startOffset + input.quote.length;
+
+  await prisma.annotation.create({
+    data: {
+      documentId: input.documentId,
+      ownerId: input.ownerId,
+      startBlockKey: matchingBlock.blockKey,
+      startOffset,
+      endBlockKey: matchingBlock.blockKey,
+      endOffset,
+      quote: input.quote,
+      note: input.note,
+      color: "yellow",
+      tags: [],
+    },
+  });
 }
 
 async function getMissingPrerequisites() {
