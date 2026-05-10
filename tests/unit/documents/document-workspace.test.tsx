@@ -17,10 +17,47 @@ vi.mock("next/link", () => ({
 
 afterEach(() => {
   cleanup();
+  window.sessionStorage.clear();
   vi.restoreAllMocks();
 });
 
 describe("DocumentWorkspace", () => {
+  it("links workspace drill-down actions to the document-specific destinations", () => {
+    render(
+      <DocumentWorkspace
+        annotations={[]}
+        annotationIndexHref="/annotations?document=doc_1"
+        blocks={[]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
+        enableShareAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        matchedWordCount={0}
+        matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Title"
+        readingMinutes={1}
+        revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+        share={null}
+        title="Title"
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        updatedLabel="Today at 10:24 AM"
+        wordCount={1}
+        wordLists={[]}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "View all annotations" })).toHaveAttribute(
+      "href",
+      "/annotations?document=doc_1",
+    );
+    expect(screen.getByRole("link", { name: "View all matched words →" })).toHaveAttribute(
+      "href",
+      "/documents/doc_1/matched-words",
+    );
+  });
+
   it("shows search result count and next-result navigation in the workspace", () => {
     render(
       <DocumentWorkspace
@@ -161,5 +198,52 @@ describe("DocumentWorkspace", () => {
 
     expect(screen.getByText("Edit annotation")).toBeInTheDocument();
     expect(screen.getByText("Tip")).toBeInTheDocument();
+  });
+
+  it("hides the tip after dismissing it and persists the dismissal", () => {
+    render(
+      <DocumentWorkspace
+        annotations={[
+          {
+            id: "annotation-1",
+            color: "yellow",
+            createdAt: new Date("2026-04-24T10:24:00.000Z"),
+            endBlockKey: "paragraph:1",
+            endOffset: 10,
+            note: "Important note.",
+            quote: "Learning is valuable.",
+            startBlockKey: "paragraph:1",
+            startOffset: 0,
+            tags: [],
+            updatedAt: new Date("2026-04-24T10:24:00.000Z"),
+          },
+        ]}
+        annotationIndexHref="/annotations?document=doc_1"
+        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
+        enableShareAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        initialSelectedAnnotationId="annotation-1"
+        matchedWordCount={0}
+        matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Learning"
+        readingMinutes={1}
+        revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+        share={null}
+        title="Learning"
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        updatedLabel="Today at 10:24 AM"
+        wordCount={3}
+        wordLists={[]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+
+    expect(screen.queryByText("Tip")).not.toBeInTheDocument();
+    expect(window.sessionStorage.getItem("document-workspace-tip-dismissed")).toBe("1");
   });
 });

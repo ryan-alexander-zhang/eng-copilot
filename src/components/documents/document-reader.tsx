@@ -134,6 +134,7 @@ export function DocumentReader({
   highlightMatches,
   onCreateDraft,
   onSelectAnnotation,
+  rawMarkdown,
   searchMatches = [],
   showTitle = true,
   title,
@@ -151,6 +152,7 @@ export function DocumentReader({
   highlightMatches: ReaderHighlightMatch[];
   onCreateDraft?: (draft: AnnotationDraft) => void;
   onSelectAnnotation?: (annotationId: string) => void;
+  rawMarkdown?: string;
   searchMatches?: ReaderSearchMatch[];
   showTitle?: boolean;
   title?: string;
@@ -158,6 +160,7 @@ export function DocumentReader({
   const previewRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [dialogDraft, setDialogDraft] = useState<AnnotationDraft | null>(null);
+  const [isRawMarkdownOpen, setIsRawMarkdownOpen] = useState(false);
   const annotationSegments = buildAnnotationSegments({ blocks, annotations });
   const highlightMatchesByBlock = groupByBlock(highlightMatches);
   const searchMatchesByBlock = groupByBlock(searchMatches);
@@ -184,7 +187,7 @@ export function DocumentReader({
   }, [activeSearchMatchId]);
 
   useEffect(() => {
-    if (!contextMenu && !dialogDraft) {
+    if (!contextMenu && !dialogDraft && !isRawMarkdownOpen) {
       return;
     }
 
@@ -192,6 +195,7 @@ export function DocumentReader({
       if (event.key === "Escape") {
         setContextMenu(null);
         setDialogDraft(null);
+        setIsRawMarkdownOpen(false);
       }
     }
 
@@ -206,7 +210,7 @@ export function DocumentReader({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("scroll", handleWindowInteraction, true);
     };
-  }, [contextMenu, dialogDraft]);
+  }, [contextMenu, dialogDraft, isRawMarkdownOpen]);
 
   function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
     if (!createAction && !onCreateDraft) {
@@ -322,10 +326,16 @@ export function DocumentReader({
             <span>•</span>
             <span>Last edited {footer.updatedLabel}</span>
           </div>
-          <button className="inline-flex items-center gap-2 text-[#4B5563]" type="button">
-            <span>{"</>"}</span>
-            Open raw Markdown
-          </button>
+          {rawMarkdown ? (
+            <button
+              className="inline-flex items-center gap-2 text-[#4B5563]"
+              onClick={() => setIsRawMarkdownOpen(true)}
+              type="button"
+            >
+              <span>{"</>"}</span>
+              Open raw Markdown
+            </button>
+          ) : null}
         </div>
       ) : null}
 
@@ -370,6 +380,16 @@ export function DocumentReader({
             draft={dialogDraft}
             key="annotation-dialog"
             onClose={() => setDialogDraft(null)}
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isRawMarkdownOpen && rawMarkdown ? (
+          <RawMarkdownDialog
+            content={rawMarkdown}
+            key="raw-markdown-dialog"
+            onClose={() => setIsRawMarkdownOpen(false)}
           />
         ) : null}
       </AnimatePresence>
@@ -500,6 +520,47 @@ function CreateAnnotationDialog({
             </button>
           </div>
         </form>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function RawMarkdownDialog({
+  content,
+  onClose,
+}: {
+  content: string;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 z-60 flex items-center justify-center bg-[#111827]/35 p-4 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        aria-label="Raw Markdown"
+        aria-modal="true"
+        className="w-full max-w-3xl rounded-[24px] border border-[#E8EBF0] bg-white p-6 shadow-[0_24px_48px_rgba(15,23,42,0.16)]"
+        initial={{ opacity: 0, y: 16, scale: 0.98 }}
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-[18px] font-semibold text-[#111827]">Raw Markdown</h2>
+          <button
+            className="inline-flex h-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#374151]"
+            onClick={onClose}
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+        <pre className="mt-5 overflow-x-auto rounded-[16px] border border-[#E5E7EB] bg-[#111827] px-5 py-4 text-[14px] leading-7 text-[#F9FAFB]">
+          <code>{content}</code>
+        </pre>
       </motion.div>
     </motion.div>
   );

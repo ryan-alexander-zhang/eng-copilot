@@ -270,6 +270,27 @@ describe("DocumentReader", () => {
     );
   });
 
+  it("opens a raw markdown dialog from the reader footer", () => {
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[{ blockKey: "paragraph:1", text: "Paragraph" }]}
+        footer={{
+          readingMinutes: 1,
+          updatedLabel: "Today at 10:24 AM",
+          wordCount: 1,
+        }}
+        highlightMatches={[]}
+        rawMarkdown="# Title"
+        searchMatches={[]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Open raw Markdown/ }));
+
+    expect(screen.getByRole("dialog")).toHaveTextContent("# Title");
+  });
+
   it("can strip the markdown title without rendering a duplicate page heading", () => {
     render(
       <DocumentReader

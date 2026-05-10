@@ -230,14 +230,18 @@ export default async function DocumentPage({
           </aside>
 
           <DocumentWorkspace
+            annotationIndexHref={`/annotations?document=${document.id}`}
             annotations={document.annotations}
             blocks={document.blocks}
             createAction={createAnnotationAction}
             deleteAction={deleteAnnotationAction}
+            documentId={document.id}
             enableShareAction={enableShareAction}
             highlightMatches={document.highlightMatches}
             matchedWords={matchedWordItems}
             matchedWordCount={matchedWordCount}
+            matchedWordsHref={`/documents/${document.id}/matched-words`}
+            rawMarkdown={document.rawMarkdown}
             readingMinutes={readingMinutes}
             revokeShareAction={revokeShareAction}
             share={document.share}

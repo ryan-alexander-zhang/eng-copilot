@@ -12,7 +12,7 @@ import {
   MoreHorizontal,
   Search,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnnotationEditorPanel } from "@/components/documents/annotation-editor-panel";
 import { AnnotationPanel } from "@/components/documents/annotation-panel";
 import {
@@ -32,6 +32,8 @@ type WorkspaceAnnotation = ReaderAnnotation & {
   tags: string[];
   updatedAt: Date;
 };
+
+const DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY = "document-workspace-tip-dismissed";
 
 type DocumentWorkspaceProps = {
   annotationIndexHref: string;
@@ -70,6 +72,7 @@ type DocumentWorkspaceProps = {
 
 export function DocumentWorkspace(props: DocumentWorkspaceProps) {
   const {
+    annotationIndexHref,
     annotations,
     blocks,
     createAction,
@@ -79,6 +82,8 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
     initialSelectedAnnotationId = null,
     matchedWordCount,
     matchedWords,
+    matchedWordsHref,
+    rawMarkdown,
     readingMinutes,
     revokeShareAction,
     share,
@@ -90,6 +95,7 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
   } = props;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearchMatchIndex, setActiveSearchMatchIndex] = useState(0);
+  const [isTipDismissed, setIsTipDismissed] = useState(false);
   const searchResult = buildReaderSearchMatches({
     blocks,
     query: searchQuery,
@@ -123,6 +129,13 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
       : null;
   const selectedAnnotationId = selectedAnnotation?.id ?? null;
   const isAnnotationEditorOpen = editorState !== null;
+
+  useEffect(() => {
+    setIsTipDismissed(
+      window.sessionStorage.getItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY) === "1",
+    );
+  }, []);
+
   return (
     <section className="flex min-w-0 flex-1">
       <div className="min-w-0 flex-1 px-7 py-6">
@@ -243,6 +256,7 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
                 mode: "edit",
               });
             }}
+            rawMarkdown={rawMarkdown}
             searchMatches={searchResult.matches}
             title={title}
           />
@@ -274,23 +288,33 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
               }}
               selectedAnnotationId={selectedAnnotationId}
               variant="detailed"
+              viewAllHref={annotationIndexHref}
             />
-            <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
-              <div className="flex items-start gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8E7] text-[#B7791F]">
-                  <Lightbulb className="h-5 w-5" strokeWidth={2} />
-                </span>
-                <div>
-                  <h2 className="text-[16px] font-semibold text-[#111827]">Tip</h2>
-                  <p className="mt-3 text-[14px] leading-7 text-[#4B5563]">
-                    Right-click any text to add an annotation quickly.
-                  </p>
+            {!isTipDismissed ? (
+              <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8E7] text-[#B7791F]">
+                    <Lightbulb className="h-5 w-5" strokeWidth={2} />
+                  </span>
+                  <div>
+                    <h2 className="text-[16px] font-semibold text-[#111827]">Tip</h2>
+                    <p className="mt-3 text-[14px] leading-7 text-[#4B5563]">
+                      Right-click any text to add an annotation quickly.
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <button className="mt-5 inline-flex w-full justify-end text-[14px] font-medium text-[#3B82F6]" type="button">
-                Dismiss
-              </button>
-            </section>
+                <button
+                  className="mt-5 inline-flex w-full justify-end text-[14px] font-medium text-[#3B82F6]"
+                  onClick={() => {
+                    window.sessionStorage.setItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY, "1");
+                    setIsTipDismissed(true);
+                  }}
+                  type="button"
+                >
+                  Dismiss
+                </button>
+              </section>
+            ) : null}
           </>
         ) : (
           <>
@@ -367,13 +391,13 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
                   ))
                 )}
               </div>
-              <button
+              <Link
                 className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
-                type="button"
+                href={matchedWordsHref}
               >
                 View all matched words
                 <span className="ml-2">→</span>
-              </button>
+              </Link>
             </section>
 
             <div className="mt-5">
@@ -387,6 +411,7 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
                 }}
                 selectedAnnotationId={selectedAnnotationId}
                 variant="compact"
+                viewAllHref={annotationIndexHref}
               />
             </div>
           </>
