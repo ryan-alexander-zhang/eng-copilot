@@ -134,4 +134,26 @@ describe("DocumentsPage", () => {
 
     expect(screen.queryByRole("button", { name: "Filter" })).not.toBeInTheDocument();
   });
+
+  it("does not render bulk-selection checkboxes without bulk actions", async () => {
+    vi.mocked(prisma.document.findMany).mockResolvedValue([
+      {
+        _count: {
+          annotations: 0,
+        },
+        activeLists: [],
+        createdAt: new Date("2026-05-01T00:00:00.000Z"),
+        id: "doc_1",
+        originalName: "focus.md",
+        rawMarkdown: "# Focus\n\nOne sharp note.",
+        share: null,
+        title: "The Art of Focus",
+        updatedAt: new Date("2026-05-02T00:00:00.000Z"),
+      },
+    ]);
+
+    render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
+
+    expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
+  });
 });

@@ -300,9 +300,6 @@ export default async function DocumentsPage({
           <table className="min-w-full divide-y divide-[#E8EBF0] text-left">
             <thead className="bg-[#FBFCFE] text-[13px] font-medium text-[#7B8594]">
               <tr>
-                <th className="w-12 px-4 py-4">
-                  <input className="h-4 w-4 rounded border-[#D0D5DD]" type="checkbox" />
-                </th>
                 <th className="px-4 py-4">Document</th>
                 <th className="px-4 py-4">Words</th>
                 <th className="px-4 py-4">Last edited</th>
@@ -315,16 +312,13 @@ export default async function DocumentsPage({
             <tbody className="divide-y divide-[#E8EBF0] bg-white">
               {pagedDocuments.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-14 text-center text-[15px] text-[#6B7280]" colSpan={8}>
+                  <td className="px-6 py-14 text-center text-[15px] text-[#6B7280]" colSpan={7}>
                     No documents matched this view.
                   </td>
                 </tr>
               ) : null}
               {pagedDocuments.map((document) => (
                 <tr className="align-top" key={document.id}>
-                  <td className="px-4 py-5">
-                    <input className="mt-1 h-4 w-4 rounded border-[#D0D5DD]" type="checkbox" />
-                  </td>
                   <td className="px-4 py-5">
                     <Link className="block" href={`/documents/${document.id}`}>
                       <p className="text-[16px] font-semibold text-[#111827]">{document.title}.md</p>

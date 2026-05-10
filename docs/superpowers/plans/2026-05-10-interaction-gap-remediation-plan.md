@@ -199,10 +199,17 @@ For every backlog item below, use this checklist:
   - Preferred fix: either wire the select to submit on change or replace it with a real submit button.
   - Minimum validation: page-level sort interaction test plus documents library regression tests.
 
-- [ ] `IG-P1-03` Dead row-selection affordances on `/documents`.
+- [x] `IG-P1-03` Dead row-selection affordances on `/documents`.
   - Files: `src/app/(app)/documents/page.tsx`
   - Preferred fix: remove table checkboxes until a real bulk-action model exists.
   - Minimum validation: page-level render test proving selections are absent or intentionally non-interactive.
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/documents/documents-page.test.tsx`
+    - asserts the documents page renders no bulk-selection checkboxes
+  - Tests run:
+    - `npm test -- tests/unit/documents/documents-page.test.tsx`
+    - `npm test -- tests/unit/documents/library-pages.test.tsx`
 
 - [ ] `IG-P1-04` Dead reader toolbar controls in document workspace.
   - Files: `src/components/documents/document-workspace.tsx`
