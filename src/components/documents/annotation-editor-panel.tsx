@@ -6,12 +6,11 @@ import {
   Link2,
   List,
   ListOrdered,
-  TableProperties,
   Trash2,
   X,
 } from "lucide-react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ANNOTATION_COLORS,
   normalizeAnnotationColor,
@@ -97,6 +96,7 @@ function EditorPanelForm({
   const [color, setColor] = useState(initialColor);
   const [pendingTag, setPendingTag] = useState("");
   const [tags, setTags] = useState(initialTags);
+  const noteFieldRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setColor(initialColor);
@@ -143,12 +143,41 @@ function EditorPanelForm({
           </label>
           <div className="overflow-hidden rounded-[14px] border border-[#E5E7EB]">
             <div className="flex items-center gap-1 border-b border-[#E5E7EB] px-3 py-2">
-              <EditorIconButton icon={<Bold className="h-4 w-4" strokeWidth={2.2} />} />
-              <EditorIconButton icon={<Italic className="h-4 w-4" strokeWidth={2.2} />} />
-              <EditorIconButton icon={<List className="h-4 w-4" strokeWidth={2.2} />} />
-              <EditorIconButton icon={<ListOrdered className="h-4 w-4" strokeWidth={2.2} />} />
-              <EditorIconButton icon={<Link2 className="h-4 w-4" strokeWidth={2.2} />} />
-              <EditorIconButton icon={<TableProperties className="h-4 w-4" strokeWidth={2.2} />} />
+              <EditorIconButton
+                icon={<Bold className="h-4 w-4" strokeWidth={2.2} />}
+                label="Bold"
+                onClick={() => {
+                  applyTextFormatting(noteFieldRef.current, createWrappedFormatting("**"));
+                }}
+              />
+              <EditorIconButton
+                icon={<Italic className="h-4 w-4" strokeWidth={2.2} />}
+                label="Italic"
+                onClick={() => {
+                  applyTextFormatting(noteFieldRef.current, createWrappedFormatting("*"));
+                }}
+              />
+              <EditorIconButton
+                icon={<List className="h-4 w-4" strokeWidth={2.2} />}
+                label="Bulleted list"
+                onClick={() => {
+                  applyTextFormatting(noteFieldRef.current, createLinePrefixFormatting("- "));
+                }}
+              />
+              <EditorIconButton
+                icon={<ListOrdered className="h-4 w-4" strokeWidth={2.2} />}
+                label="Numbered list"
+                onClick={() => {
+                  applyTextFormatting(noteFieldRef.current, createNumberedListFormatting);
+                }}
+              />
+              <EditorIconButton
+                icon={<Link2 className="h-4 w-4" strokeWidth={2.2} />}
+                label="Insert link"
+                onClick={() => {
+                  applyTextFormatting(noteFieldRef.current, createLinkFormatting);
+                }}
+              />
             </div>
             <textarea
               className="min-h-[224px] w-full resize-none border-0 px-4 py-4 text-[15px] leading-8 text-[#374151] outline-none"
@@ -156,6 +185,7 @@ function EditorPanelForm({
               id={`${formKey}-annotation-note`}
               name="note"
               placeholder="Add context, a definition, or your own study note..."
+              ref={noteFieldRef}
             />
           </div>
         </div>
@@ -255,15 +285,136 @@ function EditorPanelForm({
   );
 }
 
-function EditorIconButton({ icon }: { icon: ReactNode }) {
+function EditorIconButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
   return (
     <button
+      aria-label={label}
       className="inline-flex h-8 w-8 items-center justify-center rounded-[8px] text-[#6B7280] transition hover:bg-[#F9FAFB]"
+      onClick={onClick}
+      title={label}
       type="button"
     >
       {icon}
     </button>
   );
+}
+
+type TextFormatting = {
+  replacement: string;
+  selectionEndOffset: number;
+  selectionStartOffset: number;
+};
+
+function applyTextFormatting(
+  noteField: HTMLTextAreaElement | null,
+  buildFormatting: (selectedText: string) => TextFormatting,
+) {
+  if (!noteField) {
+    return;
+  }
+
+  const selectionStart = noteField.selectionStart ?? 0;
+  const selectionEnd = noteField.selectionEnd ?? selectionStart;
+  const selectedText = noteField.value.slice(selectionStart, selectionEnd);
+  const formatting = buildFormatting(selectedText);
+  const nextValue =
+    noteField.value.slice(0, selectionStart) +
+    formatting.replacement +
+    noteField.value.slice(selectionEnd);
+
+  noteField.value = nextValue;
+  noteField.focus();
+  noteField.setSelectionRange(
+    selectionStart + formatting.selectionStartOffset,
+    selectionStart + formatting.selectionEndOffset,
+  );
+  noteField.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function createWrappedFormatting(marker: string) {
+  return (selectedText: string): TextFormatting => {
+    if (selectedText.length === 0) {
+      return {
+        replacement: `${marker}${marker}`,
+        selectionEndOffset: marker.length,
+        selectionStartOffset: marker.length,
+      };
+    }
+
+    return {
+      replacement: `${marker}${selectedText}${marker}`,
+      selectionEndOffset: marker.length + selectedText.length,
+      selectionStartOffset: marker.length,
+    };
+  };
+}
+
+function createLinePrefixFormatting(prefix: string) {
+  return (selectedText: string): TextFormatting => {
+    if (selectedText.length === 0) {
+      return {
+        replacement: prefix,
+        selectionEndOffset: prefix.length,
+        selectionStartOffset: prefix.length,
+      };
+    }
+
+    const replacement = selectedText
+      .split("\n")
+      .map((line) => `${prefix}${line}`)
+      .join("\n");
+
+    return {
+      replacement,
+      selectionEndOffset: replacement.length,
+      selectionStartOffset: 0,
+    };
+  };
+}
+
+function createNumberedListFormatting(selectedText: string): TextFormatting {
+  if (selectedText.length === 0) {
+    return {
+      replacement: "1. ",
+      selectionEndOffset: 3,
+      selectionStartOffset: 3,
+    };
+  }
+
+  const replacement = selectedText
+    .split("\n")
+    .map((line, index) => `${index + 1}. ${line}`)
+    .join("\n");
+
+  return {
+    replacement,
+    selectionEndOffset: replacement.length,
+    selectionStartOffset: 0,
+  };
+}
+
+function createLinkFormatting(selectedText: string): TextFormatting {
+  if (selectedText.length === 0) {
+    return {
+      replacement: "[link text](https://)",
+      selectionEndOffset: 10,
+      selectionStartOffset: 1,
+    };
+  }
+
+  return {
+    replacement: `[${selectedText}](https://)`,
+    selectionEndOffset: selectedText.length + 11,
+    selectionStartOffset: selectedText.length + 3,
+  };
 }
 
 function appendTag(input: {

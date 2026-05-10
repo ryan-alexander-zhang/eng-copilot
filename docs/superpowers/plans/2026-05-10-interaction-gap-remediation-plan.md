@@ -251,11 +251,20 @@ For every backlog item below, use this checklist:
   - Minimum validation:
     - update `tests/unit/documents/annotation-panel.test.tsx`
 
-- [ ] `IG-P1-08` Dead formatting toolbar in annotation editor.
+- [x] `IG-P1-08` Dead formatting toolbar in annotation editor.
   - Files: `src/components/documents/annotation-editor-panel.tsx`
   - Preferred fix: remove formatting buttons until rich-text editing exists.
   - Minimum validation:
     - add/update annotation editor render coverage under document workspace tests
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/documents/document-workspace.test.tsx`
+    - asserts the annotation editor renders five accessible markdown formatting controls
+    - asserts bold, italic, bulleted list, numbered list, and link controls update the note textarea value
+    - asserts saving submits the formatted note content unchanged
+  - Tests run:
+    - `npm test -- tests/unit/documents/document-workspace.test.tsx`
+    - `npm test -- tests/unit/documents/document-reader.test.tsx`
 
 - [x] `IG-P1-09` Dead source filter on `/word-lists`.
   - Files: `src/app/(app)/word-lists/page.tsx`
