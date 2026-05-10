@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Ellipsis,
-  ExternalLink,
   ListPlus,
   PencilLine,
   Search,
@@ -484,18 +483,27 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               {buildVocabularyLookupLinks(entry.word).map((link) => (
                                 <a
                                   aria-label={`${link.label} lookup for ${entry.word}`}
-                                  className="inline-flex items-center gap-1 text-[13px] font-medium text-[#475569] transition hover:text-[#0F172A]"
+                                  className="group relative inline-flex h-8 w-8 items-center justify-center rounded-[10px] border border-[#E3E8F1] bg-white transition hover:border-[#D5DEEA] hover:bg-[#F8FAFC] focus:outline-none focus:ring-4 focus:ring-[#DCE8FF]"
                                   href={link.href}
                                   key={link.href}
                                   rel="noreferrer"
                                   target="_blank"
+                                  title={link.label}
                                 >
-                                  <span>{getLookupShortLabel(link.label)}</span>
-                                  <ExternalLink
+                                  <img
+                                    alt=""
                                     aria-hidden="true"
-                                    className="h-3.5 w-3.5 text-[#94A3B8]"
-                                    strokeWidth={2}
+                                    className="h-4 w-4 rounded-[3px]"
+                                    height={16}
+                                    src={link.iconSrc}
+                                    width={16}
                                   />
+                                  <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 -translate-x-1/2 whitespace-nowrap rounded-[10px] bg-[#0F172A] px-2 py-1 text-[12px] font-medium text-white opacity-0 shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition group-hover:opacity-100 group-focus:opacity-100"
+                                  >
+                                    {link.label}
+                                  </span>
                                 </a>
                               ))}
                             </div>
@@ -763,19 +771,6 @@ function countEntriesForWordList(
   return entries.filter((entry) =>
     entry.wordLists.some((wordList) => wordList.wordList.slug === slug),
   ).length;
-}
-
-function getLookupShortLabel(label: string) {
-  const shortLabels: Record<string, string> = {
-    "Collins Dictionary": "C",
-    "Dictionary.com": "D",
-    "Pronounce (UK)": "UK",
-    "Pronounce (US)": "US",
-    "Vocabulary.com": "V",
-    Youdao: "Y",
-  };
-
-  return shortLabels[label] ?? label;
 }
 
 function getPositiveInt(value: string | undefined) {

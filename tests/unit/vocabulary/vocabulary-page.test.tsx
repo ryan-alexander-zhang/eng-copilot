@@ -109,9 +109,17 @@ describe("VocabularyPage", () => {
       "href",
       "/api/vocabulary",
     );
-    expect(screen.getByRole("link", { name: "Vocabulary.com lookup for observability" })).toHaveAttribute(
+    const vocabularyLookupLink = screen.getByRole("link", {
+      name: "Vocabulary.com lookup for observability",
+    });
+    expect(vocabularyLookupLink).toHaveAttribute(
       "href",
       "https://www.vocabulary.com/dictionary/observability",
+    );
+    expect(vocabularyLookupLink).toHaveAttribute("title", "Vocabulary.com");
+    expect(vocabularyLookupLink.querySelector("img")).toHaveAttribute(
+      "src",
+      "/lookup-links/vocabulary.ico",
     );
     expect(screen.getByRole("link", { name: "Pronounce (UK) lookup for observability" })).toHaveAttribute(
       "href",

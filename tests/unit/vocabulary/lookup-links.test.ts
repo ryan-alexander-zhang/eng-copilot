@@ -14,28 +14,33 @@ describe("buildVocabularyLookupLinks", () => {
       {
         label: "Vocabulary.com",
         href: "https://www.vocabulary.com/dictionary/observability",
+        iconSrc: "/lookup-links/vocabulary.ico",
       },
       {
         label: "Dictionary.com",
         href: "https://www.dictionary.com/browse/observability",
+        iconSrc: "/lookup-links/dictionary.png",
       },
       {
         label: "Youdao",
         href: "https://www.youdao.com/result?word=observability&lang=en",
+        iconSrc: "/lookup-links/youdao.ico",
       },
       {
         label: "Collins Dictionary",
         href: "https://www.collinsdictionary.com/dictionary/english/observability",
+        iconSrc: "/lookup-links/collins.ico",
       },
       {
         label: "Pronounce (US)",
         href: "https://youglish.com/pronounce/observability/english/us",
+        iconSrc: "/lookup-links/youglish.ico",
       },
       {
         label: "Pronounce (UK)",
         href: "https://youglish.com/pronounce/observability/english/uk",
+        iconSrc: "/lookup-links/youglish.ico",
       },
     ]);
   });
 });
-
