@@ -76,7 +76,7 @@ export async function getWordListDashboardData(input: {
       description: catalogEntry.description,
       updatedAt: wordList.updatedAt,
       syncedLabel: catalogEntry.syncedLabel,
-      wordCount: catalogEntry.displayWordCount,
+      wordCount: wordList.entries.length,
       isSelected: selectedWordListIds.has(wordList.id),
     };
   }).filter((wordList): wordList is NonNullable<typeof wordList> => wordList !== null);
