@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { Check, ChevronDown, RefreshCw, Search } from "lucide-react";
+import { Check, RefreshCw, Search } from "lucide-react";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import {
@@ -136,13 +136,6 @@ export default async function WordListsPage({
                       placeholder="Search lists..."
                       type="search"
                     />
-                  </div>
-
-                  <div className="relative">
-                    <select className="h-11 appearance-none rounded-[12px] border border-[#E5E7EB] bg-white pl-4 pr-10 text-[14px] font-medium text-[#4B5563]">
-                      <option>All Sources</option>
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" strokeWidth={2} />
                   </div>
 
                   <button

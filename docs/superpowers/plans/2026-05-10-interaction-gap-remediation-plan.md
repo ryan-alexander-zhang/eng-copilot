@@ -255,12 +255,19 @@ For every backlog item below, use this checklist:
   - Minimum validation:
     - add/update annotation editor render coverage under document workspace tests
 
-- [ ] `IG-P1-09` Dead source filter on `/word-lists`.
+- [x] `IG-P1-09` Dead source filter on `/word-lists`.
   - Files: `src/app/(app)/word-lists/page.tsx`
   - Problem: `All Sources` is not part of the query model.
   - Preferred fix: remove the source filter unless a real source query model is added in the same pass.
   - Minimum validation:
     - update `tests/unit/word-lists/word-lists-page.test.tsx`
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/word-lists/word-lists-page.test.tsx`
+    - asserts the word-lists page does not render the `All Sources` option
+  - Tests run:
+    - `npm test -- tests/unit/word-lists/word-lists-page.test.tsx`
+    - `npm test -- tests/unit/word-lists/word-list-selection-form.test.tsx`
 
 - [ ] `IG-P1-10` Dead bulk-selection affordances on `/vocabulary`.
   - Files: `src/app/(app)/vocabulary/page.tsx`

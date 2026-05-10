@@ -98,4 +98,10 @@ describe("WordListsPage", () => {
     expect(screen.queryByText("Backend status")).not.toBeInTheDocument();
     expect(screen.queryByText("Healthy")).not.toBeInTheDocument();
   });
+
+  it("does not render a dead source filter", async () => {
+    render(await WordListsPage({ searchParams: Promise.resolve({}) }));
+
+    expect(screen.queryByRole("option", { name: "All Sources" })).not.toBeInTheDocument();
+  });
 });
