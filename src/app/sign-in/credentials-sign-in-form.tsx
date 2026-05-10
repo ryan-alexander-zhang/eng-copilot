@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -59,17 +58,6 @@ export default function CredentialsSignInForm({
           </button>
         </div>
       </div>
-
-      <div className="flex items-center justify-between gap-4 text-[14px] text-[#6B7280]">
-        <label className="inline-flex items-center gap-2">
-          <input className="h-4 w-4 rounded border border-[#D5DCE6]" type="checkbox" />
-          <span>Remember me</span>
-        </label>
-        <Link className="font-medium text-[#4A9FD8]" href="/sign-in">
-          Forgot password?
-        </Link>
-      </div>
-
       <CredentialsSubmitButton />
     </form>
   );

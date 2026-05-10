@@ -108,7 +108,6 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
             </Link>
             <Link href="/documents">Documents</Link>
             <Link href="/documents?tab=shared">Shared view</Link>
-            <Link href="/">Pricing</Link>
           </nav>
         </header>
 
@@ -155,24 +154,6 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               <div className="mt-8">
                 <SignInButton callbackUrl={callbackUrl ?? "/documents"} />
               </div>
-
-              <p className="mt-10 text-center text-[16px] text-[#6B7280]">
-                Don&apos;t have an account?{" "}
-                <Link className="font-medium text-[#4A9FD8]" href="/">
-                  Create account
-                </Link>
-              </p>
-              <p className="mt-5 text-center text-[13px] leading-6 text-[#9AA3B2]">
-                By continuing, you agree to our{" "}
-                <Link className="text-[#4A9FD8]" href="/">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link className="text-[#4A9FD8]" href="/">
-                  Privacy Policy
-                </Link>
-                .
-              </p>
             </section>
           </div>
         </div>

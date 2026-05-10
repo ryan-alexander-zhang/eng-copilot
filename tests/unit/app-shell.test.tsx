@@ -31,7 +31,7 @@ describe("LandingPage", () => {
 });
 
 describe("SignInButton", () => {
-  it("renders the redesigned sign-in page", async () => {
+  it("renders the sign-in page without unsupported auth entry points", async () => {
     render(await SignInPage({ searchParams: Promise.resolve({}) }));
 
     expect(
@@ -48,6 +48,12 @@ describe("SignInButton", () => {
     expect(
       screen.getByRole("button", { name: "Continue with Google" }),
     ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Remember me")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Forgot password?" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Pricing" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Create account" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Terms of Service" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Privacy Policy" })).not.toBeInTheDocument();
   });
 
   it("starts Google sign-in with the owner shell callback", () => {

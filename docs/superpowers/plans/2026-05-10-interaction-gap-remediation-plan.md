@@ -165,13 +165,20 @@ For every backlog item below, use this checklist:
   - Tests run:
     - `npm test -- tests/unit/settings/settings-page-shell.test.tsx`
 
-- [ ] `IG-P0-04` Unsupported auth-adjacent entry points on the sign-in surface.
+- [x] `IG-P0-04` Unsupported auth-adjacent entry points on the sign-in surface.
   - Files: `src/app/sign-in/page.tsx`, `src/app/sign-in/credentials-sign-in-form.tsx`
   - Problem: `Remember me` is not read by the server action; `Forgot password?` loops back to `/sign-in`; `Create account`, `Pricing`, `Terms of Service`, and `Privacy Policy` point to `/`.
   - Preferred fix: remove unsupported controls and links until corresponding routes and contracts exist.
   - Minimum validation:
     - add or update sign-in render tests
     - run `tests/unit/auth/password-sign-in.test.ts`
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/app-shell.test.tsx`
+    - asserts the sign-in page omits `Remember me`, `Forgot password?`, `Pricing`, `Create account`, `Terms of Service`, and `Privacy Policy`
+  - Tests run:
+    - `npm test -- tests/unit/app-shell.test.tsx`
+    - `npm test -- tests/unit/auth/password-sign-in.test.ts`
 
 ### P1
 
