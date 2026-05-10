@@ -23,6 +23,10 @@ function getSignInErrorMessage(error: string | undefined) {
     return "Email, username, or password was incorrect.";
   }
 
+  if (error === "AccessDenied") {
+    return "This email address is not allowed to sign in.";
+  }
+
   if (!error) {
     return null;
   }

@@ -2,7 +2,7 @@ import NextAuth, { customFetch, type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
-import { applySessionUserId, createGoogleAuthFetch } from "@/lib/auth-config";
+import { applySessionUserId, canSignIn, createGoogleAuthFetch } from "@/lib/auth-config";
 import { assertValidAuthEnv, getAuthEnv } from "@/lib/auth-env";
 
 assertValidAuthEnv();
@@ -25,6 +25,7 @@ export const authConfig = {
     signIn: "/sign-in",
   },
   callbacks: {
+    signIn: canSignIn,
     session: applySessionUserId,
   },
 } satisfies NextAuthConfig;

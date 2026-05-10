@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { ProxyAgent } from "undici";
 import {
   applySessionUserId,
+  canSignIn,
   createGoogleAuthFetch,
   getGoogleHttpOptions,
 } from "@/lib/auth-config";
@@ -120,6 +121,42 @@ describe("getRequiredSession", () => {
     } as never);
 
     expect(session?.user.id).toBe("user_123");
+  });
+
+  it("allows Google sign-in when no email allowlist is configured", async () => {
+    await expect(
+      canSignIn(
+        {
+          profile: {
+            email: "owner@example.com",
+          },
+          user: {
+            email: null,
+            id: "user_123",
+          },
+        } as never,
+        createProcessEnv(),
+      ),
+    ).resolves.toBe(true);
+  });
+
+  it("blocks Google sign-in when the email is outside the allowlist", async () => {
+    await expect(
+      canSignIn(
+        {
+          profile: {
+            email: "viewer@example.com",
+          },
+          user: {
+            email: null,
+            id: "user_456",
+          },
+        } as never,
+        createProcessEnv({
+          ALLOWED_SIGN_IN_EMAILS: "owner@example.com,editor@example.com",
+        }),
+      ),
+    ).resolves.toBe(false);
   });
 
   it("uses a longer Google discovery timeout without a proxy", () => {

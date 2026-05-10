@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { isAllowedSignInEmail } from "@/lib/auth-env";
 import { verifyPassword } from "@/lib/passwords";
 
 type PasswordSignInPrisma = {
@@ -14,6 +15,7 @@ type PasswordSignInPrisma = {
   user: {
     findFirst: (args: {
       select: {
+        email: true;
         id: true;
         passwordHash: true;
       };
@@ -28,6 +30,7 @@ type PasswordSignInPrisma = {
         >;
       };
     }) => Promise<{
+      email: string | null;
       id: string;
       passwordHash: string | null;
     } | null>;
@@ -37,11 +40,13 @@ type PasswordSignInPrisma = {
 const SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 30;
 
 export async function createPasswordSignInSession({
+  env = process.env,
   identifier,
   now = new Date(),
   password,
   prisma,
 }: {
+  env?: NodeJS.ProcessEnv;
   identifier: string;
   now?: Date;
   password: string;
@@ -65,12 +70,17 @@ export async function createPasswordSignInSession({
       ],
     },
     select: {
+      email: true,
       id: true,
       passwordHash: true,
     },
   });
 
   if (!user?.passwordHash) {
+    return null;
+  }
+
+  if (!isAllowedSignInEmail(user.email, env)) {
     return null;
   }
 

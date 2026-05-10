@@ -1,8 +1,11 @@
 import type { NextAuthConfig } from "next-auth";
 import { ProxyAgent } from "undici";
+import { isAllowedSignInEmail } from "@/lib/auth-env";
 
 const GOOGLE_FETCH_TIMEOUT_MS = 10_000;
 
+type SignInCallback = NonNullable<NextAuthConfig["callbacks"]>["signIn"];
+type SignInCallbackArgs = Parameters<NonNullable<SignInCallback>>[0];
 type SessionCallback = NonNullable<NextAuthConfig["callbacks"]>["session"];
 type SessionCallbackArgs = Parameters<NonNullable<SessionCallback>>[0];
 
@@ -29,6 +32,13 @@ export function createGoogleAuthFetch(env: NodeJS.ProcessEnv = process.env): typ
       signal,
     } as RequestInit & { dispatcher?: ProxyAgent });
   };
+}
+
+export async function canSignIn(
+  { profile, user }: SignInCallbackArgs,
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  return isAllowedSignInEmail(user.email ?? profile?.email, env);
 }
 
 export function applySessionUserId({ session, user }: SessionCallbackArgs) {

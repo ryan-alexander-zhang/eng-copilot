@@ -92,4 +92,14 @@ describe("SignInButton", () => {
       "Google sign-in could not be started. Check the Google OAuth settings and the server's outbound network access, then try again.",
     );
   });
+
+  it("shows an access denied message when the email is not allowed", async () => {
+    render(await SignInPage({ searchParams: Promise.resolve({ error: "AccessDenied" }) }));
+
+    expect(
+      screen.getByRole("alert", {
+        name: "",
+      }),
+    ).toHaveTextContent("This email address is not allowed to sign in.");
+  });
 });

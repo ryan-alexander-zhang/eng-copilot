@@ -48,4 +48,32 @@ describe("createPasswordSignInSession", () => {
 
     expect(result).toBeNull();
   });
+
+  it("returns null when the account email is outside the allowlist", async () => {
+    const create = vi.fn(async () => undefined);
+    const passwordHash = await hashPassword("eng-copilot-dev");
+
+    const result = await createPasswordSignInSession({
+      env: {
+        ALLOWED_SIGN_IN_EMAILS: "owner@example.com",
+      },
+      identifier: "alex.chen@example.com",
+      password: "eng-copilot-dev",
+      prisma: {
+        session: {
+          create,
+        },
+        user: {
+          findFirst: vi.fn(async () => ({
+            email: "alex.chen@example.com",
+            id: "user-1",
+            passwordHash,
+          })),
+        },
+      },
+    });
+
+    expect(result).toBeNull();
+    expect(create).not.toHaveBeenCalled();
+  });
 });
