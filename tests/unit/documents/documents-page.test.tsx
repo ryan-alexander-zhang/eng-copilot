@@ -101,7 +101,7 @@ describe("DocumentsPage", () => {
         title: "Effective Communication",
         updatedAt: new Date("2026-05-04T00:00:00.000Z"),
       },
-    ]);
+    ] as never);
 
     render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
 
@@ -128,7 +128,7 @@ describe("DocumentsPage", () => {
         title: "The Art of Focus",
         updatedAt: new Date("2026-05-02T00:00:00.000Z"),
       },
-    ]);
+    ] as never);
 
     render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
 
@@ -150,7 +150,7 @@ describe("DocumentsPage", () => {
         title: "The Art of Focus",
         updatedAt: new Date("2026-05-02T00:00:00.000Z"),
       },
-    ]);
+    ] as never);
 
     render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
 
@@ -172,7 +172,7 @@ describe("DocumentsPage", () => {
         title: "The Art of Focus",
         updatedAt: new Date("2026-05-02T00:00:00.000Z"),
       },
-    ]);
+    ] as never);
 
     render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
 

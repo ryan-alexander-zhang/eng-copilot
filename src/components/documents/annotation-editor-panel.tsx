@@ -20,7 +20,7 @@ import type { AnnotationDraft } from "@/components/documents/document-reader";
 
 type EditableAnnotation = {
   id: string;
-  color?: string;
+  color?: string | null;
   note: string;
   quote: string;
   tags: string[];

@@ -25,10 +25,6 @@ describe("AnnotationPanel", () => {
         annotations={[
           {
             id: "annotation-1",
-            startBlockKey: "paragraph:1",
-            startOffset: 0,
-            endBlockKey: "paragraph:1",
-            endOffset: 7,
             quote: "ability",
             note: "Owner note for shared viewer.",
             color: "yellow",
@@ -55,10 +51,6 @@ describe("AnnotationPanel", () => {
         annotations={[
           {
             id: "annotation-1",
-            startBlockKey: "paragraph:1",
-            startOffset: 0,
-            endBlockKey: "paragraph:1",
-            endOffset: 7,
             quote: "ability",
             note: "Shared readers should see this note.",
             color: "yellow",

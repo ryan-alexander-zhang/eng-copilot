@@ -80,6 +80,7 @@ describe("POST /api/vocabulary", () => {
     } as never);
     vi.mocked(saveVocabularyEntry).mockResolvedValue({
       id: "entry_123",
+      note: "",
       word: "observability",
       source: "plugin",
       wordListSlugs: ["cet6", "ielts"],
@@ -123,4 +124,3 @@ function createJsonRequest(payload: unknown) {
     },
   });
 }
-

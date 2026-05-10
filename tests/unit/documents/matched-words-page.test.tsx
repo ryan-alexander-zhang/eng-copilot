@@ -99,7 +99,7 @@ describe("MatchedWordsPage", () => {
         name: "CET4",
         entries: [{ term: "valuable" }],
       },
-    ]);
+    ] as never);
 
     render(
       await MatchedWordsPage({

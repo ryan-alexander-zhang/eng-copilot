@@ -27,7 +27,7 @@ export type ReaderHighlightMatch = {
 
 export type ReaderAnnotation = {
   id: string;
-  color?: string;
+  color?: string | null;
   startBlockKey: string;
   startOffset: number;
   endBlockKey: string;
@@ -36,7 +36,7 @@ export type ReaderAnnotation = {
 
 type AnnotationSegment = {
   annotationId: string;
-  color?: string;
+  color?: string | null;
   startOffset: number;
   endOffset: number;
 };
@@ -632,7 +632,7 @@ function buildSliceStyle(
   slice: {
     highlightTerms: string[];
     annotationIds: string[];
-    annotationColor?: string;
+    annotationColor?: string | null;
     searchMatchIds: string[];
   },
   activeAnnotationId?: string | null,
@@ -739,7 +739,7 @@ function buildRenderSlices(input: {
     highlightTerms: string[];
     searchMatchIds: string[];
     annotationIds: string[];
-    annotationColor?: string;
+    annotationColor?: string | null;
   }> = [];
 
   for (let index = 0; index < sortedBoundaries.length - 1; index += 1) {

@@ -63,9 +63,18 @@ describe("SharedDocumentPage", () => {
   it("places document metadata before the read-only callout", async () => {
     vi.mocked(prisma.userWordListPreference.findMany).mockResolvedValue([]);
     vi.mocked(getSharedDocument).mockResolvedValue({
+      id: "doc_1",
       activeLists: [],
       annotations: [],
-      blocks: [{ blockKey: "paragraph:1", text: "Small changes compound over time." }],
+      blocks: [
+        {
+          id: "block-1",
+          blockKey: "paragraph:1",
+          kind: "paragraph",
+          sortOrder: 0,
+          text: "Small changes compound over time.",
+        },
+      ],
       createdAt: new Date("2026-04-20T00:00:00.000Z"),
       highlightMatches: [],
       owner: {

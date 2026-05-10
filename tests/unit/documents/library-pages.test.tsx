@@ -63,16 +63,11 @@ beforeEach(() => {
 
 describe("Library pages", () => {
   it("renders the shared with me page", async () => {
-    vi.mocked(prisma.document.findMany).mockResolvedValueOnce([
-      {
-        rawMarkdown: "# My doc",
-      },
-    ]);
+    vi.mocked(prisma.document.findMany).mockResolvedValueOnce([{ rawMarkdown: "# My doc" }] as never);
     vi.mocked(prisma.document.count).mockResolvedValue(1);
     vi.mocked(prisma.documentShare.count).mockResolvedValue(1);
     vi.mocked(prisma.documentShare.findMany).mockResolvedValueOnce([
       {
-        createdAt: new Date("2026-05-01T00:00:00.000Z"),
         document: {
           _count: {
             annotations: 2,
@@ -93,11 +88,10 @@ describe("Library pages", () => {
           updatedAt: new Date("2026-05-02T00:00:00.000Z"),
         },
         token: "share-token",
-        updatedAt: new Date("2026-05-03T00:00:00.000Z"),
       },
-    ]);
+    ] as never);
 
-    render(await SharedWithMePage({ searchParams: Promise.resolve({}) }));
+    render(await SharedWithMePage());
 
     expect(screen.getByRole("heading", { name: "Shared with Me" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Shared doc" })).toHaveAttribute(
@@ -112,7 +106,7 @@ describe("Library pages", () => {
         {
           rawMarkdown: "# My doc",
         },
-      ])
+      ] as never)
       .mockResolvedValueOnce([
         {
           _count: {
@@ -123,16 +117,15 @@ describe("Library pages", () => {
           share: {
             createdAt: new Date("2026-05-01T00:00:00.000Z"),
             token: "readonly-token",
-            updatedAt: new Date("2026-05-03T00:00:00.000Z"),
           },
           title: "Guide",
           updatedAt: new Date("2026-05-04T00:00:00.000Z"),
         },
-    ]);
+      ] as never);
     vi.mocked(prisma.document.count).mockResolvedValue(1);
     vi.mocked(prisma.documentShare.count).mockResolvedValue(1);
 
-    render(await ReadOnlyLinksPage({ searchParams: Promise.resolve({}) }));
+    render(await ReadOnlyLinksPage());
 
     expect(screen.getByRole("heading", { name: "Read-Only Links" })).toBeInTheDocument();
     expect(screen.getByText("/shared/readonly-token")).toBeInTheDocument();
@@ -152,7 +145,7 @@ describe("Library pages", () => {
         {
           rawMarkdown: "# My doc",
         },
-      ])
+      ] as never)
       .mockResolvedValueOnce([
         {
           _count: {
@@ -164,11 +157,11 @@ describe("Library pages", () => {
           trashedAt: new Date("2026-05-05T00:00:00.000Z"),
           updatedAt: new Date("2026-05-04T00:00:00.000Z"),
         },
-    ]);
+      ] as never);
     vi.mocked(prisma.document.count).mockResolvedValue(1);
     vi.mocked(prisma.documentShare.count).mockResolvedValue(0);
 
-    render(await TrashPage({ searchParams: Promise.resolve({}) }));
+    render(await TrashPage());
 
     expect(screen.getByRole("heading", { name: "Trash" })).toBeInTheDocument();
     expect(screen.getByText("Archive.md")).toBeInTheDocument();

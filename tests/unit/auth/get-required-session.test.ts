@@ -39,7 +39,7 @@ describe("getRequiredSession", () => {
   });
 
   it("throws when the request is unauthenticated", async () => {
-    authMock.mockResolvedValue(null);
+    authMock.mockResolvedValue(null as never);
     cookiesMock.mockResolvedValue({
       get: () => undefined,
     });
@@ -48,12 +48,14 @@ describe("getRequiredSession", () => {
   });
 
   it("throws when the session is missing the owner id", async () => {
-    authMock.mockResolvedValue({
-      user: {
-        email: "owner@example.com",
-      },
-      expires: "2099-01-01T00:00:00.000Z",
-    });
+    authMock.mockResolvedValue(
+      {
+        user: {
+          email: "owner@example.com",
+        },
+        expires: "2099-01-01T00:00:00.000Z",
+      } as never,
+    );
     cookiesMock.mockResolvedValue({
       get: () => undefined,
     });
@@ -70,13 +72,13 @@ describe("getRequiredSession", () => {
       expires: "2099-01-01T00:00:00.000Z",
     };
 
-    authMock.mockResolvedValue(session);
+    authMock.mockResolvedValue(session as never);
 
     await expect(getRequiredSession()).resolves.toEqual(session);
   });
 
   it("falls back to the database session when the auth helper returns null", async () => {
-    authMock.mockResolvedValue(null);
+    authMock.mockResolvedValue(null as never);
     cookiesMock.mockResolvedValue({
       get: (name: string) =>
         name === "authjs.session-token" ? { value: "token_123" } : undefined,
@@ -121,7 +123,7 @@ describe("getRequiredSession", () => {
   });
 
   it("uses a longer Google discovery timeout without a proxy", () => {
-    expect(getGoogleHttpOptions({})).toEqual({
+    expect(getGoogleHttpOptions(createProcessEnv())).toEqual({
       proxyUrl: undefined,
       timeoutMs: 10_000,
     });
@@ -130,6 +132,7 @@ describe("getRequiredSession", () => {
   it("returns the configured proxy URL when a proxy is present", () => {
     expect(
       getGoogleHttpOptions({
+        NODE_ENV: "test",
         HTTPS_PROXY: "http://127.0.0.1:7890",
       }),
     ).toEqual({
@@ -143,9 +146,11 @@ describe("getRequiredSession", () => {
     const originalFetch = global.fetch;
     global.fetch = fetchMock;
 
-    const googleFetch = createGoogleAuthFetch({
-      HTTPS_PROXY: "http://127.0.0.1:7890",
-    });
+    const googleFetch = createGoogleAuthFetch(
+      createProcessEnv({
+        HTTPS_PROXY: "http://127.0.0.1:7890",
+      }),
+    );
 
     await googleFetch("https://accounts.google.com");
 
@@ -162,7 +167,7 @@ describe("getRequiredSession", () => {
     const originalFetch = global.fetch;
     global.fetch = fetchMock;
 
-    const googleFetch = createGoogleAuthFetch({});
+    const googleFetch = createGoogleAuthFetch(createProcessEnv());
 
     await googleFetch("https://accounts.google.com");
 
@@ -175,3 +180,10 @@ describe("getRequiredSession", () => {
   });
 
 });
+
+function createProcessEnv(overrides: Partial<NodeJS.ProcessEnv> = {}): NodeJS.ProcessEnv {
+  return {
+    NODE_ENV: "test",
+    ...overrides,
+  };
+}

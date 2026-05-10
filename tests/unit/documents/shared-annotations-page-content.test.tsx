@@ -64,7 +64,6 @@ describe("SharedAnnotationsPageContent", () => {
           {
             blockKey: "paragraph:1",
             endOffset: 20,
-            id: "highlight-1",
             startOffset: 11,
             term: "tiny",
           },

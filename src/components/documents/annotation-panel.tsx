@@ -11,7 +11,7 @@ import { getAnnotationColor } from "@/lib/annotations/presentation";
 
 type AnnotationPanelAnnotation = {
   id: string;
-  color?: string;
+  color?: string | null;
   quote: string;
   note: string;
   createdAt: Date;
