@@ -1,4 +1,4 @@
-import { WordListKind, type PrismaClient } from "@prisma/client";
+import { Prisma, WordListKind, type PrismaClient } from "@prisma/client";
 import { recomputeDocumentHighlights } from "@/lib/highlights/recompute-document-highlights";
 import { getOwnerActiveTerms } from "@/lib/highlights/get-owner-active-terms";
 import { normalizeVocabularyWord } from "@/lib/vocabulary/normalize-word";
@@ -19,7 +19,9 @@ type VocabularyPrisma = Pick<
 type ExportVocabularyPrisma = Pick<PrismaClient, "vocabularyEntry">;
 
 type VocabularyEntryInput = {
+  entryId?: string;
   ownerId: string;
+  note?: string;
   word: string;
   source?: string;
   wordListSlugs?: string[];
@@ -34,6 +36,7 @@ export type VocabularyJson = {
   version: 1;
   entries: Array<{
     word: string;
+    note?: string;
     source?: string;
     wordListSlugs?: string[];
   }>;
@@ -48,33 +51,45 @@ export class VocabularyValidationError extends Error {
 
 export async function saveVocabularyEntry(input: VocabularyEntryInput) {
   const normalizedWord = getRequiredNormalizedWord(input.word);
+  const note = normalizeVocabularyNote(input.note);
   const source = normalizeVocabularySource(input.source);
   const selectedWordLists = await getSelectableWordLists(input.prisma, input.wordListSlugs ?? []);
 
   const entry = await input.prisma.$transaction(async (tx) => {
-    const savedEntry = await tx.vocabularyEntry.upsert({
-      where: {
-        ownerId_word: {
+    const savedEntry = input.entryId
+      ? await updateVocabularyEntry(tx, {
+          entryId: input.entryId,
+          normalizedWord,
+          note,
           ownerId: input.ownerId,
-          word: normalizedWord,
-        },
-      },
-      update: {
-        source,
-      },
-      create: {
-        ownerId: input.ownerId,
-        word: normalizedWord,
-        source,
-      },
-      select: {
-        createdAt: true,
-        id: true,
-        source: true,
-        updatedAt: true,
-        word: true,
-      },
-    });
+          source,
+        })
+      : await tx.vocabularyEntry.upsert({
+          where: {
+            ownerId_word: {
+              ownerId: input.ownerId,
+              word: normalizedWord,
+            },
+          },
+          update: {
+            note,
+            source,
+          },
+          create: {
+            note,
+            ownerId: input.ownerId,
+            word: normalizedWord,
+            source,
+          },
+          select: {
+            createdAt: true,
+            id: true,
+            note: true,
+            source: true,
+            updatedAt: true,
+            word: true,
+          },
+        });
 
     await tx.vocabularyEntryWordList.deleteMany({
       where: {
@@ -119,6 +134,7 @@ export async function importVocabularyJson(input: {
   const entriesByWord = new Map<
     string,
     {
+      note?: string;
       word: string;
       source?: string;
       wordListSlugs?: string[];
@@ -134,6 +150,7 @@ export async function importVocabularyJson(input: {
     results.push(
       await saveVocabularyEntry({
         ownerId: input.ownerId,
+        note: entry.note,
         word: entry.word,
         source: entry.source ?? "import",
         wordListSlugs: entry.wordListSlugs ?? [],
@@ -165,6 +182,7 @@ export async function exportVocabularyJson(input: {
       createdAt: "desc",
     },
     select: {
+      note: true,
       source: true,
       word: true,
       wordLists: {
@@ -182,6 +200,7 @@ export async function exportVocabularyJson(input: {
   return {
     version: VOCABULARY_JSON_VERSION,
     entries: entries.map((entry) => ({
+      note: entry.note,
       word: entry.word,
       source: entry.source,
       wordListSlugs: entry.wordLists.map((wordList) => wordList.wordList.slug),
@@ -237,6 +256,7 @@ function parseVocabularyJson(payload: unknown): VocabularyJson {
       }
 
       return {
+        note: typeof entry.note === "string" ? entry.note : undefined,
         word: entry.word,
         source: typeof entry.source === "string" ? entry.source : undefined,
         wordListSlugs: Array.isArray(entry.wordListSlugs)
@@ -290,6 +310,79 @@ function normalizeVocabularySource(source: string | undefined) {
   const normalizedSource = source?.trim() ?? "";
 
   return normalizedSource.length > 0 ? normalizedSource : "manual";
+}
+
+function normalizeVocabularyNote(note: string | undefined) {
+  return note?.trim() ?? "";
+}
+
+async function updateVocabularyEntry(
+  tx: Pick<PrismaClient, "vocabularyEntry">,
+  input: {
+    entryId: string;
+    normalizedWord: string;
+    note: string;
+    ownerId: string;
+    source: string;
+  },
+) {
+  const existingEntry = await tx.vocabularyEntry.findUnique({
+    where: {
+      id: input.entryId,
+    },
+    select: {
+      id: true,
+      ownerId: true,
+    },
+  });
+
+  if (!existingEntry || existingEntry.ownerId !== input.ownerId) {
+    throw new VocabularyValidationError("Vocabulary entry not found");
+  }
+
+  const duplicateEntry = await tx.vocabularyEntry.findFirst({
+    where: {
+      ownerId: input.ownerId,
+      word: input.normalizedWord,
+      id: {
+        not: input.entryId,
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (duplicateEntry) {
+    throw new VocabularyValidationError("Word already exists");
+  }
+
+  try {
+    return await tx.vocabularyEntry.update({
+      where: {
+        id: input.entryId,
+      },
+      data: {
+        note: input.note,
+        source: input.source,
+        word: input.normalizedWord,
+      },
+      select: {
+        createdAt: true,
+        id: true,
+        note: true,
+        source: true,
+        updatedAt: true,
+        word: true,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new VocabularyValidationError("Word already exists");
+    }
+
+    throw error;
+  }
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

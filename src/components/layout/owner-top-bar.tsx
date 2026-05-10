@@ -4,10 +4,15 @@ import { UserMenu } from "./user-menu";
 
 type OwnerTopBarProps = {
   activeTab: "annotations" | "documents" | "vocabulary" | "word-lists";
+  showSearch?: boolean;
   userInitial: string;
 };
 
-export function OwnerTopBar({ activeTab, userInitial }: OwnerTopBarProps) {
+export function OwnerTopBar({
+  activeTab,
+  showSearch = true,
+  userInitial,
+}: OwnerTopBarProps) {
   return (
     <header className="flex h-[72px] items-center justify-between border-b border-[#E8EBF0] bg-white px-8">
       <Link className="text-[23px] font-semibold tracking-[-0.05em] text-[#111827]" href="/documents">
@@ -15,13 +20,15 @@ export function OwnerTopBar({ activeTab, userInitial }: OwnerTopBarProps) {
       </Link>
 
       <div className="flex items-center gap-7 text-[15px] text-[#374151]">
-        <button
-          aria-label="Search"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#6B7280] transition hover:bg-[#F3F4F6]"
-          type="button"
-        >
-          <Search className="h-4.5 w-4.5" strokeWidth={2} />
-        </button>
+        {showSearch ? (
+          <button
+            aria-label="Search"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#6B7280] transition hover:bg-[#F3F4F6]"
+            type="button"
+          >
+            <Search className="h-4.5 w-4.5" strokeWidth={2} />
+          </button>
+        ) : null}
         <TopBarLink active={activeTab === "documents"} href="/documents">
           Documents
         </TopBarLink>

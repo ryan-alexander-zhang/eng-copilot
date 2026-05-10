@@ -139,6 +139,7 @@ model UserWordListPreference {
 model VocabularyEntry {
   id        String                    @id @default(cuid())
   ownerId   String
+  note      String                    @default("") @db.Text
   word      String
   source    String                    @default("manual")
   createdAt DateTime                  @default(now())

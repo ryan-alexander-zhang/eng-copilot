@@ -58,44 +58,31 @@ test("vocabulary page header and add panel smoke", async ({ browser, baseURL }) 
     await page.goto("/vocabulary");
 
     await expect(page.getByRole("heading", { level: 1, name: "Vocabulary" })).toBeVisible();
+    await expect(page.getByText("Overview", { exact: true })).toBeVisible();
     await expect(page.getByPlaceholder("Search vocabulary...")).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: "Note" })).toBeVisible();
     await expect(page.getByText("Add word", { exact: true })).toBeVisible();
     await expect(page.getByText("Import", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Export" })).toHaveAttribute(
       "href",
       "/api/vocabulary",
     );
-    await expect(page.getByRole("button", { name: "Apply", exact: true })).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "Vocabulary.com lookup for observability" }),
+    ).toHaveAttribute("href", "https://www.vocabulary.com/dictionary/observability");
+    await expect(page.getByRole("button", { name: "Copy observability" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Edit observability" })).toBeVisible();
     await expect(page.getByPlaceholder("Add a word...")).toBeHidden();
     await expect(page.getByLabel("Vocabulary JSON file")).toBeHidden();
 
     const vocabularyRow = page.getByRole("row").filter({ hasText: "observability" });
-    const rowBoxBeforeLinks = await vocabularyRow.boundingBox();
-    const openLinksButton = vocabularyRow.getByText("Open links", { exact: true });
-
-    await openLinksButton.click();
-
-    const lookupMenu = page.getByRole("link", { name: "Vocabulary.com" }).locator("..");
-    await expect(lookupMenu).toBeVisible();
-    const rowBoxAfterLinks = await vocabularyRow.boundingBox();
-    const lookupMenuBox = await lookupMenu.boundingBox();
-
-    expect(lookupMenuBox?.width).toBeLessThanOrEqual(260);
-    expect(rowBoxAfterLinks?.height).toBeLessThanOrEqual((rowBoxBeforeLinks?.height ?? 0) + 10);
-
-    await page.getByRole("heading", { level: 1, name: "Vocabulary" }).click();
-    await expect(page.getByRole("link", { name: "Vocabulary.com" })).toBeHidden();
-
-    const wordListButton = vocabularyRow.getByText("Add to Word List", { exact: true });
+    const wordListButton = vocabularyRow.getByRole("button", {
+      name: "Manage word lists for observability",
+    });
     await wordListButton.click();
     await expect(page.getByRole("button", { name: "Save lists" })).toBeVisible();
     await page.getByPlaceholder("Search vocabulary...").click();
     await expect(page.getByRole("button", { name: "Save lists" })).toBeHidden();
-
-    await openLinksButton.click();
-    await expect(page.getByRole("link", { name: "Vocabulary.com" })).toBeVisible();
-    await openLinksButton.click();
-    await expect(page.getByRole("link", { name: "Vocabulary.com" })).toBeHidden();
 
     await page.getByText("Add word", { exact: true }).click();
 

@@ -42,6 +42,7 @@ export async function POST(request: Request) {
 
     const entry = await saveVocabularyEntry({
       ownerId: session.user.id,
+      note: typeof payload.note === "string" ? payload.note : undefined,
       word: typeof payload.word === "string" ? payload.word : "",
       wordListSlugs: Array.isArray(payload.wordListSlugs)
         ? payload.wordListSlugs.filter((slug): slug is string => typeof slug === "string")

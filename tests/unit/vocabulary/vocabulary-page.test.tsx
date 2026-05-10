@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import VocabularyPage from "@/app/(app)/vocabulary/page";
 import { prisma } from "@/lib/db";
@@ -69,6 +69,7 @@ beforeEach(() => {
   vi.mocked(prisma.vocabularyEntry.findMany).mockResolvedValue([
     {
       id: "entry_123",
+      note: "Useful in academic writing",
       word: "observability",
       source: "manual",
       createdAt: new Date("2026-05-09T00:00:00.000Z"),
@@ -93,35 +94,47 @@ beforeEach(() => {
 });
 
 describe("VocabularyPage", () => {
-  it("renders vocabulary controls and configured lookup links", async () => {
+  it("renders the redesigned vocabulary table, sidebar, and configured lookup links", async () => {
     render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
 
     expect(screen.getByRole("heading", { name: "Vocabulary" })).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Search vocabulary...")).toBeInTheDocument();
     expect(screen.getByText("Add word")).toBeInTheDocument();
     expect(screen.getByText("Import")).toBeInTheDocument();
+    expect(screen.getByText("Overview")).toBeInTheDocument();
+    expect(screen.getByText("How it works")).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Note" })).toBeInTheDocument();
+    expect(screen.getByText("Useful in academic writing")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Export" })).toHaveAttribute(
       "href",
       "/api/vocabulary",
     );
-    fireEvent.click(screen.getByText("Open links"));
-    expect(screen.getByRole("link", { name: "Vocabulary.com" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Vocabulary.com lookup for observability" })).toHaveAttribute(
       "href",
       "https://www.vocabulary.com/dictionary/observability",
     );
-    expect(screen.getByRole("link", { name: "Pronounce (UK)" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Pronounce (UK) lookup for observability" })).toHaveAttribute(
       "href",
       "https://youglish.com/pronounce/observability/english/uk",
     );
+    expect(screen.getByRole("button", { name: "Copy observability" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit observability" })).toBeInTheDocument();
     expect(screen.getAllByText("CET6").length).toBeGreaterThan(0);
     expect(screen.getAllByText("IELTS").length).toBeGreaterThan(0);
   });
 
-  it("keeps secondary add and import controls out of the header until opened", async () => {
+  it("keeps the vocabulary table card at content height when pagination is absent", async () => {
     render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
 
-    expect(screen.queryByRole("button", { name: "Apply" })).not.toBeInTheDocument();
-    expect(screen.queryByPlaceholderText("Add a word...")).not.toBeInTheDocument();
-    expect(screen.queryByLabelText("Vocabulary JSON file")).not.toBeInTheDocument();
+    expect(screen.getByRole("table").closest("section")).toHaveClass("xl:self-start");
+  });
+
+  it("keeps the edit action area visible for dropdown panels", async () => {
+    render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
+
+    expect(screen.getByRole("button", { name: "Edit observability" }).closest("td")).toHaveClass(
+      "overflow-visible",
+    );
+    expect(screen.getByRole("table").closest("section")).not.toHaveClass("overflow-hidden");
   });
 });
