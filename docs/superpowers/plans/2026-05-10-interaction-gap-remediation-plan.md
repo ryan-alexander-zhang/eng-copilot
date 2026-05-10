@@ -151,13 +151,19 @@ For every backlog item below, use this checklist:
     - `npm test -- tests/unit/word-lists/word-lists-page.test.tsx`
     - `npm test -- tests/unit/word-lists/word-list-selection-form.test.tsx`
 
-- [ ] `IG-P0-03` Fake "View all sessions" capability in Settings.
+- [x] `IG-P0-03` Fake "View all sessions" capability in Settings.
   - Files: `src/app/(app)/settings/page.tsx`, `src/components/settings/settings-page-shell.tsx`
   - Problem: the UI offers "View all sessions" while the query hard-caps sessions to `take: 3`.
   - Preferred fix: remove the link until a non-truncated session view exists, or implement a real full-session page before re-exposing it.
   - Minimum validation:
     - update `tests/unit/settings/settings-page-shell.test.tsx`
     - add page-level assertion if the query shape changes
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/settings/settings-page-shell.test.tsx`
+    - asserts the security panel does not render a `View all sessions` link
+  - Tests run:
+    - `npm test -- tests/unit/settings/settings-page-shell.test.tsx`
 
 - [ ] `IG-P0-04` Unsupported auth-adjacent entry points on the sign-in surface.
   - Files: `src/app/sign-in/page.tsx`, `src/app/sign-in/credentials-sign-in-form.tsx`

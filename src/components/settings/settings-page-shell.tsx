@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  ChevronRight,
   CircleUserRound,
   ExternalLink,
   LockKeyhole,
@@ -392,16 +391,6 @@ function SecurityPanel({
               ) : null}
             </div>
           ))}
-        </div>
-
-        <div className="mt-4 border-t border-[#EEF2F6] pt-4 text-center">
-          <Link
-            className="inline-flex items-center gap-2 text-[16px] font-medium text-[#2483E2]"
-            href="/settings?tab=security"
-          >
-            View all sessions
-            <ChevronRight className="h-4 w-4" strokeWidth={2} />
-          </Link>
         </div>
       </section>
 

@@ -46,6 +46,7 @@ describe("SettingsPageShell", () => {
     expect(screen.getByRole("heading", { name: "Security" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Update password" })).toBeInTheDocument();
     expect(screen.getByText("Recent sessions")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "View all sessions" })).not.toBeInTheDocument();
   });
 
   it("renders the danger zone view", () => {
