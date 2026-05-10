@@ -26,7 +26,6 @@ export default async function WordListsPage({
   const session = await getRequiredSession();
   const resolvedSearchParams = await searchParams;
   const query = resolvedSearchParams.q?.trim().toLowerCase() ?? "";
-  const startedAt = performance.now();
   const [dashboardData, documents, documentCount] = await Promise.all([
     getWordListDashboardData({
       ownerId: session.user.id,
@@ -55,7 +54,6 @@ export default async function WordListsPage({
       },
     }),
   ]);
-  const responseTimeMs = Math.max(1, Math.round(performance.now() - startedAt));
   const visibleLists = dashboardData.lists.filter(
     (list) =>
       query.length === 0 ||
@@ -122,7 +120,8 @@ export default async function WordListsPage({
                   Manage vocabulary lists used for automatic highlighting in your documents.
                 </p>
                 <p className="mt-2 text-[20px] leading-8 text-[#7B8594]">
-                  Lists are loaded from the backend and kept up to date.
+                  Choose which lists should be used when highlighting words in your reading
+                  workspace.
                 </p>
               </div>
 
@@ -152,15 +151,9 @@ export default async function WordListsPage({
                     type="submit"
                   >
                     <RefreshCw className="h-4 w-4" strokeWidth={2} />
-                    Refresh
+                    Save selections
                   </button>
                 </form>
-
-                <div className="flex items-center gap-3 text-[14px] text-[#6B7280]">
-                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#56C271]" />
-                  Synced from backend
-                  <span className="text-[#9CA3AF]">Just now</span>
-                </div>
               </div>
 
               <WordListSelectionForm
@@ -264,28 +257,6 @@ export default async function WordListsPage({
                 >
                   Preview in a document
                 </Link>
-              </section>
-
-              <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-[15px] font-semibold text-[#111827]">Backend status</h2>
-                  <span className="rounded-full bg-[#ECFDF3] px-2.5 py-1 text-[12px] font-semibold text-[#12B76A]">
-                    Healthy
-                  </span>
-                </div>
-                <p className="mt-4 text-[14px] leading-7 text-[#6B7280]">
-                  All word lists are up to date.
-                  <br />
-                  API response time: {responseTimeMs}ms
-                </p>
-                <button
-                  className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-[12px] border border-[#E5E7EB] text-[14px] font-medium text-[#4B5563]"
-                  form="word-lists-form"
-                  type="submit"
-                >
-                  <RefreshCw className="h-4 w-4" strokeWidth={2} />
-                  Sync now
-                </button>
               </section>
             </aside>
           </section>

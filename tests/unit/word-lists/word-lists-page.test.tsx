@@ -87,12 +87,15 @@ afterEach(() => {
 });
 
 describe("WordListsPage", () => {
-  it("binds Refresh to the word list sync form", async () => {
+  it("binds a save action to the word list selection form without fake sync status", async () => {
     render(await WordListsPage({ searchParams: Promise.resolve({}) }));
 
-    expect(screen.getByRole("button", { name: "Refresh" })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Save selections" })).toHaveAttribute(
       "form",
       "word-lists-form",
     );
+    expect(screen.queryByText("Synced from backend")).not.toBeInTheDocument();
+    expect(screen.queryByText("Backend status")).not.toBeInTheDocument();
+    expect(screen.queryByText("Healthy")).not.toBeInTheDocument();
   });
 });

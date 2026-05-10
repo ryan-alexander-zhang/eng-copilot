@@ -135,13 +135,21 @@ For every backlog item below, use this checklist:
     - `npm test -- tests/unit/documents/documents-page.test.tsx`
     - `npm test -- tests/unit/documents/library-pages.test.tsx`
 
-- [ ] `IG-P0-02` Fake backend health and sync semantics on `/word-lists`.
+- [x] `IG-P0-02` Fake backend health and sync semantics on `/word-lists`.
   - Files: `src/app/(app)/word-lists/page.tsx`
   - Problem: the page claims backend health, "Just now" sync state, and exposes sync-style controls without a real sync source or health contract.
   - Preferred fix: remove or downgrade the health/sync UI to non-misleading static copy until real telemetry exists.
   - Minimum validation:
     - update `tests/unit/word-lists/word-lists-page.test.tsx`
     - run `tests/unit/word-lists/word-list-selection-form.test.tsx`
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/word-lists/word-lists-page.test.tsx`
+    - asserts the page exposes a save action instead of fake sync/health messaging
+    - asserts `Synced from backend`, `Backend status`, and `Healthy` are not rendered
+  - Tests run:
+    - `npm test -- tests/unit/word-lists/word-lists-page.test.tsx`
+    - `npm test -- tests/unit/word-lists/word-list-selection-form.test.tsx`
 
 - [ ] `IG-P0-03` Fake "View all sessions" capability in Settings.
   - Files: `src/app/(app)/settings/page.tsx`, `src/components/settings/settings-page-shell.tsx`
@@ -213,10 +221,10 @@ For every backlog item below, use this checklist:
   - Minimum validation:
     - add/update annotation editor render coverage under document workspace tests
 
-- [ ] `IG-P1-09` Dead source filter and misleading refresh action on `/word-lists`.
+- [ ] `IG-P1-09` Dead source filter on `/word-lists`.
   - Files: `src/app/(app)/word-lists/page.tsx`
-  - Problem: `All Sources` is not part of the query model and `Refresh` submits the selection form rather than refreshing backend data.
-  - Preferred fix: remove the source filter and rename/remove refresh semantics.
+  - Problem: `All Sources` is not part of the query model.
+  - Preferred fix: remove the source filter unless a real source query model is added in the same pass.
   - Minimum validation:
     - update `tests/unit/word-lists/word-lists-page.test.tsx`
 
