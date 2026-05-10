@@ -194,10 +194,17 @@ For every backlog item below, use this checklist:
     - `npm test -- tests/unit/documents/documents-page.test.tsx`
     - `npm test -- tests/unit/documents/library-pages.test.tsx`
 
-- [ ] `IG-P1-02` Non-submitting sort control on `/documents`.
+- [x] `IG-P1-02` Non-submitting sort control on `/documents`.
   - Files: `src/app/(app)/documents/page.tsx`
   - Preferred fix: either wire the select to submit on change or replace it with a real submit button.
   - Minimum validation: page-level sort interaction test plus documents library regression tests.
+  - Status: Completed on 2026-05-10.
+  - New validation:
+    - updated `tests/unit/documents/documents-page.test.tsx`
+    - asserts the documents page exposes an `Apply sort` button bound to `document-sort-form`
+  - Tests run:
+    - `npm test -- tests/unit/documents/documents-page.test.tsx`
+    - `npm test -- tests/unit/documents/library-pages.test.tsx`
 
 - [x] `IG-P1-03` Dead row-selection affordances on `/documents`.
   - Files: `src/app/(app)/documents/page.tsx`

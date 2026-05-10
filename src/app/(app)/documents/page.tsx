@@ -293,6 +293,13 @@ export default async function DocumentsPage({
                 <input name="tab" type="hidden" value={activeTab} />
               </form>
             </div>
+            <button
+              className="inline-flex h-11 items-center rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#4B5563]"
+              form="document-sort-form"
+              type="submit"
+            >
+              Apply sort
+            </button>
           </div>
         </div>
 

@@ -156,4 +156,29 @@ describe("DocumentsPage", () => {
 
     expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
   });
+
+  it("renders an explicit submit control for sorting", async () => {
+    vi.mocked(prisma.document.findMany).mockResolvedValue([
+      {
+        _count: {
+          annotations: 0,
+        },
+        activeLists: [],
+        createdAt: new Date("2026-05-01T00:00:00.000Z"),
+        id: "doc_1",
+        originalName: "focus.md",
+        rawMarkdown: "# Focus\n\nOne sharp note.",
+        share: null,
+        title: "The Art of Focus",
+        updatedAt: new Date("2026-05-02T00:00:00.000Z"),
+      },
+    ]);
+
+    render(await DocumentsPage({ searchParams: Promise.resolve({}) }));
+
+    expect(screen.getByRole("button", { name: "Apply sort" })).toHaveAttribute(
+      "form",
+      "document-sort-form",
+    );
+  });
 });
