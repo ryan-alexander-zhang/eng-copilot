@@ -343,6 +343,10 @@ export function DocumentReader({
         {contextMenu ? (
           <SelectionContextMenu
             key="selection-menu"
+            onAddToVocabulary={() => {
+              void addToVocabulary(contextMenu.draft.quote).catch(() => undefined);
+              setContextMenu(null);
+            }}
             onClose={() => setContextMenu(null)}
             onCopy={() => {
               void copyText(contextMenu.draft.quote);
@@ -400,6 +404,7 @@ export function DocumentReader({
 export const DocumentPreview = DocumentReader;
 
 function SelectionContextMenu({
+  onAddToVocabulary,
   onCopy,
   quote,
   onSearchWeb,
@@ -408,6 +413,7 @@ function SelectionContextMenu({
   onSelect,
   onClose,
 }: {
+  onAddToVocabulary: () => void;
   onCopy: () => void;
   quote: string;
   onSearchWeb: () => void;
@@ -439,6 +445,13 @@ function SelectionContextMenu({
         >
           <span>Add annotation</span>
           <span className="text-[#9CA3AF]">›</span>
+        </button>
+        <button
+          className="flex w-full items-center rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]"
+          onClick={onAddToVocabulary}
+          type="button"
+        >
+          Add to vocabulary
         </button>
         <button
           className="flex w-full items-center justify-between rounded-[12px] px-4 py-3 text-left text-[14px] text-[#4B5563] transition hover:bg-[#F9FAFB]"
@@ -817,6 +830,18 @@ function getSelectionDraft(root: HTMLDivElement | null): AnnotationDraft | null 
 
 async function copyText(value: string) {
   await navigator.clipboard?.writeText(value);
+}
+
+async function addToVocabulary(word: string) {
+  await fetch("/api/vocabulary", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      word,
+    }),
+  });
 }
 
 function resolveSelectionPoint(node: Node, offset: number): SelectionPoint | null {

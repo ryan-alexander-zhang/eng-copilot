@@ -6,6 +6,7 @@ import { DocumentReader } from "@/components/documents/document-reader";
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("DocumentReader", () => {
@@ -268,6 +269,50 @@ describe("DocumentReader", () => {
       "_blank",
       "noopener,noreferrer",
     );
+  });
+
+  it("adds the selected text to vocabulary from the context menu", async () => {
+    const fetch = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal("fetch", fetch);
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        searchMatches={[]}
+      />,
+    );
+
+    const textSpan = screen.getByText("abcdef");
+    const textNode = textSpan.firstChild;
+    const range = document.createRange();
+
+    range.setStart(textNode as Node, 1);
+    range.setEnd(textNode as Node, 4);
+
+    vi.spyOn(window, "getSelection").mockReturnValue({
+      rangeCount: 1,
+      isCollapsed: false,
+      getRangeAt: () => range,
+      toString: () => "bcd",
+    } as unknown as Selection);
+
+    fireEvent.contextMenu(textSpan);
+    fireEvent.click(screen.getByRole("button", { name: "Add to vocabulary" }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith("/api/vocabulary", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          word: "bcd",
+        }),
+      });
+    });
   });
 
   it("opens a raw markdown dialog from the reader footer", () => {
