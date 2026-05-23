@@ -499,4 +499,107 @@ describe("DocumentReader", () => {
       "beta",
     );
   });
+
+  it.each([
+    {
+      label: "strong text",
+      rawMarkdown: "alpha **beta** gamma",
+    },
+    {
+      label: "emphasized text",
+      rawMarkdown: "alpha *beta* gamma",
+    },
+    {
+      label: "linked text",
+      rawMarkdown: "alpha [beta](https://example.com) gamma",
+    },
+    {
+      label: "inline code",
+      rawMarkdown: "alpha `beta` gamma",
+    },
+  ])("maps selections inside $label back to visible-text offsets", ({ rawMarkdown }) => {
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing projected paragraph block");
+    }
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[paragraphBlock]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    mockTextSelection(screen.getByText("beta"), 0, 4, "beta");
+
+    fireEvent.contextMenu(screen.getByText("beta"));
+    fireEvent.click(screen.getByRole("button", { name: /Add annotation/ }));
+
+    expect(document.querySelector('input[name="startBlockKey"]')).toHaveValue(
+      paragraphBlock.blockKey,
+    );
+    expect(document.querySelector('input[name="startOffset"]')).toHaveValue("6");
+    expect(document.querySelector('input[name="endBlockKey"]')).toHaveValue(
+      paragraphBlock.blockKey,
+    );
+    expect(document.querySelector('input[name="endOffset"]')).toHaveValue("10");
+  });
+
+  it("maps table-cell selections to the projected table-cell block", () => {
+    const rawMarkdown = ["| Word |", "| --- |", "| beta |"].join("\n");
+    const blocks = parseMarkdownToBlocks(rawMarkdown);
+    const cellBlock = blocks.find(
+      (block) => block.kind === "table-cell" && block.text === "beta",
+    );
+
+    if (!cellBlock) {
+      throw new Error("Missing projected table cell block");
+    }
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={blocks}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    mockTextSelection(screen.getByText("beta"), 0, 4, "beta");
+
+    fireEvent.contextMenu(screen.getByText("beta"));
+    fireEvent.click(screen.getByRole("button", { name: /Add annotation/ }));
+
+    expect(document.querySelector('input[name="startBlockKey"]')).toHaveValue(cellBlock.blockKey);
+    expect(document.querySelector('input[name="startOffset"]')).toHaveValue("0");
+    expect(document.querySelector('input[name="endBlockKey"]')).toHaveValue(cellBlock.blockKey);
+    expect(document.querySelector('input[name="endOffset"]')).toHaveValue("4");
+  });
 });
+
+function mockTextSelection(target: HTMLElement, start: number, end: number, quote: string) {
+  const textNode = target.firstChild;
+
+  if (!textNode) {
+    throw new Error("Missing text node for selection");
+  }
+
+  const range = document.createRange();
+
+  range.setStart(textNode, start);
+  range.setEnd(textNode, end);
+
+  vi.spyOn(window, "getSelection").mockReturnValue({
+    rangeCount: 1,
+    isCollapsed: false,
+    getRangeAt: () => range,
+    toString: () => quote,
+  } as unknown as Selection);
+}
