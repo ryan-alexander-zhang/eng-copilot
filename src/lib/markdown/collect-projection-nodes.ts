@@ -1,4 +1,3 @@
-import { toString } from "mdast-util-to-string";
 import type {
   ProjectionBlockAttrs,
   ProjectionBlockKind,
@@ -64,7 +63,7 @@ function visitNode(
       pushNode(nodes, {
         blockPath: path,
         kind: "heading",
-        text: toString(node),
+        text: collectVisibleText(node),
         selectable: true,
         attrs: {
           depth: node.depth,
@@ -75,7 +74,7 @@ function visitNode(
       pushNode(nodes, {
         blockPath: path,
         kind: resolveParagraphKind(context),
-        text: toString(node),
+        text: collectVisibleText(node),
         selectable: true,
         attrs: buildParagraphAttrs(context),
       });
@@ -95,7 +94,7 @@ function visitNode(
       pushNode(nodes, {
         blockPath: path,
         kind: "table-cell",
-        text: toString(node),
+        text: collectVisibleText(node),
         selectable: true,
         attrs: {
           tableColumnAlign: context.tableColumnAlign,
@@ -202,4 +201,20 @@ function buildParagraphAttrs(context: WalkContext): ProjectionBlockAttrs | null 
       context.blockquoteDepth > 0 ? context.blockquoteDepth : undefined,
     tableColumnAlign: context.tableColumnAlign,
   };
+}
+
+function collectVisibleText(node: MarkdownNode): string {
+  switch (node.type) {
+    case "text":
+    case "inlineCode":
+      return node.value ?? "";
+    case "break":
+      return "\n";
+    case "image":
+    case "imageReference":
+    case "html":
+      return "";
+    default:
+      return (node.children ?? []).map((child) => collectVisibleText(child)).join("");
+  }
 }

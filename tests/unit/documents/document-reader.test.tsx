@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DocumentReader } from "@/components/documents/document-reader";
+import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
 
 afterEach(() => {
   cleanup();
@@ -358,5 +359,64 @@ describe("DocumentReader", () => {
       screen.queryByRole("heading", { level: 2, name: "## The Value of Lifelong Learning" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("A paragraph after the title.")).toBeInTheDocument();
+  });
+
+  it("renders semantic markdown when raw markdown is provided", () => {
+    const rawMarkdown = "# Semantic Title\n\nThis has **bold** text and a [link](https://example.com).\n\n- alpha\n  - beta\n\n> gamma";
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
+        highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { level: 1, name: "Semantic Title" })).toBeInTheDocument();
+    expect(screen.getByText("bold").closest("strong")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "link" })).toHaveAttribute(
+      "href",
+      "https://example.com",
+    );
+    expect(screen.getByText("alpha").closest("li")).toBeInTheDocument();
+    expect(screen.getByText("gamma").closest("blockquote")).toBeInTheDocument();
+  });
+
+  it("keeps annotation slicing across inline markdown boundaries", () => {
+    const rawMarkdown = "ab**cd**ef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    render(
+      <DocumentReader
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: paragraphBlock!.blockKey,
+            startOffset: 2,
+            endBlockKey: paragraphBlock!.blockKey,
+            endOffset: 5,
+          },
+        ]}
+        blocks={[paragraphBlock!]}
+        highlightMatches={[
+          {
+            blockKey: paragraphBlock!.blockKey,
+            startOffset: 1,
+            endOffset: 4,
+            term: "match",
+          },
+        ]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    expect(screen.getByTitle("Highlights: match | Annotations: annotation-1")).toHaveTextContent(
+      "cd",
+    );
+    expect(screen.getByTitle("Annotations: annotation-1")).toHaveTextContent("e");
+    expect(screen.getByText("cd").closest("strong")).toBeInTheDocument();
   });
 });

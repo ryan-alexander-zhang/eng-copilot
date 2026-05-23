@@ -81,6 +81,7 @@ export default async function SharedDocumentPage({
           originalName={document.originalName}
           ownerInitials={ownerInitials}
           ownerLabel={ownerLabel}
+          rawMarkdown={document.rawMarkdown}
           readingMinutes={readingMinutes}
           title={document.title}
           token={token}

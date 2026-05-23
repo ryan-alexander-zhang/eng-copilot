@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { DocumentMarkdownPreview } from "@/components/documents/document-markdown-preview";
 import { getAnnotationColor } from "@/lib/annotations/presentation";
 import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
 import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
@@ -165,12 +166,17 @@ export function DocumentReader({
   const annotationSegments = buildAnnotationSegments({ blocks, annotations });
   const highlightMatchesByBlock = groupByBlock(highlightMatches);
   const searchMatchesByBlock = groupByBlock(searchMatches);
-  const renderedBlocks =
+  const hiddenFirstHeading =
     title &&
     blocks[0]?.kind === "heading" &&
     blocks[0].text.trim().toLowerCase() === title.trim().toLowerCase()
-      ? blocks.slice(1)
-      : blocks;
+      ? blocks[0].blockKey
+      : null;
+  const canRenderMarkdownPreview =
+    !!rawMarkdown && blocks.every((block) => typeof block.kind === "string");
+  const renderedBlocks = hiddenFirstHeading
+    ? blocks.slice(1)
+    : blocks;
 
   useEffect(() => {
     if (!activeSearchMatchId) {
@@ -246,6 +252,18 @@ export function DocumentReader({
         {title && showTitle && renderedBlocks.length > 0 ? <div className="mt-8" /> : null}
         {renderedBlocks.length === 0 ? (
           <p className="text-[15px] text-[#6B7280]">No readable content.</p>
+        ) : canRenderMarkdownPreview ? (
+          <DocumentMarkdownPreview
+            activeAnnotationId={activeAnnotationId}
+            activeSearchMatchId={activeSearchMatchId}
+            annotationSegmentsByBlock={annotationSegments}
+            blocks={blocks}
+            hiddenBlockKeys={hiddenFirstHeading ? new Set([hiddenFirstHeading]) : undefined}
+            highlightMatchesByBlock={highlightMatchesByBlock}
+            onSelectAnnotation={onSelectAnnotation}
+            rawMarkdown={rawMarkdown}
+            searchMatchesByBlock={searchMatchesByBlock}
+          />
         ) : (
           renderedBlocks.map((block, index) => {
             const inlineContent = renderInlineContent({

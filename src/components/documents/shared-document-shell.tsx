@@ -30,6 +30,7 @@ type SharedDocumentShellProps = {
   originalName: string;
   ownerInitials: string;
   ownerLabel: string;
+  rawMarkdown: string;
   readingMinutes: number;
   title: string;
   token: string;
@@ -47,6 +48,7 @@ export function SharedDocumentShell({
   originalName,
   ownerInitials,
   ownerLabel,
+  rawMarkdown,
   readingMinutes,
   title,
   token,
@@ -121,6 +123,7 @@ export function SharedDocumentShell({
               footer={undefined}
               highlightMatches={highlightMatches}
               onSelectAnnotation={(annotationId) => setSelectedAnnotationId(annotationId)}
+              rawMarkdown={rawMarkdown}
               showTitle={false}
               title={title}
             />

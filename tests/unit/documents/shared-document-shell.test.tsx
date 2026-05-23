@@ -63,6 +63,8 @@ describe("SharedDocumentShell", () => {
     originalName: "How to Build Good Habits.md",
     ownerInitials: "R",
     ownerLabel: "Ryan",
+    rawMarkdown:
+      "Start with one tiny action, repeat it consistently, and let momentum improve your routine over time.",
     readingMinutes: 4,
     title: "How to Build Good Habits",
     token: "share-token",

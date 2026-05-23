@@ -135,4 +135,13 @@ describe("parseMarkdownToRenderProjection", () => {
     expect(shiftedBeta?.kind).toBe("paragraph");
     expect(shiftedBeta?.blockKey).toBe(originalBeta?.blockKey);
   });
+
+  it("excludes image alt text from visible text projection", () => {
+    const [block] = parseMarkdownToRenderProjection("hello ![alt text](x.png) world");
+
+    expect(block).toMatchObject({
+      kind: "paragraph",
+      text: "hello  world",
+    });
+  });
 });
