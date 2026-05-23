@@ -419,4 +419,21 @@ describe("DocumentReader", () => {
     expect(screen.getByTitle("Annotations: annotation-1")).toHaveTextContent("e");
     expect(screen.getByText("cd").closest("strong")).toBeInTheDocument();
   });
+
+  it("renders mermaid fences as preview-only blocks", () => {
+    const rawMarkdown = "```mermaid\ngraph TD;\nA-->B;\n```";
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
+        highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    expect(screen.getByText("Mermaid preview is not enabled yet.")).toBeInTheDocument();
+    expect(screen.getByText(/graph TD;\s*A-->B;/)).toBeInTheDocument();
+  });
 });

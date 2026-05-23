@@ -44,8 +44,11 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
         select: {
           id: true,
           blockKey: true,
+          blockPath: true,
           sortOrder: true,
           kind: true,
+          selectable: true,
+          attrs: true,
           text: true,
         },
       },

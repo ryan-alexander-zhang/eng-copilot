@@ -12,10 +12,14 @@ import { DocumentMarkdownPreview } from "@/components/documents/document-markdow
 import { getAnnotationColor } from "@/lib/annotations/presentation";
 import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
 import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
+import type { ProjectionBlockAttrs } from "@/lib/markdown/types";
 
 export type ReaderBlock = {
   blockKey: string;
+  blockPath?: string;
   kind?: string;
+  selectable?: boolean;
+  attrs?: ProjectionBlockAttrs | null;
   text: string;
 };
 

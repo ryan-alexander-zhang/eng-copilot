@@ -5,16 +5,19 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { Children, createElement, isValidElement } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { MermaidBlock } from "@/components/documents/mermaid-block";
 import { ProjectedInlineRenderer } from "@/components/documents/projected-inline-renderer";
 import type { BlockRun } from "@/lib/markdown/build-block-runs";
 import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
 import { rehypeAttachProjectionMetadata } from "@/lib/markdown/rehype-attach-projection-metadata";
+import type { ProjectionBlockAttrs } from "@/lib/markdown/types";
 
 type PreviewBlock = {
   blockKey: string;
   blockPath?: string;
   kind?: string;
   selectable?: boolean;
+  attrs?: ProjectionBlockAttrs | null;
   text: string;
 };
 
@@ -218,11 +221,7 @@ function buildComponents(input: {
       );
     },
     pre: (props: ComponentPropsWithoutRef<"pre"> & ExtraProps) =>
-      createElementWithChildren(
-        "pre",
-        props,
-        "mt-8 overflow-x-auto rounded-[16px] border border-[#E5E7EB] bg-[#111827] px-5 py-4 text-[14px] leading-7 text-[#F9FAFB]",
-      ),
+      renderPreformattedBlock(props, input.blocksByKey),
     code: (props: ComponentPropsWithoutRef<"code"> & ExtraProps) => {
       const metadata = getBlockMetadata(props.node);
       const className = props.className ? String(props.className) : "";
@@ -359,3 +358,30 @@ function isElementTag(node: RootContent | undefined, tagName: string): node is E
 }
 
 type BlockComponentProps = ComponentPropsWithoutRef<"div"> & ExtraProps;
+
+function renderPreformattedBlock(
+  props: ComponentPropsWithoutRef<"pre"> & ExtraProps,
+  blocksByKey: Map<string, PreviewBlock>,
+) {
+  const metadata = getCodeChildMetadata(props.node);
+
+  if (metadata) {
+    const block = blocksByKey.get(metadata.blockKey);
+
+    if (block?.selectable === false && block.attrs?.language === "mermaid") {
+      return <MermaidBlock code={block.text} />;
+    }
+  }
+
+  return createElementWithChildren(
+    "pre",
+    props,
+    "mt-8 overflow-x-auto rounded-[16px] border border-[#E5E7EB] bg-[#111827] px-5 py-4 text-[14px] leading-7 text-[#F9FAFB]",
+  );
+}
+
+function getCodeChildMetadata(node?: Element) {
+  const codeChild = node?.children.find((child) => isElementTag(child, "code"));
+
+  return codeChild ? getBlockMetadata(codeChild) : null;
+}

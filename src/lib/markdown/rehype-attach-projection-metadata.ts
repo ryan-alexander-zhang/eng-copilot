@@ -93,7 +93,7 @@ function describeRuntimeBlockSurface(
   if (node.tagName === "code" && isParentElement(parent, "pre")) {
     return {
       kind: "code",
-      text: collectVisibleText(node),
+      text: normalizeCodeBlockText(collectVisibleText(node)),
     };
   }
 
@@ -155,4 +155,8 @@ function isHeading(tagName: string) {
 
 function normalizeVisibleText(value: string) {
   return value.replace(/\r\n?/g, "\n");
+}
+
+function normalizeCodeBlockText(value: string) {
+  return normalizeVisibleText(value).replace(/\n$/, "");
 }

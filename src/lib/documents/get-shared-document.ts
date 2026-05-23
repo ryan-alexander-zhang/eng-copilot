@@ -50,8 +50,11 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
             select: {
               id: true,
               blockKey: true,
+              blockPath: true,
               sortOrder: true,
               kind: true,
+              selectable: true,
+              attrs: true,
               text: true,
             },
           },
@@ -96,7 +99,8 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
     throw new Error("SHARE_NOT_FOUND");
   }
 
-  const { trashedAt: _trashedAt, ...document } = share.document;
+  const document = { ...share.document };
+  delete document.trashedAt;
 
   return document;
 }

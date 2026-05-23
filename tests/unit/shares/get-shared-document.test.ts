@@ -48,7 +48,17 @@ describe("getSharedDocument", () => {
           },
         },
       ],
-      blocks: [{ blockKey: "paragraph:0", sortOrder: 0, kind: "paragraph", text: "alpha" }],
+      blocks: [
+        {
+          blockKey: "paragraph:0",
+          blockPath: "0:paragraph",
+          sortOrder: 0,
+          kind: "paragraph",
+          selectable: true,
+          attrs: null,
+          text: "alpha",
+        },
+      ],
       highlightMatches: [
         {
           id: "match_123",
@@ -137,8 +147,11 @@ describe("getSharedDocument", () => {
               select: {
                 id: true,
                 blockKey: true,
+                blockPath: true,
                 sortOrder: true,
                 kind: true,
+                selectable: true,
+                attrs: true,
                 text: true,
               },
             },
