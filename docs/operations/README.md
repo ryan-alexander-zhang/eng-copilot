@@ -14,3 +14,7 @@ This directory stores operation documents.
 
 - product requirements
 - architecture decisions
+
+## Backfills
+
+- Render projection V2: `npm run backfill:render-projection-v2`

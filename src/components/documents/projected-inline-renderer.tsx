@@ -9,6 +9,23 @@ import type { Properties, RootContent } from "hast";
 import { getAnnotationColor } from "@/lib/annotations/presentation";
 import type { BlockRun } from "@/lib/markdown/build-block-runs";
 
+const VOID_HTML_TAGS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
+]);
+
 export function ProjectedInlineRenderer({
   activeAnnotationId,
   activeSearchMatchId,
@@ -73,6 +90,10 @@ function renderNode(
   const Tag = node.tagName;
   const props = normalizeProperties(node.properties);
   const children = renderNodes(node.children, context, key);
+
+  if (VOID_HTML_TAGS.has(Tag)) {
+    return [createElement(Tag, { ...props, key })];
+  }
 
   return [createElement(Tag, { ...props, key }, children)];
 }

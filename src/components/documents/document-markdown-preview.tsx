@@ -9,7 +9,7 @@ import { MermaidBlock } from "@/components/documents/mermaid-block";
 import { ProjectedInlineRenderer } from "@/components/documents/projected-inline-renderer";
 import type { BlockRun } from "@/lib/markdown/build-block-runs";
 import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
-import { rehypeAttachProjectionMetadata } from "@/lib/markdown/rehype-attach-projection-metadata";
+import { remarkAttachProjectionMetadata } from "@/lib/markdown/remark-attach-projection-metadata";
 import type { ProjectionBlockAttrs } from "@/lib/markdown/types";
 
 type PreviewBlock = {
@@ -41,6 +41,23 @@ type HighlightMatch = {
   endOffset: number;
   term: string;
 };
+
+const VOID_HTML_TAGS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
+]);
 
 export function DocumentMarkdownPreview({
   activeAnnotationId,
@@ -86,8 +103,7 @@ export function DocumentMarkdownPreview({
         onSelectAnnotation,
         runsByBlockKey,
       })}
-      rehypePlugins={[[rehypeAttachProjectionMetadata, { blocks }]]}
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, [remarkAttachProjectionMetadata, { blocks }]]}
     >
       {rawMarkdown}
     </Markdown>
@@ -326,14 +342,21 @@ function createElementWithChildren(
     className,
   );
 
-  return createElement(
-    tagName,
-    {
-      ...props,
-      className: mergedClassName,
-    },
-    children ?? props.children,
-  );
+  const nextProps = {
+    ...props,
+    className: mergedClassName,
+  };
+  const nextChildren = children ?? props.children;
+
+  if (isVoidHtmlTag(tagName)) {
+    const { children: voidChildren, ...voidProps } = nextProps;
+
+    void voidChildren;
+
+    return createElement(tagName, voidProps);
+  }
+
+  return createElement(tagName, nextProps, nextChildren);
 }
 
 function mergeClasses(...values: Array<string | undefined>) {
@@ -358,6 +381,10 @@ function isElementTag(node: RootContent | undefined, tagName: string): node is E
 }
 
 type BlockComponentProps = ComponentPropsWithoutRef<"div"> & ExtraProps;
+
+function isVoidHtmlTag(tagName: string) {
+  return VOID_HTML_TAGS.has(tagName);
+}
 
 function renderPreformattedBlock(
   props: ComponentPropsWithoutRef<"pre"> & ExtraProps,

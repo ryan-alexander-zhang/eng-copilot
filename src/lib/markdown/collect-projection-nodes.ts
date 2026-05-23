@@ -4,14 +4,17 @@ import type {
   ProjectionNodeDescriptor,
 } from "@/lib/markdown/types";
 
-type MarkdownNode = {
+export type ProjectionMarkdownNode = {
   type: string;
   depth?: number;
   ordered?: boolean;
   start?: number | null;
   lang?: string | null;
   align?: Array<"left" | "center" | "right" | null> | null;
-  children?: MarkdownNode[];
+  children?: ProjectionMarkdownNode[];
+  data?: {
+    hProperties?: Record<string, unknown>;
+  };
   value?: string;
 };
 
@@ -23,6 +26,11 @@ type WalkContext = {
   tableColumnAlign: "left" | "center" | "right" | null;
 };
 
+export type ProjectionNodeVisit = ProjectionNodeDescriptor & {
+  node: ProjectionMarkdownNode;
+  parent: ProjectionMarkdownNode;
+};
+
 const ROOT_CONTEXT: WalkContext = {
   blockquoteDepth: 0,
   listDepth: 0,
@@ -31,36 +39,52 @@ const ROOT_CONTEXT: WalkContext = {
   tableColumnAlign: null,
 };
 
-export function collectProjectionNodes(root: MarkdownNode): ProjectionNodeDescriptor[] {
+export function collectProjectionNodes(root: ProjectionMarkdownNode): ProjectionNodeDescriptor[] {
   const nodes: ProjectionNodeDescriptor[] = [];
 
-  visitChildren(root, "", ROOT_CONTEXT, nodes);
+  visitProjectionNodes(root, ({ blockPath, kind, text, selectable, attrs }) => {
+    nodes.push({
+      blockPath,
+      kind,
+      text,
+      selectable,
+      attrs,
+    });
+  });
 
   return nodes;
 }
 
+export function visitProjectionNodes(
+  root: ProjectionMarkdownNode,
+  visit: (input: ProjectionNodeVisit) => void,
+) {
+  visitChildren(root, "", ROOT_CONTEXT, visit);
+}
+
 function visitChildren(
-  parent: MarkdownNode,
+  parent: ProjectionMarkdownNode,
   parentPath: string,
   context: WalkContext,
-  nodes: ProjectionNodeDescriptor[],
+  visit: (input: ProjectionNodeVisit) => void,
 ) {
   for (const [index, child] of (parent.children ?? []).entries()) {
     const path = appendPath(parentPath, index, child.type);
 
-    visitNode(child, path, context, nodes);
+    visitNode(child, path, context, parent, visit);
   }
 }
 
 function visitNode(
-  node: MarkdownNode,
+  node: ProjectionMarkdownNode,
   path: string,
   context: WalkContext,
-  nodes: ProjectionNodeDescriptor[],
+  parent: ProjectionMarkdownNode,
+  visit: (input: ProjectionNodeVisit) => void,
 ) {
   switch (node.type) {
     case "heading":
-      pushNode(nodes, {
+      emitProjectionNode(node, parent, visit, {
         blockPath: path,
         kind: "heading",
         text: collectVisibleText(node),
@@ -71,7 +95,7 @@ function visitNode(
       });
       return;
     case "paragraph":
-      pushNode(nodes, {
+      emitProjectionNode(node, parent, visit, {
         blockPath: path,
         kind: resolveParagraphKind(context),
         text: collectVisibleText(node),
@@ -80,7 +104,7 @@ function visitNode(
       });
       return;
     case "code":
-      pushNode(nodes, {
+      emitProjectionNode(node, parent, visit, {
         blockPath: path,
         kind: "code",
         text: node.value ?? "",
@@ -91,7 +115,7 @@ function visitNode(
       });
       return;
     case "tableCell":
-      pushNode(nodes, {
+      emitProjectionNode(node, parent, visit, {
         blockPath: path,
         kind: "table-cell",
         text: collectVisibleText(node),
@@ -109,7 +133,7 @@ function visitNode(
           ...context,
           blockquoteDepth: context.blockquoteDepth + 1,
         },
-        nodes,
+        visit,
       );
       return;
     case "list":
@@ -122,22 +146,22 @@ function visitNode(
           ordered: Boolean(node.ordered),
           listStart: node.start ?? null,
         },
-        nodes,
+        visit,
       );
       return;
     case "table":
-      visitTable(node, path, context, nodes);
+      visitTable(node, path, context, visit);
       return;
     default:
-      visitChildren(node, path, context, nodes);
+      visitChildren(node, path, context, visit);
   }
 }
 
 function visitTable(
-  tableNode: MarkdownNode,
+  tableNode: ProjectionMarkdownNode,
   tablePath: string,
   context: WalkContext,
-  nodes: ProjectionNodeDescriptor[],
+  visit: (input: ProjectionNodeVisit) => void,
 ) {
   for (const [rowIndex, row] of (tableNode.children ?? []).entries()) {
     const rowPath = appendPath(tablePath, rowIndex, row.type);
@@ -152,7 +176,8 @@ function visitTable(
           ...context,
           tableColumnAlign: tableNode.align?.[cellIndex] ?? null,
         },
-        nodes,
+        row,
+        visit,
       );
     }
   }
@@ -164,12 +189,21 @@ function appendPath(parentPath: string, index: number, nodeType: string) {
   return parentPath.length === 0 ? segment : `${parentPath}/${segment}`;
 }
 
-function pushNode(nodes: ProjectionNodeDescriptor[], node: ProjectionNodeDescriptor) {
-  if (node.text.trim().length === 0) {
+function emitProjectionNode(
+  node: ProjectionMarkdownNode,
+  parent: ProjectionMarkdownNode,
+  visit: (input: ProjectionNodeVisit) => void,
+  descriptor: ProjectionNodeDescriptor,
+) {
+  if (descriptor.text.trim().length === 0) {
     return;
   }
 
-  nodes.push(node);
+  visit({
+    ...descriptor,
+    node,
+    parent,
+  });
 }
 
 function resolveParagraphKind(context: WalkContext): ProjectionBlockKind {
@@ -203,7 +237,7 @@ function buildParagraphAttrs(context: WalkContext): ProjectionBlockAttrs | null 
   };
 }
 
-function collectVisibleText(node: MarkdownNode): string {
+function collectVisibleText(node: ProjectionMarkdownNode): string {
   switch (node.type) {
     case "text":
     case "inlineCode":

@@ -177,7 +177,11 @@ export function DocumentReader({
       ? blocks[0].blockKey
       : null;
   const canRenderMarkdownPreview =
-    !!rawMarkdown && blocks.every((block) => typeof block.kind === "string");
+    !!rawMarkdown &&
+    blocks.every(
+      (block) =>
+        typeof block.kind === "string" && typeof block.blockPath === "string",
+    );
   const renderedBlocks = hiddenFirstHeading
     ? blocks.slice(1)
     : blocks;

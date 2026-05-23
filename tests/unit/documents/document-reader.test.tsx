@@ -436,4 +436,67 @@ describe("DocumentReader", () => {
     expect(screen.getByText("Mermaid preview is not enabled yet.")).toBeInTheDocument();
     expect(screen.getByText(/graph TD;\s*A-->B;/)).toBeInTheDocument();
   });
+
+  it("prefers annotation selection over link navigation inside semantic markdown", () => {
+    const rawMarkdown = "[alpha](https://example.com)";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+    const onSelectAnnotation = vi.fn();
+
+    render(
+      <DocumentReader
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: paragraphBlock!.blockKey,
+            startOffset: 0,
+            endBlockKey: paragraphBlock!.blockKey,
+            endOffset: 5,
+          },
+        ]}
+        blocks={[paragraphBlock!]}
+        highlightMatches={[]}
+        onSelectAnnotation={onSelectAnnotation}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    fireEvent.click(screen.getByTitle("Annotations: annotation-1"));
+
+    expect(onSelectAnnotation).toHaveBeenCalledWith("annotation-1");
+  });
+
+  it("keeps offsets stable after inline images are removed from visible text projection", () => {
+    const rawMarkdown = "alpha ![ignored alt](x.png) beta";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    render(
+      <DocumentReader
+        annotations={[
+          {
+            id: "annotation-1",
+            startBlockKey: paragraphBlock!.blockKey,
+            startOffset: 7,
+            endBlockKey: paragraphBlock!.blockKey,
+            endOffset: 11,
+          },
+        ]}
+        blocks={[paragraphBlock!]}
+        highlightMatches={[
+          {
+            blockKey: paragraphBlock!.blockKey,
+            startOffset: 7,
+            endOffset: 11,
+            term: "beta",
+          },
+        ]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    expect(screen.getByTitle("Highlights: beta | Annotations: annotation-1")).toHaveTextContent(
+      "beta",
+    );
+  });
 });
