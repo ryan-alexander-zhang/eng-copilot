@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import nextEnv from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import { expect, test } from "@playwright/test";
+import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
+import { parseMarkdownToRenderProjection } from "@/lib/markdown/parse-markdown-to-render-projection";
 
 const { loadEnvConfig } = nextEnv;
 
@@ -172,6 +174,177 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
   }
 });
 
+test("owner and shared viewer render semantic markdown from a seeded document", async ({
+  browser,
+  baseURL,
+}) => {
+  test.skip(
+    missingAppEnv.length > 0,
+    `E2E requires ${missingAppEnv.join(", ")}. Set app env to run this flow.`,
+  );
+
+  const rawMarkdown = [
+    "# Study Notes",
+    "",
+    "This has **ability** and a [benefit](https://example.com).",
+    "",
+    "- improve",
+    "",
+    "> culture",
+    "",
+    "```mermaid",
+    "graph TD;",
+    "A-->B;",
+    "```",
+  ].join("\n");
+  const ownerSessionToken = randomUUID();
+  const viewerSessionToken = randomUUID();
+  let ownerContext:
+    | Awaited<ReturnType<typeof browser.newContext>>
+    | null = null;
+  let viewerContext:
+    | Awaited<ReturnType<typeof browser.newContext>>
+    | null = null;
+  let ownerIdentity: { userId: string } | null = null;
+  let viewerIdentity: { userId: string } | null = null;
+
+  try {
+    const missingPrerequisites = await getMissingPrerequisites();
+
+    test.skip(
+      missingPrerequisites.length > 0,
+      `E2E requires ${missingPrerequisites.join(", ")} before the flow can run.`,
+    );
+
+    ownerContext = await browser.newContext();
+    viewerContext = await browser.newContext();
+    ownerIdentity = await seedUserWithSession({
+      email: `owner-semantic-${randomUUID()}@example.com`,
+      name: "E2E Semantic Owner",
+      sessionToken: ownerSessionToken,
+    });
+    viewerIdentity = await seedUserWithSession({
+      email: `viewer-semantic-${randomUUID()}@example.com`,
+      name: "E2E Semantic Viewer",
+      sessionToken: viewerSessionToken,
+    });
+
+    const blocks = parseMarkdownToRenderProjection(rawMarkdown);
+    const highlightMatches = computeHighlightMatches({
+      blocks,
+      activeTerms: new Set(["ability"]),
+      excludedTerms: new Set<string>(),
+    });
+    const shareToken = randomUUID();
+    const document = await prisma.document.create({
+      data: {
+        ownerId: ownerIdentity.userId,
+        title: "semantic-study-notes",
+        originalName: "semantic-study-notes.md",
+        rawMarkdown,
+        blocks: {
+          create: blocks.map((block) => ({
+            blockKey: block.blockKey,
+            blockPath: block.blockPath,
+            sortOrder: block.sortOrder,
+            kind: block.kind,
+            selectable: block.selectable,
+            attrs: block.attrs,
+            text: block.text,
+          })),
+        },
+        highlightMatches: {
+          create: highlightMatches.map((match) => ({
+            blockKey: match.blockKey,
+            startOffset: match.startOffset,
+            endOffset: match.endOffset,
+            term: match.term,
+          })),
+        },
+        share: {
+          create: {
+            token: shareToken,
+            isActive: true,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await seedAnnotationForQuote({
+      documentId: document.id,
+      note: "Semantic note for shared viewer.",
+      ownerId: ownerIdentity.userId,
+      quote: "ability",
+    });
+
+    await ownerContext.addCookies([
+      buildSessionCookie({
+        baseURL,
+        sessionToken: ownerSessionToken,
+      }),
+    ]);
+    await viewerContext.addCookies([
+      buildSessionCookie({
+        baseURL,
+        sessionToken: viewerSessionToken,
+      }),
+    ]);
+
+    const ownerPage = await ownerContext.newPage();
+    await ownerPage.goto(`/documents/${document.id}`);
+
+    await expect(ownerPage.getByText("semantic-study-notes.md")).toBeVisible();
+    await expect(ownerPage.getByRole("heading", { level: 1, name: "Study Notes" })).toBeVisible();
+    await expect(ownerPage.locator("strong", { hasText: "ability" })).toBeVisible();
+    await expect(ownerPage.getByRole("link", { name: "benefit" })).toBeVisible();
+    await expect(ownerPage.locator("li").filter({ hasText: "improve" })).toBeVisible();
+    await expect(ownerPage.locator("blockquote").filter({ hasText: "culture" })).toBeVisible();
+    await expect(ownerPage.getByText("Mermaid preview is not enabled yet.")).toBeVisible();
+    await expect(
+      ownerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" }),
+    ).toBeVisible();
+
+    const viewerPage = await viewerContext.newPage();
+    await viewerPage.goto(
+      new URL(`/shared/${shareToken}`, baseURL ?? "http://127.0.0.1:3000").toString(),
+    );
+
+    await expect(viewerPage.getByText("This is a read-only shared document.")).toBeVisible();
+    await expect(viewerPage.getByRole("heading", { level: 1, name: "Study Notes" })).toBeVisible();
+    await expect(viewerPage.locator("strong", { hasText: "ability" })).toBeVisible();
+    await expect(viewerPage.getByRole("link", { name: "benefit" })).toBeVisible();
+    await expect(viewerPage.locator("li").filter({ hasText: "improve" })).toBeVisible();
+    await expect(viewerPage.locator("blockquote").filter({ hasText: "culture" })).toBeVisible();
+    await expect(viewerPage.getByText("Mermaid preview is not enabled yet.")).toBeVisible();
+    await expect(
+      viewerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" }),
+    ).toBeVisible();
+    await expect(viewerPage.getByText("Semantic note for shared viewer.")).toBeVisible();
+  } finally {
+    await ownerContext?.close();
+    await viewerContext?.close();
+    await prisma.session.deleteMany({
+      where: {
+        sessionToken: {
+          in: [ownerSessionToken, viewerSessionToken],
+        },
+      },
+    });
+    await prisma.user.deleteMany({
+      where: {
+        id: {
+          in: [ownerIdentity?.userId, viewerIdentity?.userId].filter(
+            (value): value is string => Boolean(value),
+          ),
+        },
+      },
+    });
+  }
+});
+
 function buildSessionCookie(input: { baseURL: string | undefined; sessionToken: string }) {
   const url = new URL(input.baseURL ?? "http://127.0.0.1:3000");
 
@@ -289,6 +462,27 @@ async function getMissingPrerequisites() {
 
   if (!builtInExclusion) {
     missing.push("seeded built-in exclusion list");
+  }
+
+  const [documentProjectionColumn, blockPathColumn] = await Promise.all([
+    prisma.$queryRaw<Array<{ exists: boolean }>>`
+      SELECT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'Document' AND column_name = 'renderProjectionVersion'
+      ) AS "exists"
+    `,
+    prisma.$queryRaw<Array<{ exists: boolean }>>`
+      SELECT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'DocumentBlock' AND column_name = 'blockPath'
+      ) AS "exists"
+    `,
+  ]);
+
+  if (!documentProjectionColumn[0]?.exists || !blockPathColumn[0]?.exists) {
+    missing.push("latest projection schema (run npm run db:push)");
   }
 
   return missing;
