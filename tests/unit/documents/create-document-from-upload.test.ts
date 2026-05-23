@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 import { createDocumentFromUpload } from "@/lib/documents/create-document-from-upload";
 
@@ -43,14 +44,22 @@ describe("createDocumentFromUpload", () => {
           create: [
             {
               blockKey: expect.stringMatching(/^heading:[0-9a-f]{8}$/),
+              blockPath: "0:heading",
               sortOrder: 0,
               kind: "heading",
+              selectable: true,
+              attrs: {
+                depth: 1,
+              },
               text: "Hello",
             },
             {
               blockKey: expect.stringMatching(/^paragraph:[0-9a-f]{8}$/),
+              blockPath: "1:paragraph",
               sortOrder: 1,
               kind: "paragraph",
+              selectable: true,
+              attrs: Prisma.JsonNull,
               text: "alpha beta",
             },
           ],

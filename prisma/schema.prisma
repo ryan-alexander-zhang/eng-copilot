@@ -66,6 +66,7 @@ model Document {
   title            String
   originalName     String
   rawMarkdown      String             @db.Text
+  renderProjectionVersion Int         @default(2)
   trashedAt        DateTime?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -84,8 +85,11 @@ model DocumentBlock {
   id         String   @id @default(cuid())
   documentId String
   blockKey   String
+  blockPath  String
   sortOrder  Int
   kind       String
+  selectable Boolean  @default(true)
+  attrs      Json?
   text       String   @db.Text
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 

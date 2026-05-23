@@ -1,7 +1,7 @@
-import { type PrismaClient } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
 import { getOwnerActiveTerms } from "@/lib/highlights/get-owner-active-terms";
-import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
+import { parseMarkdownToRenderProjection } from "@/lib/markdown/parse-markdown-to-render-projection";
 
 const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
 const MARKDOWN_FILE_EXTENSIONS = [".md", ".markdown", ".mdown", ".mkd"];
@@ -29,7 +29,7 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
   validateMarkdownUpload(input.file);
 
   const rawMarkdown = await input.file.text();
-  const blocks = parseMarkdownToBlocks(rawMarkdown);
+  const blocks = parseMarkdownToRenderProjection(rawMarkdown);
   const { activeTerms, excludedTerms, selectedWordListIds } = await getOwnerWordListSelection({
     ownerId: input.ownerId,
     prisma: input.prisma,
@@ -51,8 +51,11 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
             blocks: {
               create: blocks.map((block) => ({
                 blockKey: block.blockKey,
+                blockPath: block.blockPath,
                 sortOrder: block.sortOrder,
                 kind: block.kind,
+                selectable: block.selectable,
+                attrs: block.attrs ?? Prisma.JsonNull,
                 text: block.text,
               })),
             },

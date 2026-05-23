@@ -10,6 +10,7 @@ import {
 } from "react";
 import { getAnnotationColor } from "@/lib/annotations/presentation";
 import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
+import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
 
 export type ReaderBlock = {
   blockKey: string;
@@ -703,86 +704,15 @@ function buildRenderSlices(input: {
   annotationSegments: AnnotationSegment[];
   searchMatches: ReaderSearchMatch[];
 }) {
-  if (input.text.length === 0) {
-    return [];
-  }
-
-  const validHighlightMatches = input.highlightMatches.filter(
-    (match) =>
-      isValidRange(match.startOffset, input.text.length) &&
-      isValidRange(match.endOffset, input.text.length) &&
-      match.startOffset < match.endOffset,
-  );
-  const validSearchMatches = input.searchMatches.filter(
-    (match) =>
-      isValidRange(match.startOffset, input.text.length) &&
-      isValidRange(match.endOffset, input.text.length) &&
-      match.startOffset < match.endOffset,
-  );
-  const boundaries = new Set([0, input.text.length]);
-
-  for (const match of validHighlightMatches) {
-    boundaries.add(match.startOffset);
-    boundaries.add(match.endOffset);
-  }
-
-  for (const match of validSearchMatches) {
-    boundaries.add(match.startOffset);
-    boundaries.add(match.endOffset);
-  }
-
-  for (const segment of input.annotationSegments) {
-    if (
-      !isValidRange(segment.startOffset, input.text.length) ||
-      !isValidRange(segment.endOffset, input.text.length) ||
-      segment.startOffset >= segment.endOffset
-    ) {
-      continue;
-    }
-
-    boundaries.add(segment.startOffset);
-    boundaries.add(segment.endOffset);
-  }
-
-  const sortedBoundaries = [...boundaries].sort((left, right) => left - right);
-  const slices: Array<{
-    text: string;
-    startOffset: number;
-    endOffset: number;
-    highlightTerms: string[];
-    searchMatchIds: string[];
-    annotationIds: string[];
-    annotationColor?: string | null;
-  }> = [];
-
-  for (let index = 0; index < sortedBoundaries.length - 1; index += 1) {
-    const startOffset = sortedBoundaries[index];
-    const endOffset = sortedBoundaries[index + 1];
-
-    if (startOffset === endOffset) {
-      continue;
-    }
-
-    slices.push({
-      text: input.text.slice(startOffset, endOffset),
-      startOffset,
-      endOffset,
-      highlightTerms: validHighlightMatches
-        .filter((match) => match.startOffset <= startOffset && endOffset <= match.endOffset)
-        .map((match) => match.term),
-      searchMatchIds: validSearchMatches
-        .filter((match) => match.startOffset <= startOffset && endOffset <= match.endOffset)
-        .map((match) => match.id),
-      annotationIds: input.annotationSegments
-        .filter((segment) => segment.startOffset <= startOffset && endOffset <= segment.endOffset)
-        .map((segment) => segment.annotationId),
-      annotationColor: input.annotationSegments.find(
-        (segment) => segment.startOffset <= startOffset && endOffset <= segment.endOffset,
-      )?.color,
-    });
-  }
-
-  return slices;
+  return buildBlockRuns({
+    textLength: input.text.length,
+    highlightMatches: input.highlightMatches,
+    searchMatches: input.searchMatches,
+    annotationSegments: input.annotationSegments,
+  }).map((run) => ({
+    ...run,
+    text: input.text.slice(run.startOffset, run.endOffset),
+  }));
 }
 
 function getSelectionDraft(root: HTMLDivElement | null): AnnotationDraft | null {
