@@ -6,6 +6,13 @@
 
 **Tech Stack Changes:** Add `react-markdown` and `remark-gfm`. Do not adopt `rehype-raw` in this phase. Keep `next`, `react`, `prisma`, and the existing annotation tables unchanged.
 
+## Status
+
+- Completed in code: Tasks 1, 2, 3, 4, 5, and 8
+- Mostly completed in code: Tasks 6 and 9
+- Partially completed: Task 7 and Task 10
+- Remaining blocking prerequisite: local databases used by E2E still need the latest projection schema before the new Playwright coverage can run instead of skip
+
 ## Scope Check
 
 This plan is one coherent subsystem change:
