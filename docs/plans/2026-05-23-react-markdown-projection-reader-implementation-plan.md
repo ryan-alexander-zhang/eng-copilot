@@ -8,10 +8,9 @@
 
 ## Status
 
-- Completed in code: Tasks 1, 2, 3, 4, 5, 6, 8, 9, and 10
-- Partially completed in code: Task 7
+- Completed in code: Tasks 1 through 10
 - Completed locally: `npm run db:push`, `npm run backfill:render-projection-v2`, focused unit coverage, and `tests/e2e/owner-upload-and-share.spec.ts`
-- Intentional compatibility seam: `DocumentReader` still retains the legacy block renderer when `rawMarkdown` or V2 projection metadata is missing, while the owner/shared app flows now run through the semantic preview path
+- Current reader shape: `DocumentReader` is now an interaction shell over `DocumentMarkdownPreview`; the legacy block renderer path has been removed
 
 ## Scope Check
 

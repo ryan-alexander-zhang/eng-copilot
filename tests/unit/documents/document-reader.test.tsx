@@ -12,16 +12,24 @@ afterEach(() => {
 
 describe("DocumentReader", () => {
   it("renders active search hits in the reader", () => {
+    const rawMarkdown = "Learning is valuable.";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
+
     render(
       <DocumentReader
         activeSearchMatchId="paragraph:1:12-20"
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        blocks={[paragraphBlock]}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[
           {
             id: "paragraph:1:12-20",
-            blockKey: "paragraph:1",
+            blockKey: paragraphBlock.blockKey,
             startOffset: 12,
             endOffset: 20,
             text: "valuable",
@@ -34,33 +42,41 @@ describe("DocumentReader", () => {
   });
 
   it("renders separate spans when highlights and annotations overlap", () => {
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
+
     render(
       <DocumentReader
         annotations={[
           {
             id: "annotation-1",
-            startBlockKey: "paragraph:1",
+            startBlockKey: paragraphBlock.blockKey,
             startOffset: 2,
-            endBlockKey: "paragraph:1",
+            endBlockKey: paragraphBlock.blockKey,
             endOffset: 5,
           },
         ]}
-        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        blocks={[paragraphBlock]}
         highlightMatches={[
           {
-            blockKey: "paragraph:1",
+            blockKey: paragraphBlock.blockKey,
             startOffset: 1,
             endOffset: 4,
             term: "match",
           },
         ]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
 
     const paragraph = screen
       .getByLabelText("Document reader")
-      .querySelector('p[data-block-key="paragraph:1"]');
+      .querySelector(`p[data-block-key="${paragraphBlock.blockKey}"]`);
     const spans = paragraph?.querySelectorAll("span");
 
     expect(spans).toHaveLength(5);
@@ -79,42 +95,47 @@ describe("DocumentReader", () => {
   });
 
   it("ignores invalid highlight and annotation ranges while rendering", () => {
+    const rawMarkdown = "abcdef\n\nghij";
+    const [firstBlock, secondBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!firstBlock || !secondBlock) {
+      throw new Error("Missing paragraph block fixtures");
+    }
+
     render(
       <DocumentReader
         annotations={[
           {
             id: "annotation-1",
-            startBlockKey: "paragraph:2",
+            startBlockKey: secondBlock.blockKey,
             startOffset: 3,
-            endBlockKey: "paragraph:1",
+            endBlockKey: firstBlock.blockKey,
             endOffset: 1,
           },
           {
             id: "annotation-2",
-            startBlockKey: "paragraph:1",
+            startBlockKey: firstBlock.blockKey,
             startOffset: -1,
-            endBlockKey: "paragraph:1",
+            endBlockKey: firstBlock.blockKey,
             endOffset: 1,
           },
         ]}
-        blocks={[
-          { blockKey: "paragraph:1", text: "abcdef" },
-          { blockKey: "paragraph:2", text: "ghij" },
-        ]}
+        blocks={[firstBlock, secondBlock]}
         highlightMatches={[
           {
-            blockKey: "paragraph:1",
+            blockKey: firstBlock.blockKey,
             startOffset: 4,
             endOffset: 4,
             term: "empty",
           },
           {
-            blockKey: "paragraph:1",
+            blockKey: firstBlock.blockKey,
             startOffset: 0,
             endOffset: 99,
             term: "out-of-bounds",
           },
         ]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -130,48 +151,70 @@ describe("DocumentReader", () => {
   });
 
   it("renders the non-paragraph block kinds", () => {
+    const rawMarkdown = [
+      "# Heading text",
+      "",
+      "1. List text",
+      "",
+      "> Quote text",
+      "",
+      "```js",
+      "const x = 1;",
+      "```",
+    ].join("\n");
+    const blocks = parseMarkdownToBlocks(rawMarkdown);
+    const codeBlock = blocks.find((block) => block.kind === "code");
+
+    if (!codeBlock) {
+      throw new Error("Missing code block fixture");
+    }
+
     render(
       <DocumentReader
         annotations={[
           {
             id: "annotation-1",
-            startBlockKey: "code:1",
+            startBlockKey: codeBlock.blockKey,
             startOffset: 0,
-            endBlockKey: "code:1",
+            endBlockKey: codeBlock.blockKey,
             endOffset: 5,
           },
         ]}
-        blocks={[
-          { blockKey: "heading:1", kind: "heading", text: "Heading text" },
-          { blockKey: "list-item:1", kind: "list-item", text: "List text" },
-          { blockKey: "blockquote:1", kind: "blockquote", text: "Quote text" },
-          { blockKey: "code:1", kind: "code", text: "const x = 1;" },
-        ]}
+        blocks={blocks}
         highlightMatches={[
           {
-            blockKey: "heading:1",
+            blockKey: blocks[0]!.blockKey,
             startOffset: 0,
             endOffset: 7,
             term: "Heading",
           },
         ]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
 
-    expect(screen.getByRole("heading", { level: 2, name: "## Heading text" })).toBeInTheDocument();
-    expect(screen.getByText("List text").closest("p")).toHaveTextContent("1. List text");
+    expect(screen.getByRole("heading", { level: 1, name: "Heading text" })).toBeInTheDocument();
+    expect(screen.getByText("List text").closest("li")).toBeInTheDocument();
     expect(screen.getByText("Quote text").closest("blockquote")).toHaveTextContent("Quote text");
     expect(screen.getByTitle("Annotations: annotation-1").closest("code")).toHaveTextContent("const x = 1;");
   });
 
   it("opens the annotation context menu and dialog from a valid selection", () => {
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
+
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -202,13 +245,20 @@ describe("DocumentReader", () => {
     Object.assign(navigator, {
       clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
     });
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
 
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -237,13 +287,20 @@ describe("DocumentReader", () => {
 
   it("opens a new tab for web search", () => {
     const open = vi.spyOn(window, "open").mockReturnValue(null);
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
 
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -275,13 +332,20 @@ describe("DocumentReader", () => {
   it("adds the selected text to vocabulary from the context menu", async () => {
     const fetch = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal("fetch", fetch);
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
 
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "abcdef" }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -317,17 +381,19 @@ describe("DocumentReader", () => {
   });
 
   it("opens a raw markdown dialog from the reader footer", () => {
+    const rawMarkdown = "# Title";
+
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[{ blockKey: "paragraph:1", text: "Paragraph" }]}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
         footer={{
           readingMinutes: 1,
           updatedLabel: "Today at 10:24 AM",
           wordCount: 1,
         }}
         highlightMatches={[]}
-        rawMarkdown="# Title"
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
       />,
     );
@@ -338,14 +404,14 @@ describe("DocumentReader", () => {
   });
 
   it("can strip the markdown title without rendering a duplicate page heading", () => {
+    const rawMarkdown = "# The Value of Lifelong Learning\n\nA paragraph after the title.";
+
     render(
       <DocumentReader
         annotations={[]}
-        blocks={[
-          { blockKey: "heading:1", kind: "heading", text: "The Value of Lifelong Learning" },
-          { blockKey: "paragraph:1", text: "A paragraph after the title." },
-        ]}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
         highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
         searchMatches={[]}
         showTitle={false}
         title="The Value of Lifelong Learning"
@@ -354,9 +420,6 @@ describe("DocumentReader", () => {
 
     expect(
       screen.queryByRole("heading", { level: 1, name: "The Value of Lifelong Learning" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { level: 2, name: "## The Value of Lifelong Learning" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("A paragraph after the title.")).toBeInTheDocument();
   });

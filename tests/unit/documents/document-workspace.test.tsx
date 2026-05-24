@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DocumentWorkspace } from "@/components/documents/document-workspace";
+import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
 
 vi.mock("next/link", () => ({
   default: ({
@@ -59,14 +60,13 @@ describe("DocumentWorkspace", () => {
   });
 
   it("shows search result count and next-result navigation in the workspace", () => {
+    const rawMarkdown = "Learning is valuable.\n\nValuable habits compound.";
+
     render(
       <DocumentWorkspace
         annotations={[]}
         annotationIndexHref="/annotations?document=doc_1"
-        blocks={[
-          { blockKey: "paragraph:1", text: "Learning is valuable." },
-          { blockKey: "paragraph:2", text: "Valuable habits compound." },
-        ]}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
         documentId="doc_1"
@@ -75,7 +75,7 @@ describe("DocumentWorkspace", () => {
         matchedWordCount={0}
         matchedWords={[]}
         matchedWordsHref="/documents/doc_1/matched-words"
-        rawMarkdown="# Learning\n\nLearning is valuable."
+        rawMarkdown={rawMarkdown}
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}
@@ -99,6 +99,13 @@ describe("DocumentWorkspace", () => {
   });
 
   it("switches the right sidebar into edit mode after selecting an annotation", () => {
+    const rawMarkdown = "Learning is valuable.";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing workspace paragraph block");
+    }
+
     render(
       <DocumentWorkspace
         annotations={[
@@ -106,18 +113,18 @@ describe("DocumentWorkspace", () => {
             id: "annotation-1",
             color: "yellow",
             createdAt: new Date("2026-04-24T10:24:00.000Z"),
-            endBlockKey: "paragraph:1",
+            endBlockKey: paragraphBlock.blockKey,
             endOffset: 10,
             note: "This quote emphasizes that learning is valuable.",
             quote: "Learning is valuable.",
-            startBlockKey: "paragraph:1",
+            startBlockKey: paragraphBlock.blockKey,
             startOffset: 0,
             tags: [],
             updatedAt: new Date("2026-04-24T10:24:00.000Z"),
           },
         ]}
         annotationIndexHref="/annotations?document=doc_1"
-        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
         documentId="doc_1"
@@ -126,7 +133,7 @@ describe("DocumentWorkspace", () => {
         matchedWordCount={0}
         matchedWords={[]}
         matchedWordsHref="/documents/doc_1/matched-words"
-        rawMarkdown="# Test document\n\nLearning is valuable."
+        rawMarkdown={rawMarkdown}
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}
@@ -156,6 +163,13 @@ describe("DocumentWorkspace", () => {
   });
 
   it("can open directly in edit mode from an initial annotation id", () => {
+    const rawMarkdown = "Learning is valuable.";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing workspace paragraph block");
+    }
+
     render(
       <DocumentWorkspace
         annotations={[
@@ -163,18 +177,18 @@ describe("DocumentWorkspace", () => {
             id: "annotation-1",
             color: "yellow",
             createdAt: new Date("2026-04-24T10:24:00.000Z"),
-            endBlockKey: "paragraph:1",
+            endBlockKey: paragraphBlock.blockKey,
             endOffset: 10,
             note: "This quote emphasizes that learning is valuable.",
             quote: "Learning is valuable.",
-            startBlockKey: "paragraph:1",
+            startBlockKey: paragraphBlock.blockKey,
             startOffset: 0,
             tags: [],
             updatedAt: new Date("2026-04-24T10:24:00.000Z"),
           },
         ]}
         annotationIndexHref="/annotations?document=doc_1"
-        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
         documentId="doc_1"
@@ -184,7 +198,7 @@ describe("DocumentWorkspace", () => {
         matchedWordCount={0}
         matchedWords={[]}
         matchedWordsHref="/documents/doc_1/matched-words"
-        rawMarkdown="# Test document\n\nLearning is valuable."
+        rawMarkdown={rawMarkdown}
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}
@@ -201,6 +215,13 @@ describe("DocumentWorkspace", () => {
   });
 
   it("hides the tip after dismissing it and persists the dismissal", () => {
+    const rawMarkdown = "Learning is valuable.";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing workspace paragraph block");
+    }
+
     render(
       <DocumentWorkspace
         annotations={[
@@ -208,18 +229,18 @@ describe("DocumentWorkspace", () => {
             id: "annotation-1",
             color: "yellow",
             createdAt: new Date("2026-04-24T10:24:00.000Z"),
-            endBlockKey: "paragraph:1",
+            endBlockKey: paragraphBlock.blockKey,
             endOffset: 10,
             note: "Important note.",
             quote: "Learning is valuable.",
-            startBlockKey: "paragraph:1",
+            startBlockKey: paragraphBlock.blockKey,
             startOffset: 0,
             tags: [],
             updatedAt: new Date("2026-04-24T10:24:00.000Z"),
           },
         ]}
         annotationIndexHref="/annotations?document=doc_1"
-        blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+        blocks={[paragraphBlock]}
         createAction={vi.fn().mockResolvedValue(undefined)}
         deleteAction={vi.fn().mockResolvedValue(undefined)}
         documentId="doc_1"
@@ -229,7 +250,7 @@ describe("DocumentWorkspace", () => {
         matchedWordCount={0}
         matchedWords={[]}
         matchedWordsHref="/documents/doc_1/matched-words"
-        rawMarkdown="# Learning"
+        rawMarkdown={rawMarkdown}
         readingMinutes={1}
         revokeShareAction={vi.fn().mockResolvedValue(undefined)}
         share={null}
@@ -329,6 +350,13 @@ function renderWorkspaceInEditMode(input?: {
   note?: string;
   updateAction?: (formData: FormData) => Promise<void>;
 }) {
+  const rawMarkdown = "Learning is valuable.";
+  const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+  if (!paragraphBlock) {
+    throw new Error("Missing workspace paragraph block");
+  }
+
   render(
     <DocumentWorkspace
       annotations={[
@@ -336,18 +364,18 @@ function renderWorkspaceInEditMode(input?: {
           id: "annotation-1",
           color: "yellow",
           createdAt: new Date("2026-04-24T10:24:00.000Z"),
-          endBlockKey: "paragraph:1",
+          endBlockKey: paragraphBlock.blockKey,
           endOffset: 10,
           note: input?.note ?? "Important note.",
           quote: "Learning is valuable.",
-          startBlockKey: "paragraph:1",
+          startBlockKey: paragraphBlock.blockKey,
           startOffset: 0,
           tags: [],
           updatedAt: new Date("2026-04-24T10:24:00.000Z"),
         },
       ]}
       annotationIndexHref="/annotations?document=doc_1"
-      blocks={[{ blockKey: "paragraph:1", text: "Learning is valuable." }]}
+      blocks={[paragraphBlock]}
       createAction={vi.fn().mockResolvedValue(undefined)}
       deleteAction={vi.fn().mockResolvedValue(undefined)}
       documentId="doc_1"
@@ -357,7 +385,7 @@ function renderWorkspaceInEditMode(input?: {
       matchedWordCount={0}
       matchedWords={[]}
       matchedWordsHref="/documents/doc_1/matched-words"
-      rawMarkdown="# Learning"
+      rawMarkdown={rawMarkdown}
       readingMinutes={1}
       revokeShareAction={vi.fn().mockResolvedValue(undefined)}
       share={null}

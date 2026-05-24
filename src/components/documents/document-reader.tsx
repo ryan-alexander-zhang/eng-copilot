@@ -2,26 +2,16 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  type CSSProperties,
   type MouseEvent,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { DocumentMarkdownPreview } from "@/components/documents/document-markdown-preview";
-import { getAnnotationColor } from "@/lib/annotations/presentation";
 import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
-import { buildBlockRuns } from "@/lib/markdown/build-block-runs";
-import type { ProjectionBlockAttrs } from "@/lib/markdown/types";
+import type { ProjectionBlock } from "@/lib/markdown/types";
 
-export type ReaderBlock = {
-  blockKey: string;
-  blockPath?: string;
-  kind?: string;
-  selectable?: boolean;
-  attrs?: ProjectionBlockAttrs | null;
-  text: string;
-};
+export type ReaderBlock = ProjectionBlock;
 
 export type ReaderHighlightMatch = {
   id?: string;
@@ -158,7 +148,7 @@ export function DocumentReader({
   highlightMatches: ReaderHighlightMatch[];
   onCreateDraft?: (draft: AnnotationDraft) => void;
   onSelectAnnotation?: (annotationId: string) => void;
-  rawMarkdown?: string;
+  rawMarkdown: string;
   searchMatches?: ReaderSearchMatch[];
   showTitle?: boolean;
   title?: string;
@@ -176,15 +166,8 @@ export function DocumentReader({
     blocks[0].text.trim().toLowerCase() === title.trim().toLowerCase()
       ? blocks[0].blockKey
       : null;
-  const canRenderMarkdownPreview =
-    !!rawMarkdown &&
-    blocks.every(
-      (block) =>
-        typeof block.kind === "string" && typeof block.blockPath === "string",
-    );
-  const renderedBlocks = hiddenFirstHeading
-    ? blocks.slice(1)
-    : blocks;
+  const hiddenBlockKeys = hiddenFirstHeading ? new Set([hiddenFirstHeading]) : undefined;
+  const visibleBlockCount = blocks.length - (hiddenFirstHeading ? 1 : 0);
 
   useEffect(() => {
     if (!activeSearchMatchId) {
@@ -257,90 +240,21 @@ export function DocumentReader({
         {title && showTitle ? (
           <h1 className="text-[58px] font-semibold tracking-[-0.06em] text-[#111827]">{title}</h1>
         ) : null}
-        {title && showTitle && renderedBlocks.length > 0 ? <div className="mt-8" /> : null}
-        {renderedBlocks.length === 0 ? (
+        {title && showTitle && visibleBlockCount > 0 ? <div className="mt-8" /> : null}
+        {visibleBlockCount === 0 ? (
           <p className="text-[15px] text-[#6B7280]">No readable content.</p>
-        ) : canRenderMarkdownPreview ? (
+        ) : (
           <DocumentMarkdownPreview
             activeAnnotationId={activeAnnotationId}
             activeSearchMatchId={activeSearchMatchId}
             annotationSegmentsByBlock={annotationSegments}
             blocks={blocks}
-            hiddenBlockKeys={hiddenFirstHeading ? new Set([hiddenFirstHeading]) : undefined}
+            hiddenBlockKeys={hiddenBlockKeys}
             highlightMatchesByBlock={highlightMatchesByBlock}
             onSelectAnnotation={onSelectAnnotation}
             rawMarkdown={rawMarkdown}
             searchMatchesByBlock={searchMatchesByBlock}
           />
-        ) : (
-          renderedBlocks.map((block, index) => {
-            const inlineContent = renderInlineContent({
-              activeAnnotationId,
-              activeSearchMatchId,
-              annotationSegments: annotationSegments[block.blockKey] ?? [],
-              blockKey: block.blockKey,
-              highlightMatches: highlightMatchesByBlock[block.blockKey] ?? [],
-              onSelectAnnotation,
-              searchMatches: searchMatchesByBlock[block.blockKey] ?? [],
-              text: block.text,
-            });
-            const listItemIndex = getListItemIndex(renderedBlocks, index);
-
-            switch (block.kind) {
-              case "heading":
-                return (
-                  <h2
-                    className="mt-10 text-[19px] font-semibold leading-9 text-[#111827]"
-                    data-block-key={block.blockKey}
-                    key={block.blockKey}
-                  >
-                    <span className="mr-2 text-[#111827]">##</span>
-                    {inlineContent}
-                  </h2>
-                );
-              case "list-item":
-                return (
-                  <p
-                    className="mt-3 flex gap-4 text-[18px] leading-10 text-[#4B5563]"
-                    data-block-key={block.blockKey}
-                    key={block.blockKey}
-                  >
-                    <span className="min-w-5 text-[#6B7280]">{`${listItemIndex}. `}</span>
-                    <span>{inlineContent}</span>
-                  </p>
-                );
-              case "blockquote":
-                return (
-                  <blockquote
-                    className="mt-8 border-l-[3px] border-[#E5E7EB] pl-6 text-[17px] italic leading-10 text-[#6B7280]"
-                    data-block-key={block.blockKey}
-                    key={block.blockKey}
-                  >
-                    {inlineContent}
-                  </blockquote>
-                );
-              case "code":
-                return (
-                  <pre
-                    className="mt-8 overflow-x-auto rounded-[16px] border border-[#E5E7EB] bg-[#111827] px-5 py-4 text-[14px] leading-7 text-[#F9FAFB]"
-                    data-block-key={block.blockKey}
-                    key={block.blockKey}
-                  >
-                    <code>{inlineContent}</code>
-                  </pre>
-                );
-              default:
-                return (
-                  <p
-                    className="mt-4 text-[18px] leading-10 text-[#4B5563]"
-                    data-block-key={block.blockKey}
-                    key={block.blockKey}
-                  >
-                    {inlineContent}
-                  </p>
-                );
-            }
-          })
         )}
       </div>
 
@@ -353,7 +267,7 @@ export function DocumentReader({
             <span>•</span>
             <span>Last edited {footer.updatedLabel}</span>
           </div>
-          {rawMarkdown ? (
+          {rawMarkdown.length > 0 ? (
             <button
               className="inline-flex items-center gap-2 text-[#4B5563]"
               onClick={() => setIsRawMarkdownOpen(true)}
@@ -416,7 +330,7 @@ export function DocumentReader({
       </AnimatePresence>
 
       <AnimatePresence>
-        {isRawMarkdownOpen && rawMarkdown ? (
+        {isRawMarkdownOpen && rawMarkdown.length > 0 ? (
           <RawMarkdownDialog
             content={rawMarkdown}
             key="raw-markdown-dialog"
@@ -605,117 +519,6 @@ function RawMarkdownDialog({
     </motion.div>
   );
 }
-
-function renderInlineContent(input: {
-  activeAnnotationId?: string | null;
-  activeSearchMatchId?: string | null;
-  annotationSegments: AnnotationSegment[];
-  blockKey: string;
-  highlightMatches: ReaderHighlightMatch[];
-  onSelectAnnotation?: (annotationId: string) => void;
-  searchMatches: ReaderSearchMatch[];
-  text: string;
-}) {
-  const slices = buildRenderSlices(input);
-
-  if (slices.length === 0) {
-    return input.text;
-  }
-
-  return slices.map((slice, index) => {
-    const isInteractive = slice.annotationIds.length > 0 && !!input.onSelectAnnotation;
-    const isActiveSearchHit =
-      !!input.activeSearchMatchId && slice.searchMatchIds.includes(input.activeSearchMatchId);
-    const previousSliceIncludesActiveSearchHit =
-      !!input.activeSearchMatchId &&
-      !!slices[index - 1]?.searchMatchIds.includes(input.activeSearchMatchId);
-    const searchMatchId = slice.searchMatchIds[0];
-
-    return (
-      <span
-        className={`rounded-[8px] px-[0.2rem] py-[0.08rem] transition ${
-          isInteractive ? "cursor-pointer" : ""
-        }`}
-        data-annotation-ids={
-          slice.annotationIds.length > 0 ? slice.annotationIds.join(",") : undefined
-        }
-        data-block-key={input.blockKey}
-        data-highlight-terms={
-          slice.highlightTerms.length > 0 ? slice.highlightTerms.join(",") : undefined
-        }
-        data-search-match-id={searchMatchId}
-        data-slice-end={slice.endOffset}
-        data-slice-start={slice.startOffset}
-        data-testid={
-          isActiveSearchHit && !previousSliceIncludesActiveSearchHit
-            ? "search-hit-active"
-            : undefined
-        }
-        key={`${slice.startOffset}-${slice.endOffset}-${index}`}
-        onClick={
-          isInteractive
-            ? () => {
-                input.onSelectAnnotation?.(slice.annotationIds[0]);
-              }
-            : undefined
-        }
-        style={buildSliceStyle(slice, input.activeAnnotationId, input.activeSearchMatchId)}
-        title={buildSliceTitle(slice.highlightTerms, slice.annotationIds) ?? undefined}
-      >
-        {slice.text}
-      </span>
-    );
-  });
-}
-
-function buildSliceStyle(
-  slice: {
-    highlightTerms: string[];
-    annotationIds: string[];
-    annotationColor?: string | null;
-    searchMatchIds: string[];
-  },
-  activeAnnotationId?: string | null,
-  activeSearchMatchId?: string | null,
-): CSSProperties | undefined {
-  if (slice.annotationIds.length > 0) {
-    const isActive = !!activeAnnotationId && slice.annotationIds.includes(activeAnnotationId);
-    const color = getAnnotationColor(slice.annotationColor);
-
-    return {
-      backgroundColor: isActive ? color.activeBackground : color.background,
-      color: color.foreground,
-      boxShadow: isActive
-        ? `inset 0 0 0 1px ${color.activeRing}`
-        : `inset 0 0 0 1px ${color.ring}`,
-    };
-  }
-
-  if (activeSearchMatchId && slice.searchMatchIds.includes(activeSearchMatchId)) {
-    return {
-      backgroundColor: "#FDE68A",
-      color: "#92400E",
-      boxShadow: "inset 0 0 0 1px #F59E0B",
-    };
-  }
-
-  if (slice.searchMatchIds.length > 0) {
-    return {
-      backgroundColor: "#FEF3C7",
-      color: "#92400E",
-    };
-  }
-
-  if (slice.highlightTerms.length > 0) {
-    return {
-      backgroundColor: "#EAF3FF",
-      color: "#2563EB",
-    };
-  }
-
-  return undefined;
-}
-
 function truncateText(value: string, maxLength: number) {
   if (value.length <= maxLength) {
     return value;
@@ -723,24 +526,6 @@ function truncateText(value: string, maxLength: number) {
 
   return `${value.slice(0, maxLength - 3)}...`;
 }
-
-function buildRenderSlices(input: {
-  text: string;
-  highlightMatches: ReaderHighlightMatch[];
-  annotationSegments: AnnotationSegment[];
-  searchMatches: ReaderSearchMatch[];
-}) {
-  return buildBlockRuns({
-    textLength: input.text.length,
-    highlightMatches: input.highlightMatches,
-    searchMatches: input.searchMatches,
-    annotationSegments: input.annotationSegments,
-  }).map((run) => ({
-    ...run,
-    text: input.text.slice(run.startOffset, run.endOffset),
-  }));
-}
-
 function getSelectionDraft(root: HTMLDivElement | null): AnnotationDraft | null {
   if (!root) {
     return null;
@@ -845,34 +630,6 @@ function groupByBlock<T extends { blockKey: string }>(items: T[]) {
   }, {});
 }
 
-function buildSliceTitle(highlightTerms: string[], annotationIds: string[]) {
-  const parts: string[] = [];
-
-  if (highlightTerms.length > 0) {
-    parts.push(`Highlights: ${highlightTerms.join(", ")}`);
-  }
-
-  if (annotationIds.length > 0) {
-    parts.push(`Annotations: ${annotationIds.join(", ")}`);
-  }
-
-  return parts.length > 0 ? parts.join(" | ") : null;
-}
-
 function isValidRange(offset: number, textLength: number) {
   return Number.isInteger(offset) && offset >= 0 && offset <= textLength;
-}
-
-function getListItemIndex(blocks: ReaderBlock[], index: number) {
-  let count = 1;
-
-  for (let cursor = index - 1; cursor >= 0; cursor -= 1) {
-    if (blocks[cursor]?.kind !== "list-item") {
-      break;
-    }
-
-    count += 1;
-  }
-
-  return count;
 }

@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SharedDocumentShell } from "@/components/documents/shared-document-shell";
+import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
 
 vi.mock("next/link", () => ({
   default: ({
@@ -20,15 +21,23 @@ afterEach(() => {
 });
 
 describe("SharedDocumentShell", () => {
+  const rawMarkdown =
+    "Start with one tiny action, repeat it consistently, and let momentum improve your routine over time.";
+  const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+  if (!paragraphBlock) {
+    throw new Error("Missing shared document block fixture");
+  }
+
   const annotation = {
     id: "annotation-1",
     color: "yellow",
     createdAt: new Date("2026-04-23T07:31:00.000Z"),
-    endBlockKey: "paragraph:1",
+    endBlockKey: paragraphBlock.blockKey,
     endOffset: 20,
     note: "Practical steps to build habits that stick and improve your daily life.",
     quote: "Start with one tiny action",
-    startBlockKey: "paragraph:1",
+    startBlockKey: paragraphBlock.blockKey,
     startOffset: 0,
     tags: ["mindset"],
     updatedAt: new Date("2026-04-23T07:31:00.000Z"),
@@ -44,16 +53,11 @@ describe("SharedDocumentShell", () => {
       },
     ],
     annotations: [annotation],
-    blocks: [
-      {
-        blockKey: "paragraph:1",
-        text: "Start with one tiny action, repeat it consistently, and let momentum improve your routine over time.",
-      },
-    ],
+    blocks: [paragraphBlock],
     createdAt: new Date("2026-04-23T00:00:00.000Z"),
     highlightMatches: [
       {
-        blockKey: "paragraph:1",
+        blockKey: paragraphBlock.blockKey,
         endOffset: 20,
         id: "highlight-1",
         startOffset: 11,
@@ -63,8 +67,7 @@ describe("SharedDocumentShell", () => {
     originalName: "How to Build Good Habits.md",
     ownerInitials: "R",
     ownerLabel: "Ryan",
-    rawMarkdown:
-      "Start with one tiny action, repeat it consistently, and let momentum improve your routine over time.",
+    rawMarkdown,
     readingMinutes: 4,
     title: "How to Build Good Habits",
     token: "share-token",
