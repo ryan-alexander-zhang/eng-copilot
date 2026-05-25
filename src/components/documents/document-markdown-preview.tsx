@@ -104,6 +104,7 @@ export function DocumentMarkdownPreview({
         runsByBlockKey,
       })}
       remarkPlugins={[remarkGfm, [remarkAttachProjectionMetadata, { blocks }]]}
+      skipHtml
     >
       {rawMarkdown}
     </Markdown>

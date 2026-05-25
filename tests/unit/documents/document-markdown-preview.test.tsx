@@ -98,4 +98,28 @@ describe("DocumentMarkdownPreview", () => {
     );
     expect(screen.getByText("Mermaid preview is not enabled yet.")).toBeInTheDocument();
   });
+
+  it("does not render html comments from raw markdown", () => {
+    const rawMarkdown = [
+      "# Title",
+      "",
+      "Visible paragraph.",
+      "",
+      "<!-- learning learning learning -->",
+    ].join("\n");
+
+    render(
+      <DocumentMarkdownPreview
+        annotationSegmentsByBlock={{}}
+        blocks={parseMarkdownToBlocks(rawMarkdown)}
+        highlightMatchesByBlock={{}}
+        rawMarkdown={rawMarkdown}
+        searchMatchesByBlock={{}}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { level: 1, name: "Title" })).toBeInTheDocument();
+    expect(screen.getByText("Visible paragraph.")).toBeInTheDocument();
+    expect(screen.queryByText(/learning learning learning/)).not.toBeInTheDocument();
+  });
 });

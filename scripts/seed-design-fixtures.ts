@@ -238,6 +238,7 @@ async function createFixtureDocument(input: {
       title: input.fixture.title,
       originalName: `${input.fixture.title}.md`,
       rawMarkdown,
+      renderProjectionVersion: 2,
     },
     select: {
       id: true,
@@ -249,8 +250,11 @@ async function createFixtureDocument(input: {
       data: blocks.map((block) => ({
         documentId: document.id,
         blockKey: block.blockKey,
+        blockPath: block.blockPath,
         sortOrder: block.sortOrder,
         kind: block.kind,
+        selectable: block.selectable,
+        attrs: block.attrs ?? null,
         text: block.text,
       })),
     });
@@ -733,23 +737,8 @@ function buildAnnotations(input: {
 }
 
 function padMarkdownToWordCount(markdown: string, targetWordCount: number) {
-  const currentWordCount = countWords(markdown);
-
-  if (currentWordCount >= targetWordCount) {
-    return markdown;
-  }
-
-  const fillerWords: string[] = [];
-
-  while (countWords(`${markdown}\n\n<!-- ${fillerWords.join(" ")} -->`) < targetWordCount) {
-    fillerWords.push("learning");
-  }
-
-  return `${markdown}\n\n<!-- ${fillerWords.join(" ")} -->`;
-}
-
-function countWords(text: string) {
-  return text.match(/\S+/g)?.length ?? 0;
+  void targetWordCount;
+  return markdown;
 }
 
 function localDate(value: string) {

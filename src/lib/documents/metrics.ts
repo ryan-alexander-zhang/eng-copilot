@@ -1,5 +1,5 @@
 export function countWords(text: string) {
-  const matches = text.match(/\S+/g);
+  const matches = stripHtmlComments(text).match(/\S+/g);
 
   return matches ? matches.length : 0;
 }
@@ -79,4 +79,8 @@ export function formatStorageAmount(bytes: number) {
   const precision = unitIndex === 0 ? 0 : 1;
 
   return `${value.toFixed(precision)} ${units[unitIndex]}`;
+}
+
+function stripHtmlComments(text: string) {
+  return text.replace(/<!--[\s\S]*?-->/g, " ");
 }
