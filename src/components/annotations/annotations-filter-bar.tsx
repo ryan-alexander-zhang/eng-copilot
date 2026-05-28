@@ -107,6 +107,7 @@ export function AnnotationsFilterBar({
         </div>
 
         <AutoSubmitSelectField
+          className="min-w-[240px] xl:min-w-[280px]"
           onValueChange={(value) => updateParams("document", value)}
           options={[{ label: "All documents", value: "all" }, ...documents]}
           value={document}

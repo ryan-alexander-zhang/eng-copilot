@@ -14,14 +14,18 @@ export type AutoSubmitSelectOption = {
 };
 
 export function AutoSubmitSelectField({
+  className,
   name,
   onValueChange,
   options,
+  panelClassName,
   value,
 }: {
+  className?: string;
   name?: string;
   onValueChange?: (value: string) => void;
   options: AutoSubmitSelectOption[];
+  panelClassName?: string;
   value: string;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -32,6 +36,8 @@ export function AutoSubmitSelectField({
   const currentValue = isControlled ? value : selectedValue;
   const selectedOption =
     options.find((option) => option.value === currentValue) ?? options[0] ?? null;
+  const selectedTitle =
+    selectedOption && typeof selectedOption.label === "string" ? selectedOption.label : undefined;
 
   useEffect(() => {
     if (!isOpen) {
@@ -60,12 +66,13 @@ export function AutoSubmitSelectField({
   }, [isOpen]);
 
   return (
-    <div className="relative min-w-[176px]" ref={rootRef}>
+    <div className={`relative min-w-[176px] ${className ?? ""}`.trim()} ref={rootRef}>
       {name ? <input name={name} ref={inputRef} type="hidden" value={currentValue} /> : null}
       <button
         aria-expanded={isOpen}
         className="flex h-11 w-full items-center justify-between rounded-[14px] border border-[#E3E8F1] bg-white px-4 text-[14px] font-medium text-[#475569] outline-none transition hover:bg-[#F8FAFC] focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
         onClick={() => setIsOpen((open) => !open)}
+        title={selectedTitle}
         type="button"
       >
         <span className="truncate">{selectedOption?.label}</span>
@@ -78,11 +85,13 @@ export function AutoSubmitSelectField({
 
       {isOpen ? (
         <div
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-20 w-full rounded-[16px] border border-[#E3E8F1] bg-white p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]"
+          className={`absolute left-0 top-[calc(100%+0.5rem)] z-20 w-full max-h-[320px] overflow-y-auto rounded-[16px] border border-[#E3E8F1] bg-white p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)] ${panelClassName ?? ""}`.trim()}
           role="listbox"
         >
           {options.map((option) => {
             const isSelected = option.value === currentValue;
+            const optionTitle =
+              typeof option.label === "string" ? option.label : undefined;
 
             return (
               <button
@@ -108,6 +117,7 @@ export function AutoSubmitSelectField({
                   rootRef.current?.closest("form")?.requestSubmit();
                 }}
                 role="option"
+                title={optionTitle}
                 type="button"
               >
                 <span className="inline-flex h-4 w-4 items-center justify-center">

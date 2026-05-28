@@ -28,7 +28,10 @@ describe("AnnotationsFilterBar", () => {
     color: "all",
     colors: [{ label: "All colors", value: "all" }],
     document: "all",
-    documents: [{ label: "All documents", value: "all" }],
+    documents: [
+      { label: "The Value of Long Form Reading", value: "doc_1" },
+      { label: "How to Build a Better Habit System", value: "doc_2" },
+    ],
     q: "",
     sort: "newest",
     type: "all",
@@ -46,5 +49,22 @@ describe("AnnotationsFilterBar", () => {
     expect(replaceMock).toHaveBeenCalledWith("/annotations?sort=oldest", {
       scroll: false,
     });
+  });
+
+  it("renders a wider, hoverable document selector for long document names", () => {
+    render(<AnnotationsFilterBar {...props} document="doc_1" />);
+
+    const documentButton = screen.getByRole("button", {
+      name: "The Value of Long Form Reading",
+    });
+
+    expect(documentButton.parentElement).toHaveClass("min-w-[240px]", "xl:min-w-[280px]");
+    expect(documentButton).toHaveAttribute("title", "The Value of Long Form Reading");
+
+    fireEvent.click(documentButton);
+
+    expect(
+      screen.getByRole("option", { name: "How to Build a Better Habit System" }),
+    ).toHaveAttribute("title", "How to Build a Better Habit System");
   });
 });
