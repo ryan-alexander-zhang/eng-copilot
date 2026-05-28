@@ -43,7 +43,8 @@ export default async function WordListsPage({
         id: true,
         title: true,
         updatedAt: true,
-        rawMarkdown: true,
+        plainText: true,
+        sourceByteSize: true,
       },
       take: 8,
     }),
@@ -64,11 +65,11 @@ export default async function WordListsPage({
     id: document.id,
     title: document.title,
     dayLabel: formatRelativeDayLabel(document.updatedAt),
-    readingMinutes: Math.max(1, Math.round(countWords(document.rawMarkdown) / 200)),
+    readingMinutes: Math.max(1, Math.round(countWords(document.plainText) / 200)),
     isActive: index === 0,
   }));
   const storageBytes = documents.reduce(
-    (sum, document) => sum + Buffer.byteLength(document.rawMarkdown, "utf8"),
+    (sum, document) => sum + document.sourceByteSize,
     0,
   );
   const storageTotalBytes = 10 * 1024 * 1024 * 1024;

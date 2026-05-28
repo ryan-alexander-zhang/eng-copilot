@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
+import type { PdfAnnotationAnchor, ProjectionBlock } from "@/lib/markdown/types";
 
 type GetOwnerDocumentInput = {
   documentId: string;
@@ -7,7 +8,7 @@ type GetOwnerDocumentInput = {
 };
 
 export async function getOwnerDocument(input: GetOwnerDocumentInput) {
-  return input.prisma.document.findFirst({
+  const document = await input.prisma.document.findFirst({
     where: {
       id: input.documentId,
       ownerId: input.ownerId,
@@ -17,7 +18,10 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
       id: true,
       title: true,
       originalName: true,
+      sourceFormat: true,
       rawMarkdown: true,
+      plainText: true,
+      sourceByteSize: true,
       createdAt: true,
       updatedAt: true,
       share: {
@@ -76,10 +80,28 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
           note: true,
           tags: true,
           color: true,
+          anchorData: true,
           createdAt: true,
           updatedAt: true,
         },
       },
     },
   });
+
+  if (!document) {
+    return null;
+  }
+
+  return {
+    ...document,
+    blocks: document.blocks.map((block) => ({
+      ...block,
+      kind: block.kind as ProjectionBlock["kind"],
+      attrs: (block.attrs as ProjectionBlock["attrs"] | null) ?? null,
+    })),
+    annotations: document.annotations.map((annotation) => ({
+      ...annotation,
+      anchorData: (annotation.anchorData as PdfAnnotationAnchor | null) ?? null,
+    })),
+  };
 }

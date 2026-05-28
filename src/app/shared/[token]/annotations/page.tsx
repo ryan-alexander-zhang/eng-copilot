@@ -51,7 +51,7 @@ export default async function SharedAnnotationsPage({
     throw error;
   }
 
-  const wordCount = countWords(document.rawMarkdown);
+  const wordCount = countWords(document.plainText);
   const readingMinutes = estimateReadingMinutes(wordCount);
   const ownerLabel = document.owner.name?.trim() || extractOwnerName(document.owner.email);
 

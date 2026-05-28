@@ -164,6 +164,6 @@ describe("Library pages", () => {
     render(await TrashPage());
 
     expect(screen.getByRole("heading", { name: "Trash" })).toBeInTheDocument();
-    expect(screen.getByText("Archive.md")).toBeInTheDocument();
+    expect(screen.getAllByText("archive.md").length).toBeGreaterThan(0);
   });
 });

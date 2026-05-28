@@ -21,22 +21,22 @@ export function UploadForm({
     <form action={formAction} className="space-y-5">
       <div className="space-y-2">
         <label className="field-label" htmlFor="file">
-          Markdown file
+          Document file
         </label>
         <input
-          accept=".md,.markdown,.mdown,.mkd,text/markdown"
+          accept=".md,.markdown,.mdown,.mkd,.pdf,text/markdown,application/pdf"
           className="field-file"
           id="file"
           name="file"
           required
           type="file"
         />
-        <p className="text-xs text-zinc-500">Accepted: .md, .markdown, .mdown, .mkd</p>
+        <p className="text-xs text-zinc-500">Accepted: .md, .markdown, .mdown, .mkd, .pdf</p>
       </div>
       <div className="rounded-[1.25rem] border border-zinc-200/80 bg-zinc-50 px-4 py-4 text-sm leading-7 text-zinc-600">
         <p className="font-medium text-zinc-900">Before you upload</p>
-        <p className="mt-2">Use one Markdown file up to 10 MB.</p>
-        <p>Headings and paragraphs work best for a clean reading layout.</p>
+        <p className="mt-2">Use one Markdown or text-based PDF file up to 10 MB.</p>
+        <p>Scanned PDFs are not supported yet.</p>
       </div>
       {state.error ? (
         <p

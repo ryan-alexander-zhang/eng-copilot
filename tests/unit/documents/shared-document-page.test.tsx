@@ -70,8 +70,11 @@ describe("SharedDocumentPage", () => {
         {
           id: "block-1",
           blockKey: "paragraph:1",
+          blockPath: "0:paragraph",
           kind: "paragraph",
+          selectable: true,
           sortOrder: 0,
+          attrs: null,
           text: "Small changes compound over time.",
         },
       ],
@@ -82,7 +85,10 @@ describe("SharedDocumentPage", () => {
         name: "Ryan",
       },
       originalName: "The Power of Small Changes.md",
+      plainText: "The Power of Small Changes\n\nSmall changes compound over time.",
       rawMarkdown: "# The Power of Small Changes\n\nSmall changes compound over time.",
+      sourceByteSize: 61,
+      sourceFormat: "MARKDOWN",
       title: "The Power of Small Changes",
       updatedAt: new Date("2026-04-20T00:00:00.000Z"),
     });

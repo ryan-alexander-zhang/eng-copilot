@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { parseMarkdownToBlocks } from "@/lib/markdown/parse-markdown-to-blocks";
 
 const prisma = new PrismaClient();
@@ -237,8 +237,11 @@ async function createFixtureDocument(input: {
       ownerId: input.ownerId,
       title: input.fixture.title,
       originalName: `${input.fixture.title}.md`,
+      plainText: blocks.map((block) => block.text).join("\n\n"),
       rawMarkdown,
+      sourceByteSize: Buffer.byteLength(rawMarkdown, "utf8"),
       renderProjectionVersion: 2,
+      sourceFormat: "MARKDOWN",
     },
     select: {
       id: true,
@@ -254,7 +257,7 @@ async function createFixtureDocument(input: {
         sortOrder: block.sortOrder,
         kind: block.kind,
         selectable: block.selectable,
-        attrs: block.attrs ?? null,
+        attrs: block.attrs ?? Prisma.JsonNull,
         text: block.text,
       })),
     });

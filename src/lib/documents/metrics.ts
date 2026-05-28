@@ -1,7 +1,20 @@
-export function countWords(text: string) {
+export function countWords(text: string | null | undefined) {
   const matches = stripHtmlComments(text).match(/\S+/g);
 
   return matches ? matches.length : 0;
+}
+
+export function extractSummary(text: string | null | undefined) {
+  const summary = stripHtmlComments(text)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find((line) => line.length > 0);
+
+  if (!summary) {
+    return "No summary available.";
+  }
+
+  return summary.length > 78 ? `${summary.slice(0, 75)}...` : summary;
 }
 
 export function estimateReadingMinutes(wordCount: number) {
@@ -81,6 +94,6 @@ export function formatStorageAmount(bytes: number) {
   return `${value.toFixed(precision)} ${units[unitIndex]}`;
 }
 
-function stripHtmlComments(text: string) {
-  return text.replace(/<!--[\s\S]*?-->/g, " ");
+function stripHtmlComments(text: string | null | undefined) {
+  return (text ?? "").replace(/<!--[\s\S]*?-->/g, " ");
 }

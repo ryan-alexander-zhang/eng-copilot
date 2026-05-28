@@ -16,6 +16,7 @@ import { prisma } from "@/lib/db";
 import { getLibrarySidebarData } from "@/lib/documents/get-library-sidebar-data";
 import {
   countWords,
+  extractSummary,
   formatCompactNumber,
   formatDateTimeLabel,
 } from "@/lib/documents/metrics";
@@ -60,7 +61,7 @@ export default async function DocumentsPage({
         id: true,
         title: true,
         originalName: true,
-        rawMarkdown: true,
+        plainText: true,
         createdAt: true,
         updatedAt: true,
         share: {
@@ -88,8 +89,8 @@ export default async function DocumentsPage({
   ]);
   const documentsWithMetrics = documents.map((document) => ({
     ...document,
-    summary: extractSummary(document.rawMarkdown),
-    wordCount: countWords(document.rawMarkdown),
+    summary: extractSummary(document.plainText),
+    wordCount: countWords(document.plainText),
   }));
   const filteredDocuments = sortDocuments(
     documentsWithMetrics.filter((document) => {
@@ -200,7 +201,7 @@ export default async function DocumentsPage({
           Documents
         </h1>
         <p className="mt-3 text-[22px] leading-8 text-[#7B8594]">
-          Manage your Markdown reading files, annotations, and sharing settings.
+          Manage your reading files, annotations, and sharing settings.
         </p>
 
         <div className="mt-8 grid gap-4 xl:grid-cols-4">
@@ -328,7 +329,9 @@ export default async function DocumentsPage({
                 <tr className="align-top" key={document.id}>
                   <td className="px-4 py-5">
                     <Link className="block" href={`/documents/${document.id}`}>
-                      <p className="text-[16px] font-semibold text-[#111827]">{document.title}.md</p>
+                      <p className="text-[16px] font-semibold text-[#111827]">
+                        {document.originalName || document.title}
+                      </p>
                       <p className="mt-1 max-w-[320px] text-[14px] leading-6 text-[#7B8594]">
                         {document.summary}
                       </p>
@@ -427,22 +430,6 @@ export default async function DocumentsPage({
       </div>
     </LibraryPageShell>
   );
-}
-
-function extractSummary(rawMarkdown: string) {
-  const summary = rawMarkdown
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => !line.startsWith("#"))
-    .filter((line) => !line.startsWith(">"))
-    .map((line) => line.replace(/^[>*\-\d.\s]+/, "").trim())
-    .find((line) => line.length > 0);
-
-  if (!summary) {
-    return "No summary available.";
-  }
-
-  return summary.length > 78 ? `${summary.slice(0, 75)}...` : summary;
 }
 
 function sortDocuments<

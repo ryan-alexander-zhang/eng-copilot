@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getLibrarySidebarData } from "@/lib/documents/get-library-sidebar-data";
 import {
   countWords,
+  extractSummary,
   formatCompactNumber,
   formatDateTimeLabel,
 } from "@/lib/documents/metrics";
@@ -28,7 +29,7 @@ export default async function TrashPage() {
       select: {
         title: true,
         originalName: true,
-        rawMarkdown: true,
+        plainText: true,
         updatedAt: true,
         trashedAt: true,
         _count: {
@@ -41,7 +42,7 @@ export default async function TrashPage() {
   ]);
   const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
   const totalWords = trashedDocuments.reduce(
-    (sum, document) => sum + countWords(document.rawMarkdown),
+    (sum, document) => sum + countWords(document.plainText),
     0,
   );
 
@@ -95,14 +96,16 @@ export default async function TrashPage() {
               {trashedDocuments.map((document) => (
                 <tr className="align-top" key={document.originalName}>
                   <td className="px-5 py-5">
-                    <p className="text-[16px] font-semibold text-[#111827]">{document.title}.md</p>
+                    <p className="text-[16px] font-semibold text-[#111827]">
+                      {document.originalName || document.title}
+                    </p>
                     <p className="mt-1 text-[14px] text-[#7B8594]">{document.originalName}</p>
                   </td>
                   <td className="px-4 py-5 text-[15px] leading-7 text-[#4B5563]">
-                    {extractSummary(document.rawMarkdown)}
+                    {extractSummary(document.plainText)}
                   </td>
                   <td className="px-4 py-5 text-[15px] text-[#4B5563]">
-                    {formatCompactNumber(countWords(document.rawMarkdown))}
+                    {formatCompactNumber(countWords(document.plainText))}
                   </td>
                   <td className="px-4 py-5 text-[15px] text-[#4B5563]">
                     {formatCompactNumber(document._count.annotations)}
@@ -118,22 +121,6 @@ export default async function TrashPage() {
       </div>
     </LibraryPageShell>
   );
-}
-
-function extractSummary(rawMarkdown: string) {
-  const summary = rawMarkdown
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => !line.startsWith("#"))
-    .filter((line) => !line.startsWith(">"))
-    .map((line) => line.replace(/^[>*\-\d.\s]+/, "").trim())
-    .find((line) => line.length > 0);
-
-  if (!summary) {
-    return "No summary available.";
-  }
-
-  return summary.length > 78 ? `${summary.slice(0, 75)}...` : summary;
 }
 
 function getUserInitial(value: string) {

@@ -17,7 +17,7 @@ export function DocumentList({
       <section className="surface-card text-center">
         <p className="display-copy text-3xl font-semibold text-zinc-950">Your library is empty.</p>
         <p className="mt-3 text-sm leading-7 text-zinc-600">
-          Upload one Markdown file to start reading, highlighting, and saving notes in context.
+          Upload one Markdown or PDF file to start reading, highlighting, and saving notes in context.
         </p>
         <Link className="button-primary mt-6" href="/documents/new">
           Upload your first document

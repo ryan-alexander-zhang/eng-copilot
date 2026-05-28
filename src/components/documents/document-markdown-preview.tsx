@@ -381,7 +381,11 @@ function isElementTag(node: RootContent | undefined, tagName: string): node is E
   return node?.type === "element" && node.tagName === tagName;
 }
 
-type BlockComponentProps = ComponentPropsWithoutRef<"div"> & ExtraProps;
+type BlockComponentProps = ExtraProps & {
+  children?: ReactNode;
+  className?: string;
+  [key: string]: unknown;
+};
 
 function isVoidHtmlTag(tagName: string) {
   return VOID_HTML_TAGS.has(tagName);

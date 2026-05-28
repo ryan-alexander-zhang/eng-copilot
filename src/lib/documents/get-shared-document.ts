@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
+import type { PdfAnnotationAnchor, ProjectionBlock } from "@/lib/markdown/types";
 
 type GetSharedDocumentInput = {
   token: string;
@@ -17,7 +18,10 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
           id: true,
           title: true,
           originalName: true,
+          sourceFormat: true,
           rawMarkdown: true,
+          plainText: true,
+          sourceByteSize: true,
           trashedAt: true,
           createdAt: true,
           updatedAt: true,
@@ -82,6 +86,7 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
               note: true,
               tags: true,
               color: true,
+              anchorData: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -99,8 +104,19 @@ export async function getSharedDocument(input: GetSharedDocumentInput) {
     throw new Error("SHARE_NOT_FOUND");
   }
 
-  const document = { ...share.document };
-  delete document.trashedAt;
+  const { trashedAt, ...document } = share.document;
+  void trashedAt;
 
-  return document;
+  return {
+    ...document,
+    blocks: document.blocks.map((block) => ({
+      ...block,
+      kind: block.kind as ProjectionBlock["kind"],
+      attrs: (block.attrs as ProjectionBlock["attrs"] | null) ?? null,
+    })),
+    annotations: document.annotations.map((annotation) => ({
+      ...annotation,
+      anchorData: (annotation.anchorData as PdfAnnotationAnchor | null) ?? null,
+    })),
+  };
 }

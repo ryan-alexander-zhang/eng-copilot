@@ -55,7 +55,7 @@ export function OwnerDocumentsSidebar({
                     document.isActive ? "text-[#2563EB]" : "text-[#374151]"
                   }`}
                 >
-                  {document.title}.md
+                  {document.title}
                 </p>
                 <p className="mt-1 text-[12px] text-[#9CA3AF]">
                   {document.dayLabel} • {document.readingMinutes} min read

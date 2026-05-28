@@ -19,7 +19,7 @@ export function DocumentUploadSidebar() {
     const file = formData.get("file");
 
     if (!(file instanceof File) || file.size === 0) {
-      return { error: "Choose a Markdown file to upload" };
+      return { error: "Choose a Markdown or PDF file to upload" };
     }
 
     try {

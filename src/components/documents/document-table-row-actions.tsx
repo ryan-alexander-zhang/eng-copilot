@@ -43,7 +43,7 @@ export function DocumentTableRowActions({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copiedTarget, setCopiedTarget] = useState<"link" | "title" | null>(null);
   const [share, setShare] = useState<ShareState>(initialShare);
-  const shareLabel = originalName || `${title}.md`;
+  const shareLabel = originalName || title;
   const shareUrl =
     share?.token && typeof window !== "undefined"
       ? `${window.location.origin}/shared/${share.token}`

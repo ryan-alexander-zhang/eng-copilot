@@ -41,7 +41,7 @@ export default async function SharedDocumentPage({
     throw error;
   }
 
-  const wordCount = countWords(document.rawMarkdown);
+  const wordCount = countWords(document.plainText);
   const readingMinutes = estimateReadingMinutes(wordCount);
   const ownerLabel = document.owner.name?.trim() || extractOwnerName(document.owner.email);
   const ownerInitials = getUserInitials(ownerLabel);
@@ -81,8 +81,12 @@ export default async function SharedDocumentPage({
           originalName={document.originalName}
           ownerInitials={ownerInitials}
           ownerLabel={ownerLabel}
+          pdfSourceUrl={
+            document.sourceFormat === "PDF" ? `/api/shared/${token}/pdf` : null
+          }
           rawMarkdown={document.rawMarkdown}
           readingMinutes={readingMinutes}
+          sourceFormat={document.sourceFormat}
           title={document.title}
           token={token}
           updatedAt={document.updatedAt}

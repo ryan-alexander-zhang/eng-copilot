@@ -16,7 +16,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
         trashedAt: null,
       },
       select: {
-        rawMarkdown: true,
+        sourceByteSize: true,
       },
     }),
     input.prisma.documentShare.count({
@@ -50,7 +50,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
   ]);
 
   const storageBytes = activeDocuments.reduce(
-    (sum, document) => sum + Buffer.byteLength(document.rawMarkdown, "utf8"),
+    (sum, document) => sum + document.sourceByteSize,
     0,
   );
 

@@ -20,7 +20,7 @@ export function UploadSidebarPanel({
   return (
     <form action={formAction} className="space-y-5" ref={formRef}>
       <input
-        accept=".md,.markdown,.mdown,.mkd,text/markdown"
+        accept=".md,.markdown,.mdown,.mkd,.pdf,text/markdown,application/pdf"
         className="hidden"
         id="sidebar-file-upload"
         name="file"
@@ -40,7 +40,7 @@ export function UploadSidebarPanel({
         type="button"
       >
         <ArrowUpFromLine className="h-4 w-4" strokeWidth={2} />
-        {pending ? "Uploading..." : "Upload Markdown"}
+        {pending ? "Uploading..." : "Upload document"}
       </button>
 
       <button
@@ -52,11 +52,11 @@ export function UploadSidebarPanel({
           <ArrowUpFromLine className="h-4 w-4" strokeWidth={2} />
         </div>
         <p className="mt-4 text-[15px] font-medium leading-6 text-[#374151]">
-          Drop .md files here
+          Drop .md or .pdf files here
           <br />
           or click to browse
         </p>
-        <p className="mt-4 text-[12px] text-[#9CA3AF]">Supports Markdown files up to 10 MB</p>
+        <p className="mt-4 text-[12px] text-[#9CA3AF]">Supports Markdown and text-based PDF files up to 10 MB</p>
       </button>
 
       {state.error ? (

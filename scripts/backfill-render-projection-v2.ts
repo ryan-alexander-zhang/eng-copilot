@@ -9,7 +9,8 @@ const BATCH_SIZE = 100;
 type BackfillDocument = {
   id: string;
   ownerId: string;
-  rawMarkdown: string;
+  rawMarkdown: string | null;
+  sourceFormat: "MARKDOWN" | "PDF";
   renderProjectionVersion: number;
   activeLists: Array<{
     wordListId: string;
@@ -38,6 +39,7 @@ async function main() {
         id: true,
         ownerId: true,
         rawMarkdown: true,
+        sourceFormat: true,
         renderProjectionVersion: true,
         activeLists: {
           select: {
@@ -64,6 +66,10 @@ async function main() {
 }
 
 async function backfillDocument(document: BackfillDocument) {
+  if (document.sourceFormat !== "MARKDOWN" || !document.rawMarkdown) {
+    return;
+  }
+
   const blocks = parseMarkdownToRenderProjection(document.rawMarkdown);
   const { activeTerms, excludedTerms } = await getOwnerActiveTerms({
     ownerId: document.ownerId,

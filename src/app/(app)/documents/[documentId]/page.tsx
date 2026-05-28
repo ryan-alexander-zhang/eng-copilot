@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { createAnnotation } from "@/lib/annotations/create-annotation";
 import { deleteAnnotation } from "@/lib/annotations/delete-annotation";
 import { updateAnnotation } from "@/lib/annotations/update-annotation";
+import type { PdfAnnotationAnchor } from "@/lib/markdown/types";
 import {
   countWords,
   estimateReadingMinutes,
@@ -72,7 +73,8 @@ export default async function DocumentPage({
         id: true,
         title: true,
         updatedAt: true,
-        rawMarkdown: true,
+        plainText: true,
+        sourceByteSize: true,
       },
       take: 8,
     }),
@@ -112,7 +114,7 @@ export default async function DocumentPage({
     }),
     ]);
   const storageBytes = sidebarDocuments.reduce(
-    (sum, item) => sum + Buffer.byteLength(item.rawMarkdown, "utf8"),
+    (sum, item) => sum + item.sourceByteSize,
     0,
   );
   const storageTotalBytes = 10 * 1024 * 1024 * 1024;
@@ -122,7 +124,7 @@ export default async function DocumentPage({
     order: READER_MATCHED_WORD_ORDER,
   });
   const userInitial = getUserInitial(session.user.name ?? session.user.email ?? "U");
-  const wordCount = countWords(document.rawMarkdown);
+  const wordCount = countWords(document.plainText);
   const readingMinutes = estimateReadingMinutes(wordCount);
   const initialSelectedAnnotationId = document.annotations.some(
     (annotation) => annotation.id === resolvedSearchParams.annotation,
@@ -143,6 +145,7 @@ export default async function DocumentPage({
       note: getOptionalString(formData, "note"),
       tags: getStringList(formData, "tags"),
       color: getOptionalString(formData, "color") || "yellow",
+      anchorData: getOptionalJson(formData, "anchorData"),
       prisma,
     });
 
@@ -216,7 +219,7 @@ export default async function DocumentPage({
                   id: item.id,
                   title: item.title,
                   dayLabel: formatRelativeDayLabel(item.updatedAt),
-                  readingMinutes: estimateReadingMinutes(countWords(item.rawMarkdown)),
+                  readingMinutes: estimateReadingMinutes(countWords(item.plainText)),
                   isActive: item.id === document.id,
                 }))}
                 storage={{
@@ -241,11 +244,15 @@ export default async function DocumentPage({
             matchedWords={matchedWordItems}
             matchedWordCount={matchedWordCount}
             matchedWordsHref={`/documents/${document.id}/matched-words`}
+            pdfSourceUrl={
+              document.sourceFormat === "PDF" ? `/api/documents/${document.id}/pdf` : null
+            }
             rawMarkdown={document.rawMarkdown}
             readingMinutes={readingMinutes}
             revokeShareAction={revokeShareAction}
             share={document.share}
             initialSelectedAnnotationId={initialSelectedAnnotationId}
+            sourceFormat={document.sourceFormat}
             title={document.title}
             updateAction={updateAnnotationAction}
             updatedLabel={formatDateTimeLabel(document.updatedAt)}
@@ -278,6 +285,16 @@ function getOptionalString(formData: FormData, fieldName: string) {
   }
 
   return value;
+}
+
+function getOptionalJson(formData: FormData, fieldName: string) {
+  const value = getOptionalString(formData, fieldName);
+
+  if (!value) {
+    return null;
+  }
+
+  return JSON.parse(value) as PdfAnnotationAnchor;
 }
 
 export function getRequiredInteger(formData: FormData, fieldName: string) {

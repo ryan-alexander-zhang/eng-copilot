@@ -26,8 +26,11 @@ export async function recomputeDocumentHighlights(input: RecomputeDocumentHighli
         },
         select: {
           blockKey: true,
+          blockPath: true,
           kind: true,
           sortOrder: true,
+          selectable: true,
+          attrs: true,
           text: true,
         },
       },
@@ -42,6 +45,7 @@ export async function recomputeDocumentHighlights(input: RecomputeDocumentHighli
     blocks: document.blocks.map((block) => ({
       ...block,
       kind: block.kind as ParsedBlock["kind"],
+      attrs: block.attrs as ParsedBlock["attrs"],
     })),
     activeTerms: input.activeTerms,
     excludedTerms: input.excludedTerms,

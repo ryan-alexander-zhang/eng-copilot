@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import nextEnv from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { expect, test } from "@playwright/test";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
 import { parseMarkdownToRenderProjection } from "@/lib/markdown/parse-markdown-to-render-projection";
+import { parsePdfToPageProjection } from "@/lib/pdf/parse-pdf-to-page-projection";
+import { createTextPdf } from "../fixtures/pdf-fixtures";
 
 const { loadEnvConfig } = nextEnv;
 
@@ -80,7 +82,6 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     });
 
     await expect(ownerPage.getByRole("heading", { level: 1, name: "study-notes" })).toBeVisible();
-    await expect(ownerPage.getByText("study-notes.md")).toBeVisible();
 
     const ownerHighlight = ownerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" });
     await expect(ownerHighlight).toBeVisible();
@@ -174,6 +175,160 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
   }
 });
 
+test("owner and shared viewer render a seeded PDF document", async ({ browser, baseURL }) => {
+  test.skip(
+    missingAppEnv.length > 0,
+    `E2E requires ${missingAppEnv.join(", ")}. Set app env to run this flow.`,
+  );
+
+  const pdfBytes = createTextPdf(["ability and benefit improve culture."]);
+  const ownerSessionToken = randomUUID();
+  const viewerSessionToken = randomUUID();
+  let ownerContext:
+    | Awaited<ReturnType<typeof browser.newContext>>
+    | null = null;
+  let viewerContext:
+    | Awaited<ReturnType<typeof browser.newContext>>
+    | null = null;
+  let ownerIdentity: { userId: string } | null = null;
+  let viewerIdentity: { userId: string } | null = null;
+
+  try {
+    const missingPrerequisites = await getMissingPrerequisites();
+
+    test.skip(
+      missingPrerequisites.length > 0,
+      `E2E requires ${missingPrerequisites.join(", ")} before the flow can run.`,
+    );
+
+    ownerContext = await browser.newContext();
+    viewerContext = await browser.newContext();
+    ownerIdentity = await seedUserWithSession({
+      email: `owner-pdf-${randomUUID()}@example.com`,
+      name: "E2E PDF Owner",
+      sessionToken: ownerSessionToken,
+    });
+    viewerIdentity = await seedUserWithSession({
+      email: `viewer-pdf-${randomUUID()}@example.com`,
+      name: "E2E PDF Viewer",
+      sessionToken: viewerSessionToken,
+    });
+    const projection = await parsePdfToPageProjection(pdfBytes);
+    const highlightMatches = computeHighlightMatches({
+      blocks: projection.blocks,
+      activeTerms: new Set(["ability"]),
+      excludedTerms: new Set<string>(),
+    });
+    const shareToken = randomUUID();
+    const document = await prisma.document.create({
+      data: {
+        ownerId: ownerIdentity.userId,
+        title: "study-notes",
+        originalName: "study-notes.pdf",
+        sourceFormat: "PDF",
+        rawMarkdown: null,
+        plainText: projection.plainText,
+        sourceByteSize: pdfBytes.length,
+        pdfData: Buffer.from(pdfBytes),
+        renderProjectionVersion: 3,
+        blocks: {
+          create: projection.blocks.map((block) => ({
+            blockKey: block.blockKey,
+            blockPath: block.blockPath,
+            sortOrder: block.sortOrder,
+            kind: block.kind,
+            selectable: block.selectable,
+            attrs: block.attrs ?? Prisma.JsonNull,
+            text: block.text,
+          })),
+        },
+        highlightMatches: {
+          create: highlightMatches.map((match) => ({
+            blockKey: match.blockKey,
+            startOffset: match.startOffset,
+            endOffset: match.endOffset,
+            term: match.term,
+          })),
+        },
+        share: {
+          create: {
+            token: shareToken,
+            isActive: true,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await seedAnnotationForQuote({
+      documentId: document.id,
+      note: "Owner note for PDF viewer.",
+      ownerId: ownerIdentity.userId,
+      quote: "ability",
+    });
+
+    await ownerContext.addCookies([
+      buildSessionCookie({
+        baseURL,
+        sessionToken: ownerSessionToken,
+      }),
+    ]);
+
+    const ownerPage = await ownerContext.newPage();
+    await ownerPage.goto(`/documents/${document.id}`);
+    await expect(ownerPage.locator("[data-pdf-page-number='1']")).toBeVisible();
+    await expect(ownerPage.locator("[data-pdf-page-number='1']")).toContainText(
+      "ability and benefit improve culture.",
+    );
+    await expect(
+      ownerPage.locator("[data-overlay-tone='highlight']"),
+    ).toHaveCount(1);
+
+    await viewerContext.addCookies([
+      buildSessionCookie({
+        baseURL,
+        sessionToken: viewerSessionToken,
+      }),
+    ]);
+
+    const viewerPage = await viewerContext.newPage();
+    await viewerPage.goto(
+      new URL(`/shared/${shareToken}`, baseURL ?? "http://127.0.0.1:3000").toString(),
+    );
+
+    await expect(viewerPage.getByText("This is a read-only shared document.")).toBeVisible();
+    await expect(viewerPage.locator("[data-pdf-page-number='1']")).toBeVisible();
+    await expect(viewerPage.locator("[data-pdf-page-number='1']")).toContainText(
+      "ability and benefit improve culture.",
+    );
+    await expect(
+      viewerPage.locator("[data-annotation-id]").first(),
+    ).toBeVisible();
+    await expect(viewerPage.getByText("Owner note for PDF viewer.")).toBeVisible();
+  } finally {
+    await ownerContext?.close();
+    await viewerContext?.close();
+    await prisma.session.deleteMany({
+      where: {
+        sessionToken: {
+          in: [ownerSessionToken, viewerSessionToken],
+        },
+      },
+    });
+    await prisma.user.deleteMany({
+      where: {
+        id: {
+          in: [ownerIdentity?.userId, viewerIdentity?.userId].filter(
+            (value): value is string => Boolean(value),
+          ),
+        },
+      },
+    });
+  }
+});
+
 test("owner and shared viewer render semantic markdown from a seeded document", async ({
   browser,
   baseURL,
@@ -241,7 +396,10 @@ test("owner and shared viewer render semantic markdown from a seeded document", 
         ownerId: ownerIdentity.userId,
         title: "semantic-study-notes",
         originalName: "semantic-study-notes.md",
+        plainText: blocks.map((block) => block.text).join("\n\n"),
         rawMarkdown,
+        sourceByteSize: Buffer.byteLength(rawMarkdown, "utf8"),
+        sourceFormat: "MARKDOWN",
         blocks: {
           create: blocks.map((block) => ({
             blockKey: block.blockKey,
@@ -249,7 +407,7 @@ test("owner and shared viewer render semantic markdown from a seeded document", 
             sortOrder: block.sortOrder,
             kind: block.kind,
             selectable: block.selectable,
-            attrs: block.attrs,
+            attrs: block.attrs ?? Prisma.JsonNull,
             text: block.text,
           })),
         },
@@ -296,7 +454,6 @@ test("owner and shared viewer render semantic markdown from a seeded document", 
     const ownerPage = await ownerContext.newPage();
     await ownerPage.goto(`/documents/${document.id}`);
 
-    await expect(ownerPage.getByText("semantic-study-notes.md")).toBeVisible();
     await expect(ownerPage.getByRole("heading", { level: 1, name: "Study Notes" })).toBeVisible();
     await expect(ownerPage.locator("strong", { hasText: "ability" })).toBeVisible();
     await expect(ownerPage.getByRole("link", { name: "benefit" })).toBeVisible();

@@ -65,7 +65,11 @@ model Document {
   ownerId          String
   title            String
   originalName     String
-  rawMarkdown      String             @db.Text
+  sourceFormat     DocumentSourceFormat @default(MARKDOWN)
+  rawMarkdown      String?            @db.Text
+  plainText        String             @default("") @db.Text
+  sourceByteSize   Int                @default(0)
+  pdfData          Bytes?
   renderProjectionVersion Int         @default(2)
   trashedAt        DateTime?
   createdAt        DateTime           @default(now())
@@ -195,6 +199,7 @@ model Annotation {
   note          String   @db.Text
   tags          String[] @default([])
   color         String   @default("yellow")
+  anchorData    Json?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   document      Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
@@ -211,4 +216,9 @@ model DocumentShare {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+enum DocumentSourceFormat {
+  MARKDOWN
+  PDF
 }
