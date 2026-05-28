@@ -15,10 +15,12 @@ export type AutoSubmitSelectOption = {
 
 export function AutoSubmitSelectField({
   name,
+  onValueChange,
   options,
   value,
 }: {
-  name: string;
+  name?: string;
+  onValueChange?: (value: string) => void;
   options: AutoSubmitSelectOption[];
   value: string;
 }) {
@@ -26,8 +28,10 @@ export function AutoSubmitSelectField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value);
+  const isControlled = typeof onValueChange === "function";
+  const currentValue = isControlled ? value : selectedValue;
   const selectedOption =
-    options.find((option) => option.value === selectedValue) ?? options[0] ?? null;
+    options.find((option) => option.value === currentValue) ?? options[0] ?? null;
 
   useEffect(() => {
     if (!isOpen) {
@@ -57,7 +61,7 @@ export function AutoSubmitSelectField({
 
   return (
     <div className="relative min-w-[176px]" ref={rootRef}>
-      <input name={name} ref={inputRef} type="hidden" value={selectedValue} />
+      {name ? <input name={name} ref={inputRef} type="hidden" value={currentValue} /> : null}
       <button
         aria-expanded={isOpen}
         className="flex h-11 w-full items-center justify-between rounded-[14px] border border-[#E3E8F1] bg-white px-4 text-[14px] font-medium text-[#475569] outline-none transition hover:bg-[#F8FAFC] focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
@@ -78,7 +82,7 @@ export function AutoSubmitSelectField({
           role="listbox"
         >
           {options.map((option) => {
-            const isSelected = option.value === selectedValue;
+            const isSelected = option.value === currentValue;
 
             return (
               <button
@@ -93,8 +97,14 @@ export function AutoSubmitSelectField({
                   if (inputRef.current) {
                     inputRef.current.value = option.value;
                   }
-                  setSelectedValue(option.value);
                   setIsOpen(false);
+
+                  if (isControlled) {
+                    onValueChange(option.value);
+                    return;
+                  }
+
+                  setSelectedValue(option.value);
                   rootRef.current?.closest("form")?.requestSubmit();
                 }}
                 role="option"

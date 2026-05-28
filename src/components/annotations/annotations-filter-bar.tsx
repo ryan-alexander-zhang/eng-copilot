@@ -3,6 +3,10 @@
 import { List, Search } from "lucide-react";
 import { useDeferredValue, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  AutoSubmitSelectField,
+  type AutoSubmitSelectOption,
+} from "@/components/vocabulary/auto-submit-select-field";
 
 type FilterOption = {
   label: string;
@@ -35,15 +39,37 @@ export function AnnotationsFilterBar({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const currentQueryString = searchParams.toString();
   const [query, setQuery] = useState(q);
   const deferredQuery = useDeferredValue(query);
 
   useEffect(() => {
-    updateParams("q", deferredQuery.trim());
-  }, [deferredQuery]);
+    const nextParams = new URLSearchParams(currentQueryString);
+    const value = deferredQuery.trim();
+
+    if (!value) {
+      nextParams.delete("q");
+    } else {
+      nextParams.set("q", value);
+    }
+
+    nextParams.delete("page");
+    const queryString = nextParams.toString();
+    const nextHref = queryString.length > 0 ? `${pathname}?${queryString}` : pathname;
+    const currentHref =
+      currentQueryString.length > 0 ? `${pathname}?${currentQueryString}` : pathname;
+
+    if (nextHref === currentHref) {
+      return;
+    }
+
+    router.replace(nextHref, {
+      scroll: false,
+    });
+  }, [currentQueryString, deferredQuery, pathname, router]);
 
   function updateParams(key: string, value: string) {
-    const nextParams = new URLSearchParams(searchParams.toString());
+    const nextParams = new URLSearchParams(currentQueryString);
 
     if (!value || value === "all" || (key === "sort" && value === "newest")) {
       nextParams.delete(key);
@@ -53,8 +79,15 @@ export function AnnotationsFilterBar({
 
     nextParams.delete("page");
     const queryString = nextParams.toString();
+    const nextHref = queryString.length > 0 ? `${pathname}?${queryString}` : pathname;
+    const currentHref =
+      currentQueryString.length > 0 ? `${pathname}?${currentQueryString}` : pathname;
 
-    router.replace(queryString.length > 0 ? `${pathname}?${queryString}` : pathname, {
+    if (nextHref === currentHref) {
+      return;
+    }
+
+    router.replace(nextHref, {
       scroll: false,
     });
   }
@@ -73,32 +106,34 @@ export function AnnotationsFilterBar({
           />
         </div>
 
-        <FilterSelect
-          onChange={(value) => updateParams("document", value)}
+        <AutoSubmitSelectField
+          onValueChange={(value) => updateParams("document", value)}
           options={[{ label: "All documents", value: "all" }, ...documents]}
           value={document}
         />
-        <FilterSelect
-          onChange={(value) => updateParams("wordList", value)}
+        <AutoSubmitSelectField
+          onValueChange={(value) => updateParams("wordList", value)}
           options={[{ label: "All word lists", value: "all" }, ...wordLists]}
           value={wordList}
         />
-        <FilterSelect
-          onChange={(value) => updateParams("type", value)}
+        <AutoSubmitSelectField
+          onValueChange={(value) => updateParams("type", value)}
           options={[{ label: "All types", value: "all" }, ...types]}
           value={type}
         />
-        <FilterSelect
-          dotColor={colors.find((option) => option.value === color)?.value !== "all" ? colors.find((option) => option.value === color)?.value : "#FFCF64"}
-          onChange={(value) => updateParams("color", value)}
-          options={colors}
+        <AutoSubmitSelectField
+          onValueChange={(value) => updateParams("color", value)}
+          options={colors.map((option) => ({
+            label: renderOptionLabel(option),
+            value: option.value,
+          }))}
           value={color}
         />
       </div>
 
       <div className="flex items-center gap-3">
-        <FilterSelect
-          onChange={(value) => updateParams("sort", value)}
+        <AutoSubmitSelectField
+          onValueChange={(value) => updateParams("sort", value)}
           options={[
             { label: "Newest first", value: "newest" },
             { label: "Oldest first", value: "oldest" },
@@ -116,41 +151,18 @@ export function AnnotationsFilterBar({
   );
 }
 
-function FilterSelect({
-  dotColor,
-  onChange,
-  options,
-  value,
-}: {
-  dotColor?: string;
-  onChange: (value: string) => void;
-  options: FilterOption[];
-  value: string;
-}) {
+function renderOptionLabel(option: FilterOption): AutoSubmitSelectOption["label"] {
+  if (option.value === "all") {
+    return option.label;
+  }
+
   return (
-    <div className="relative min-w-[176px]">
-      {dotColor ? (
-        <span
-          className="pointer-events-none absolute left-4 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full"
-          style={{ backgroundColor: dotColor }}
-        />
-      ) : null}
-      <select
-        className={`h-11 w-full appearance-none rounded-[12px] border border-[#E5E7EB] bg-white pr-10 text-[14px] font-medium text-[#374151] outline-none ${
-          dotColor ? "pl-10" : "pl-4"
-        }`}
-        onChange={(event) => onChange(event.target.value)}
-        value={value}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]">
-        ˅
-      </span>
-    </div>
+    <span className="inline-flex items-center gap-2">
+      <span
+        className="h-3 w-3 rounded-full"
+        style={{ backgroundColor: option.value }}
+      />
+      <span>{option.label}</span>
+    </span>
   );
 }

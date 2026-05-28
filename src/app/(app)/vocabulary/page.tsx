@@ -16,6 +16,7 @@ import {
   AutoSubmitSelectField,
   type AutoSubmitSelectOption,
 } from "@/components/vocabulary/auto-submit-select-field";
+import { InlinePopover } from "@/components/vocabulary/inline-popover";
 import { VocabularyCopyButton } from "@/components/vocabulary/vocabulary-copy-button";
 import { VocabularyDisclosure } from "@/components/vocabulary/vocabulary-disclosure";
 import { getRequiredSession } from "@/lib/auth";
@@ -288,14 +289,14 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
             </form>
 
             <div className="flex flex-wrap items-center gap-3">
-              <VocabularyDisclosure
-                className="relative"
+              <InlinePopover
+                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
                 trigger="Add word"
                 triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] bg-[#3B82F6] px-5 text-[14px] font-semibold text-white shadow-[0_10px_24px_rgba(59,130,246,0.28)] transition hover:bg-[#2563EB]"
               >
                 <form
                   action={addVocabularyWordAction}
-                  className="absolute right-0 z-30 mt-3 grid w-[340px] gap-3 rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                  className="grid gap-3"
                 >
                   <input
                     className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
@@ -331,24 +332,27 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                     Save word
                   </button>
                 </form>
-              </VocabularyDisclosure>
+              </InlinePopover>
 
-              <VocabularyDisclosure
-                className="relative"
+              <InlinePopover
+                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[360px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
                 trigger="Import"
                 triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"
               >
                 <form
                   action={importVocabularyAction}
-                  className="absolute right-0 z-30 mt-3 grid w-[320px] gap-3 rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                  className="grid gap-3"
                 >
+                  <p className="text-[13px] leading-6 text-[#64748B]">
+                    Upload a vocabulary JSON export to merge its words into your library.
+                  </p>
                   <input
                     aria-label="Vocabulary JSON file"
-                    className="text-[13px] text-[#64748B]"
-                    name="vocabularyFile"
-                    type="file"
                     accept="application/json,.json"
+                    className="block w-full rounded-[12px] border border-[#E3E8F1] bg-[#F8FAFC] px-3 py-2 text-[13px] text-[#475569] file:mr-3 file:rounded-[10px] file:border-0 file:bg-[#EEF4FF] file:px-3 file:py-2 file:text-[13px] file:font-medium file:text-[#2563EB] hover:file:bg-[#E5EEFF]"
+                    name="vocabularyFile"
                     required
+                    type="file"
                   />
                   <button
                     className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
@@ -357,7 +361,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                     Import JSON
                   </button>
                 </form>
-              </VocabularyDisclosure>
+              </InlinePopover>
 
               <Link
                 className="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"

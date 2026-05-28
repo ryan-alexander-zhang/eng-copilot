@@ -57,4 +57,15 @@ describe("SharedAnnotationsFilterBar", () => {
       );
     });
   });
+
+  it("updates the route when the sort changes", () => {
+    render(<SharedAnnotationsFilterBar {...props} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Newest first" }));
+    fireEvent.click(screen.getByRole("option", { name: "Oldest first" }));
+
+    expect(replaceMock).toHaveBeenCalledWith("/shared/share-token/annotations?sort=oldest", {
+      scroll: false,
+    });
+  });
 });
