@@ -378,6 +378,54 @@ describe("DocumentReader", () => {
         }),
       });
     });
+
+    expect(screen.getByRole("status")).toHaveTextContent('Added "bcd" to vocabulary.');
+  });
+
+  it("shows a toast when adding the selected text to vocabulary fails", async () => {
+    const fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: vi.fn().mockResolvedValue({
+        error: "Unauthorized",
+      }),
+    });
+    vi.stubGlobal("fetch", fetch);
+    const rawMarkdown = "abcdef";
+    const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
+
+    if (!paragraphBlock) {
+      throw new Error("Missing paragraph block fixture");
+    }
+
+    render(
+      <DocumentReader
+        annotations={[]}
+        blocks={[paragraphBlock]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        rawMarkdown={rawMarkdown}
+        searchMatches={[]}
+      />,
+    );
+
+    const textSpan = screen.getByText("abcdef");
+    const textNode = textSpan.firstChild;
+    const range = document.createRange();
+
+    range.setStart(textNode as Node, 1);
+    range.setEnd(textNode as Node, 4);
+
+    vi.spyOn(window, "getSelection").mockReturnValue({
+      rangeCount: 1,
+      isCollapsed: false,
+      getRangeAt: () => range,
+      toString: () => "bcd",
+    } as unknown as Selection);
+
+    fireEvent.contextMenu(textSpan);
+    fireEvent.click(screen.getByRole("button", { name: "Add to vocabulary" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Unauthorized");
   });
 
   it("opens a raw markdown dialog from the reader footer", () => {

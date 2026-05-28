@@ -60,6 +60,11 @@ type ContextMenuState = {
   y: number;
 };
 
+type ToastState = {
+  kind: "success" | "error";
+  message: string;
+};
+
 export function buildAnnotationSegments(input: {
   blocks: Array<Pick<ReaderBlock, "blockKey" | "text">>;
   annotations: ReaderAnnotation[];
@@ -165,6 +170,7 @@ export function DocumentReader({
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [dialogDraft, setDialogDraft] = useState<AnnotationDraft | null>(null);
   const [isRawMarkdownOpen, setIsRawMarkdownOpen] = useState(false);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const annotationSegments = buildAnnotationSegments({ blocks, annotations });
   const highlightMatchesByBlock = groupByBlock(highlightMatches);
   const searchMatchesByBlock = groupByBlock(searchMatches);
@@ -219,6 +225,20 @@ export function DocumentReader({
       window.removeEventListener("scroll", handleWindowInteraction, true);
     };
   }, [contextMenu, dialogDraft, isRawMarkdownOpen]);
+
+  useEffect(() => {
+    if (!toast) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToast(null);
+    }, 2800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [toast]);
 
   function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
     if (!createAction && !onCreateDraft) {
@@ -311,7 +331,24 @@ export function DocumentReader({
           <SelectionContextMenu
             key="selection-menu"
             onAddToVocabulary={() => {
-              void addToVocabulary(contextMenu.draft.quote).catch(() => undefined);
+              const selectedQuote = contextMenu.draft.quote;
+
+              void addToVocabulary(selectedQuote)
+                .then(() => {
+                  setToast({
+                    kind: "success",
+                    message: `Added "${truncateText(selectedQuote, 36)}" to vocabulary.`,
+                  });
+                })
+                .catch((error) => {
+                  setToast({
+                    kind: "error",
+                    message:
+                      error instanceof Error && error.message.length > 0
+                        ? error.message
+                        : `Couldn't add "${truncateText(selectedQuote, 36)}" to vocabulary.`,
+                  });
+                });
               setContextMenu(null);
             }}
             onClose={() => setContextMenu(null)}
@@ -363,6 +400,10 @@ export function DocumentReader({
             onClose={() => setIsRawMarkdownOpen(false)}
           />
         ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {toast ? <ToastNotice key="reader-toast" kind={toast.kind} message={toast.message} /> : null}
       </AnimatePresence>
     </section>
   );
@@ -440,6 +481,31 @@ function SelectionContextMenu({
         </button>
       </motion.div>
     </>
+  );
+}
+
+function ToastNotice({
+  kind,
+  message,
+}: {
+  kind: "success" | "error";
+  message: string;
+}) {
+  return (
+    <motion.div
+      animate={{ opacity: 1, y: 0 }}
+      aria-live={kind === "error" ? "assertive" : "polite"}
+      className="pointer-events-none fixed right-6 top-6 z-70 max-w-sm rounded-[16px] border px-4 py-3 shadow-[0_20px_40px_rgba(15,23,42,0.16)]"
+      initial={{ opacity: 0, y: -10 }}
+      role={kind === "error" ? "alert" : "status"}
+      style={{
+        backgroundColor: kind === "error" ? "#FEF2F2" : "#ECFDF3",
+        borderColor: kind === "error" ? "#FECACA" : "#A7F3D0",
+        color: kind === "error" ? "#B42318" : "#027A48",
+      }}
+    >
+      <p className="text-[14px] font-medium leading-6">{message}</p>
+    </motion.div>
   );
 }
 
@@ -604,7 +670,7 @@ async function copyText(value: string) {
 }
 
 async function addToVocabulary(word: string) {
-  await fetch("/api/vocabulary", {
+  const response = await fetch("/api/vocabulary", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -613,6 +679,24 @@ async function addToVocabulary(word: string) {
       word,
     }),
   });
+
+  if (response.ok) {
+    return;
+  }
+
+  let errorMessage = `Couldn't add "${truncateText(word, 36)}" to vocabulary.`;
+
+  try {
+    const payload = (await response.json()) as { error?: unknown };
+
+    if (typeof payload.error === "string" && payload.error.trim().length > 0) {
+      errorMessage = payload.error;
+    }
+  } catch {
+    // Keep the fallback message when the API does not return JSON.
+  }
+
+  throw new Error(errorMessage);
 }
 
 function resolveSelectionPoint(node: Node, offset: number): SelectionPoint | null {
