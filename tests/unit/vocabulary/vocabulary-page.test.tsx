@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import VocabularyPage from "@/app/(app)/vocabulary/page";
 import { prisma } from "@/lib/db";
@@ -155,5 +155,22 @@ describe("VocabularyPage", () => {
       "border-[#E8EBF0]",
       "shadow-[0_12px_36px_rgba(15,23,42,0.06)]",
     );
+  });
+
+  it("auto-submits the filter form when sort changes", async () => {
+    let submittedSort: FormDataEntryValue | null = null;
+    const requestSubmit = vi
+      .spyOn(HTMLFormElement.prototype, "requestSubmit")
+      .mockImplementation(function (this: HTMLFormElement) {
+        submittedSort = new FormData(this).get("sort");
+      });
+
+    render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Newest first" }));
+    fireEvent.click(screen.getByRole("option", { name: "Oldest first" }));
+
+    expect(requestSubmit).toHaveBeenCalledTimes(1);
+    expect(submittedSort).toBe("oldest");
   });
 });

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { WordListKind } from "@prisma/client";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Ellipsis,
@@ -13,6 +12,10 @@ import {
   Search,
 } from "lucide-react";
 import { OwnerTopBar } from "@/components/layout/owner-top-bar";
+import {
+  AutoSubmitSelectField,
+  type AutoSubmitSelectOption,
+} from "@/components/vocabulary/auto-submit-select-field";
 import { VocabularyCopyButton } from "@/components/vocabulary/vocabulary-copy-button";
 import { VocabularyDisclosure } from "@/components/vocabulary/vocabulary-disclosure";
 import { getRequiredSession } from "@/lib/auth";
@@ -92,6 +95,26 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
   const selectedSort = resolvedSearchParams.sort ?? "newest";
   const requestedPage = getPositiveInt(resolvedSearchParams.page);
   const sourceOptions = [...new Set(entries.map((entry) => entry.source))].sort();
+  const wordListOptions: AutoSubmitSelectOption[] = [
+    { label: "All word lists", value: "all" },
+    { label: "Not in a word list", value: "none" },
+    ...wordLists.map((wordList) => ({
+      label: wordList.name,
+      value: wordList.slug,
+    })),
+  ];
+  const sourceFilterOptions: AutoSubmitSelectOption[] = [
+    { label: "All sources", value: "all" },
+    ...sourceOptions.map((source) => ({
+      label: source,
+      value: source,
+    })),
+  ];
+  const sortOptions: AutoSubmitSelectOption[] = [
+    { label: "Newest first", value: "newest" },
+    { label: "Oldest first", value: "oldest" },
+    { label: "Word A-Z", value: "word" },
+  ];
   const filteredEntries = entries
     .filter((entry) => query.length === 0 || entry.word.includes(query) || entry.note.toLowerCase().includes(query))
     .filter((entry) => {
@@ -239,31 +262,27 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                 />
               </div>
 
-              <SelectField name="wordList" value={selectedWordListSlug}>
-                <option value="all">All word lists</option>
-                <option value="none">Not in a word list</option>
-                {wordLists.map((wordList) => (
-                  <option key={wordList.id} value={wordList.slug}>
-                    {wordList.name}
-                  </option>
-                ))}
-              </SelectField>
+              <AutoSubmitSelectField
+                key={`wordList:${selectedWordListSlug}`}
+                name="wordList"
+                options={wordListOptions}
+                value={selectedWordListSlug}
+              />
 
-              <SelectField name="source" value={selectedSource}>
-                <option value="all">All sources</option>
-                {sourceOptions.map((source) => (
-                  <option key={source} value={source}>
-                    {source}
-                  </option>
-                ))}
-              </SelectField>
+              <AutoSubmitSelectField
+                key={`source:${selectedSource}`}
+                name="source"
+                options={sourceFilterOptions}
+                value={selectedSource}
+              />
 
               <div className="lg:ml-auto">
-                <SelectField name="sort" value={selectedSort}>
-                  <option value="newest">Newest first</option>
-                  <option value="oldest">Oldest first</option>
-                  <option value="word">Word A-Z</option>
-                </SelectField>
+                <AutoSubmitSelectField
+                  key={`sort:${selectedSort}`}
+                  name="sort"
+                  options={sortOptions}
+                  value={selectedSort}
+                />
               </div>
               <button aria-label="Submit vocabulary filters" className="sr-only" type="submit" />
             </form>
@@ -657,33 +676,6 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
         </section>
       </div>
     </main>
-  );
-}
-
-function SelectField({
-  children,
-  name,
-  value,
-}: {
-  children: ReactNode;
-  name: string;
-  value: string;
-}) {
-  return (
-    <div className="relative">
-      <select
-        className="h-11 min-w-[156px] appearance-none rounded-[14px] border border-[#E3E8F1] bg-white pl-4 pr-10 text-[14px] font-medium text-[#475569] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
-        defaultValue={value}
-        name={name}
-      >
-        {children}
-      </select>
-      <ChevronDown
-        aria-hidden="true"
-        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94A3B8]"
-        strokeWidth={2}
-      />
-    </div>
   );
 }
 
