@@ -98,7 +98,7 @@ describe("DocumentWorkspace", () => {
     expect(screen.getByText("2 / 2")).toBeInTheDocument();
   });
 
-  it("switches the right sidebar into edit mode after selecting an annotation", () => {
+  it("opens the annotation editor as a dialog without replacing the right sidebar", () => {
     const rawMarkdown = "Learning is valuable.";
     const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
 
@@ -156,13 +156,15 @@ describe("DocumentWorkspace", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /This quote emphasizes/i }));
 
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Edit annotation")).toBeInTheDocument();
     expect(screen.getByText("Tip")).toBeInTheDocument();
-    expect(screen.queryByText("Matched Words")).not.toBeInTheDocument();
-    expect(screen.queryByText("Word Lists")).not.toBeInTheDocument();
+    expect(screen.getByText("Matched Words")).toBeInTheDocument();
+    expect(screen.getByText("Word Lists")).toBeInTheDocument();
+    expect(screen.queryByText("All annotations")).not.toBeInTheDocument();
   });
 
-  it("can open directly in edit mode from an initial annotation id", () => {
+  it("can open directly in the annotation editor dialog from an initial annotation id", () => {
     const rawMarkdown = "Learning is valuable.";
     const [paragraphBlock] = parseMarkdownToBlocks(rawMarkdown);
 
@@ -210,6 +212,7 @@ describe("DocumentWorkspace", () => {
       />,
     );
 
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Edit annotation")).toBeInTheDocument();
     expect(screen.getByText("Tip")).toBeInTheDocument();
   });
@@ -344,9 +347,47 @@ describe("DocumentWorkspace", () => {
     expect(updateAction.mock.calls[0]?.[0]).toBeInstanceOf(FormData);
     expect(updateAction.mock.calls[0]?.[0].get("note")).toBe("Focus **term**");
   });
+
+  it("shows a saved toast and closes the editor after saving an annotation", async () => {
+    const updateAction = vi.fn().mockResolvedValue(undefined);
+
+    renderWorkspaceInEditMode({
+      updateAction,
+    });
+
+    fireEvent.submit(screen.getByRole("button", { name: "Save annotation" }).closest("form")!);
+
+    await waitFor(() => {
+      expect(updateAction).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("status")).toHaveTextContent("Annotation saved.");
+  });
+
+  it("requires confirmation before deleting an annotation", async () => {
+    const deleteAction = vi.fn().mockResolvedValue(undefined);
+    const confirmMock = vi.spyOn(window, "confirm").mockReturnValue(false);
+
+    renderWorkspaceInEditMode({
+      deleteAction,
+    });
+
+    fireEvent.submit(screen.getByRole("button", { name: "Delete annotation" }).closest("form")!);
+
+    expect(confirmMock).toHaveBeenCalledWith(
+      "Delete this annotation? This action cannot be undone.",
+    );
+    expect(deleteAction).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
 });
 
 function renderWorkspaceInEditMode(input?: {
+  deleteAction?: (formData: FormData) => Promise<void>;
   note?: string;
   updateAction?: (formData: FormData) => Promise<void>;
 }) {
@@ -377,7 +418,7 @@ function renderWorkspaceInEditMode(input?: {
       annotationIndexHref="/annotations?document=doc_1"
       blocks={[paragraphBlock]}
       createAction={vi.fn().mockResolvedValue(undefined)}
-      deleteAction={vi.fn().mockResolvedValue(undefined)}
+      deleteAction={input?.deleteAction ?? vi.fn().mockResolvedValue(undefined)}
       documentId="doc_1"
       enableShareAction={vi.fn().mockResolvedValue(undefined)}
       highlightMatches={[]}

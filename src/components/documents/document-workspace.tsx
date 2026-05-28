@@ -100,7 +100,14 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
   } = props;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearchMatchIndex, setActiveSearchMatchIndex] = useState(0);
-  const [isTipDismissed, setIsTipDismissed] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isTipDismissed, setIsTipDismissed] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.sessionStorage.getItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY) === "1";
+  });
   const searchResult = buildReaderSearchMatches({
     blocks,
     query: searchQuery,
@@ -133,13 +140,20 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
       ? annotations.find((annotation) => annotation.id === editorState.annotationId) ?? null
       : null;
   const selectedAnnotationId = selectedAnnotation?.id ?? null;
-  const isAnnotationEditorOpen = editorState !== null;
 
   useEffect(() => {
-    setIsTipDismissed(
-      window.sessionStorage.getItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY) === "1",
-    );
-  }, []);
+    if (!toastMessage) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToastMessage(null);
+    }, 2800);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [toastMessage]);
 
   return (
     <section className="flex min-w-0 flex-1">
@@ -278,54 +292,18 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
           draft={editorState.mode === "create" ? editorState.draft : undefined}
           mode={editorState.mode}
           onClose={() => setEditorState(null)}
+          onDeleteSuccess={() => setEditorState(null)}
+          onSaveSuccess={() => {
+            setEditorState(null);
+            setToastMessage("Annotation saved.");
+          }}
           updateAction={updateAction}
         />
       ) : null}
 
       <aside className="w-full max-w-[292px] border-l border-[#E8EBF0] bg-white px-5 py-5">
-        {isAnnotationEditorOpen ? (
-          <>
-            <AnnotationPanel
-              annotations={annotations}
-              onSelectAnnotation={(annotationId) => {
-                setEditorState({
-                  annotationId,
-                  mode: "edit",
-                });
-              }}
-              selectedAnnotationId={selectedAnnotationId}
-              variant="detailed"
-              viewAllHref={annotationIndexHref}
-            />
-            {!isTipDismissed ? (
-              <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
-                <div className="flex items-start gap-3">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8E7] text-[#B7791F]">
-                    <Lightbulb className="h-5 w-5" strokeWidth={2} />
-                  </span>
-                  <div>
-                    <h2 className="text-[16px] font-semibold text-[#111827]">Tip</h2>
-                    <p className="mt-3 text-[14px] leading-7 text-[#4B5563]">
-                      Right-click any text to add an annotation quickly.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  className="mt-5 inline-flex w-full justify-end text-[14px] font-medium text-[#3B82F6]"
-                  onClick={() => {
-                    window.sessionStorage.setItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY, "1");
-                    setIsTipDismissed(true);
-                  }}
-                  type="button"
-                >
-                  Dismiss
-                </button>
-              </section>
-            ) : null}
-          </>
-        ) : (
-          <>
-            <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+        <>
+          <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
               <h2 className="text-[16px] font-semibold text-[#111827]">Word Lists</h2>
               <p className="mt-3 text-[13px] leading-6 text-[#6B7280]">
                 Highlight words from your selected lists.
@@ -421,9 +399,52 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
                 viewAllHref={annotationIndexHref}
               />
             </div>
-          </>
-        )}
+
+          {!isTipDismissed ? (
+            <section className="mt-5 rounded-[18px] border border-[#E8EBF0] bg-white p-5">
+              <div className="flex items-start gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF8E7] text-[#B7791F]">
+                  <Lightbulb className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <div>
+                  <h2 className="text-[16px] font-semibold text-[#111827]">Tip</h2>
+                  <p className="mt-3 text-[14px] leading-7 text-[#4B5563]">
+                    Right-click any text to add an annotation quickly.
+                  </p>
+                </div>
+              </div>
+              <button
+                className="mt-5 inline-flex w-full justify-end text-[14px] font-medium text-[#3B82F6]"
+                onClick={() => {
+                  window.sessionStorage.setItem(DOCUMENT_WORKSPACE_TIP_DISMISSED_KEY, "1");
+                  setIsTipDismissed(true);
+                }}
+                type="button"
+              >
+                Dismiss
+              </button>
+            </section>
+          ) : null}
+        </>
       </aside>
+
+      {toastMessage ? <WorkspaceToast message={toastMessage} /> : null}
     </section>
+  );
+}
+
+function WorkspaceToast({
+  message,
+}: {
+  message: string;
+}) {
+  return (
+    <div
+      aria-live="polite"
+      className="pointer-events-none fixed right-6 top-6 z-70 max-w-sm rounded-[16px] border border-[#A7F3D0] bg-[#ECFDF3] px-4 py-3 text-[#027A48] shadow-[0_20px_40px_rgba(15,23,42,0.16)]"
+      role="status"
+    >
+      <p className="text-[14px] font-medium leading-6">{message}</p>
+    </div>
   );
 }

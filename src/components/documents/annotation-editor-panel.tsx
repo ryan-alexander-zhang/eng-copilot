@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ANNOTATION_COLORS,
   normalizeAnnotationColor,
@@ -32,6 +32,8 @@ export function AnnotationEditorPanel({
   draft,
   mode,
   onClose,
+  onDeleteSuccess,
+  onSaveSuccess,
   updateAction,
 }: {
   annotation?: EditableAnnotation;
@@ -40,33 +42,66 @@ export function AnnotationEditorPanel({
   draft?: AnnotationDraft;
   mode: "create" | "edit";
   onClose: () => void;
+  onDeleteSuccess?: () => void;
+  onSaveSuccess?: () => void;
   updateAction?: (formData: FormData) => Promise<void>;
 }) {
   const title = mode === "create" ? "New annotation" : "Edit annotation";
   const quote = draft?.quote ?? annotation?.quote ?? "";
   const formKey = `${mode}:${annotation?.id ?? quote}`;
 
-  return (
-    <aside className="w-full max-w-[320px] border-l border-[#E8EBF0] bg-white px-5 py-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-[16px] font-semibold text-[#111827]">{title}</h2>
-        <button className="text-[#9CA3AF]" onClick={onClose} type="button">
-          <X className="h-4 w-4" strokeWidth={2.2} />
-        </button>
-      </div>
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
 
-      <EditorPanelForm
-        annotation={annotation}
-        createAction={createAction}
-        deleteAction={deleteAction}
-        draft={draft}
-        formKey={formKey}
-        mode={mode}
-        onClose={onClose}
-        quote={quote}
-        updateAction={updateAction}
-      />
-    </aside>
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-60 flex items-center justify-center bg-[#111827]/28 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        aria-modal="true"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-[760px] overflow-y-auto rounded-[24px] border border-[#E8EBF0] bg-white p-6 shadow-[0_24px_48px_rgba(15,23,42,0.16)]"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <div className="flex items-center justify-between gap-4 border-b border-[#EEF2F6] pb-5">
+          <h2 className="text-[18px] font-semibold text-[#111827]">{title}</h2>
+          <button
+            aria-label="Close annotation editor"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280]"
+            onClick={onClose}
+            type="button"
+          >
+            <X className="h-4 w-4" strokeWidth={2.2} />
+          </button>
+        </div>
+
+        <EditorPanelForm
+          annotation={annotation}
+          createAction={createAction}
+          deleteAction={deleteAction}
+          draft={draft}
+          formKey={formKey}
+          mode={mode}
+          onClose={onClose}
+          onDeleteSuccess={onDeleteSuccess}
+          onSaveSuccess={onSaveSuccess}
+          quote={quote}
+          updateAction={updateAction}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -78,6 +113,8 @@ function EditorPanelForm({
   formKey,
   mode,
   onClose,
+  onDeleteSuccess,
+  onSaveSuccess,
   quote,
   updateAction,
 }: {
@@ -88,21 +125,16 @@ function EditorPanelForm({
   formKey: string;
   mode: "create" | "edit";
   onClose: () => void;
+  onDeleteSuccess?: () => void;
+  onSaveSuccess?: () => void;
   quote: string;
   updateAction?: (formData: FormData) => Promise<void>;
 }) {
   const initialColor = normalizeAnnotationColor(annotation?.color);
-  const initialTags = useMemo(() => annotation?.tags ?? [], [annotation?.tags]);
   const [color, setColor] = useState(initialColor);
   const [pendingTag, setPendingTag] = useState("");
-  const [tags, setTags] = useState(initialTags);
+  const [tags, setTags] = useState(annotation?.tags ?? []);
   const noteFieldRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    setColor(initialColor);
-    setPendingTag("");
-    setTags(initialTags);
-  }, [formKey, initialColor, initialTags]);
 
   const action =
     mode === "create" && createAction
@@ -110,8 +142,23 @@ function EditorPanelForm({
       : mode === "edit" && updateAction
         ? updateAction
         : undefined;
+  const saveAction =
+    mode === "edit" && action
+      ? async (formData: FormData) => {
+          await action(formData);
+          onSaveSuccess?.();
+        }
+      : action;
 
-  if (!action) {
+  const confirmDeleteAction =
+    mode === "edit" && annotation && deleteAction
+      ? async (formData: FormData) => {
+          await deleteAction(formData);
+          onDeleteSuccess?.();
+        }
+      : undefined;
+
+  if (!saveAction) {
     return null;
   }
 
@@ -122,7 +169,7 @@ function EditorPanelForm({
         <p className="mt-3 text-[17px] leading-8 text-[#3D2F0A]">{quote}</p>
       </div>
 
-      <form action={action} className="mt-8 space-y-6" key={formKey}>
+      <form action={saveAction} className="mt-8 space-y-6" key={formKey}>
         {draft ? (
           <>
             <input name="startBlockKey" type="hidden" value={draft.startBlockKey} />
@@ -269,8 +316,16 @@ function EditorPanelForm({
         </div>
       </form>
 
-      {mode === "edit" && annotation && deleteAction ? (
-        <form action={deleteAction} className="mt-4 border-t border-[#EEF2F6] pt-4">
+      {mode === "edit" && annotation && confirmDeleteAction ? (
+        <form
+          action={confirmDeleteAction}
+          className="mt-4 border-t border-[#EEF2F6] pt-4"
+          onSubmit={(event) => {
+            if (!window.confirm("Delete this annotation? This action cannot be undone.")) {
+              event.preventDefault();
+            }
+          }}
+        >
           <input name="annotationId" type="hidden" value={annotation.id} />
           <button
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[12px] text-[14px] font-semibold text-[#E14D45]"
