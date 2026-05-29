@@ -252,6 +252,7 @@ export default async function DocumentPage({
             revokeShareAction={revokeShareAction}
             share={document.share}
             initialSelectedAnnotationId={initialSelectedAnnotationId}
+            sourceUrl={document.sourceUrl}
             sourceFormat={document.sourceFormat}
             title={document.title}
             updateAction={updateAnnotationAction}

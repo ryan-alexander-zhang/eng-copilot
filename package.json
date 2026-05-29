@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "build:clipper": "node scripts/build-clipper-extension.mjs",
     "backfill:render-projection-v2": "tsx scripts/backfill-render-projection-v2.ts",
     "backfill:document-source-fields": "tsx scripts/backfill-document-source-fields.ts",
     "db:generate": "prisma generate",
@@ -20,6 +21,8 @@
   "dependencies": {
     "@auth/prisma-adapter": "2.11.2",
     "@prisma/client": "^6.0.0",
+    "defuddle": "^0.18.1",
+    "esbuild": "^0.28.0",
     "framer-motion": "12.38.0",
     "lucide-react": "^0.542.0",
     "mdast-util-from-markdown": "^2.0.3",

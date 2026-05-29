@@ -12,6 +12,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { UserMenu } from "@/components/layout/user-menu";
+import {
+  ClipperTokenSection,
+  type ClipperTokenActionState,
+} from "@/components/settings/clipper-token-section";
 import { DeleteConfirmationForm, PasswordField } from "./settings-form-controls";
 
 export type SettingsTab = "profile" | "security" | "danger-zone";
@@ -25,6 +29,13 @@ type SessionSummary = {
 
 type SettingsPageShellProps = {
   activeTab: SettingsTab;
+  clipperToken: {
+    preview: string | null;
+  };
+  clipperTokenAction: (
+    state: ClipperTokenActionState,
+    formData: FormData,
+  ) => Promise<ClipperTokenActionState>;
   deleteAllDataAction: (formData: FormData) => Promise<void>;
   notice?: {
     message: string;
@@ -71,6 +82,8 @@ const settingsLinks: Array<{
 
 export function SettingsPageShell({
   activeTab,
+  clipperToken,
+  clipperTokenAction,
   deleteAllDataAction,
   notice = null,
   revokeSessionAction,
@@ -168,6 +181,8 @@ export function SettingsPageShell({
             ) : null}
             {activeTab === "security" ? (
               <SecurityPanel
+                clipperToken={clipperToken}
+                clipperTokenAction={clipperTokenAction}
                 revokeSessionAction={revokeSessionAction}
                 sessions={sessions}
                 updatePasswordAction={updatePasswordAction}
@@ -295,10 +310,19 @@ function ProfilePanel({
 }
 
 function SecurityPanel({
+  clipperToken,
+  clipperTokenAction,
   revokeSessionAction,
   sessions,
   updatePasswordAction,
-}: Pick<SettingsPageShellProps, "revokeSessionAction" | "sessions" | "updatePasswordAction">) {
+}: Pick<
+  SettingsPageShellProps,
+  | "clipperToken"
+  | "clipperTokenAction"
+  | "revokeSessionAction"
+  | "sessions"
+  | "updatePasswordAction"
+>) {
   return (
     <div className="space-y-5">
       <div className="px-2">
@@ -348,6 +372,8 @@ function SecurityPanel({
           </button>
         </form>
       </section>
+
+      <ClipperTokenSection action={clipperTokenAction} preview={clipperToken.preview} />
 
       <section className="rounded-[24px] border border-[#E6EAF1] bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
         <p className="text-[28px] font-semibold tracking-[-0.04em] text-[#111827]">

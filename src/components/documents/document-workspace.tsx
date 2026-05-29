@@ -61,6 +61,7 @@ type DocumentWorkspaceProps = {
     isActive: boolean;
     token: string;
   } | null;
+  sourceUrl?: string | null;
   sourceFormat?: ReaderSourceFormat;
   title: string;
   updateAction: (formData: FormData) => Promise<void>;
@@ -91,6 +92,7 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
     readingMinutes,
     revokeShareAction,
     share,
+    sourceUrl,
     sourceFormat = "MARKDOWN",
     title,
     updateAction,
@@ -244,6 +246,18 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
               Share read-only
             </button>
           </form>
+
+          {sourceUrl ? (
+            <Link
+              className="inline-flex h-10 items-center gap-2 rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#374151]"
+              href={sourceUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Link2 className="h-4 w-4" strokeWidth={2} />
+              Open original
+            </Link>
+          ) : null}
 
           <button className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#6B7280]" type="button">
             <MoreHorizontal className="h-4 w-4" strokeWidth={2} />

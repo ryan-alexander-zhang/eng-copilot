@@ -59,6 +59,39 @@ describe("DocumentWorkspace", () => {
     );
   });
 
+  it("shows an Open original link for clipped documents", () => {
+    render(
+      <DocumentWorkspace
+        annotations={[]}
+        annotationIndexHref="/annotations?document=doc_1"
+        blocks={[]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
+        enableShareAction={vi.fn().mockResolvedValue(undefined)}
+        highlightMatches={[]}
+        matchedWordCount={0}
+        matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        rawMarkdown="# Title"
+        readingMinutes={1}
+        revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+        share={null}
+        sourceUrl="https://example.com/article"
+        title="Title"
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        updatedLabel="Today at 10:24 AM"
+        wordCount={1}
+        wordLists={[]}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Open original" })).toHaveAttribute(
+      "href",
+      "https://example.com/article",
+    );
+  });
+
   it("shows search result count and next-result navigation in the workspace", () => {
     const rawMarkdown = "Learning is valuable.\n\nValuable habits compound.";
 

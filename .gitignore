@@ -14,3 +14,4 @@ test-results/
 tsconfig.tsbuildinfo
 next-env.d.ts
 .vercel
+extensions/eng-copilot-clipper/dist/

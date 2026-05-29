@@ -2,7 +2,9 @@ import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getRequiredSession } from "@/lib/auth";
+import { issueClipperToken } from "@/lib/clipper/tokens";
 import { hashPassword, isValidPassword, normalizeUsername, verifyPassword } from "@/lib/passwords";
+import type { ClipperTokenActionState } from "@/components/settings/clipper-token-section";
 import { SettingsPageShell, type SettingsTab } from "@/components/settings/settings-page-shell";
 
 type SettingsPageProps = {
@@ -136,6 +138,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     select: {
       email: true,
       image: true,
+      clipperTokenPreview: true,
       name: true,
       passwordHash: true,
       sessions: {
@@ -256,6 +259,34 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     redirect(buildSettingsHref("security", "message", "session-ended"));
   }
 
+  async function clipperTokenAction(
+    _state: ClipperTokenActionState,
+    formData: FormData,
+  ): Promise<ClipperTokenActionState> {
+    "use server";
+
+    const intent = String(formData.get("intent") ?? "");
+
+    if (intent !== "generate" && intent !== "rotate") {
+      return {
+        error: "Unable to update the Web Clipper token.",
+        preview: user.clipperTokenPreview,
+        token: null,
+      };
+    }
+
+    const result = await issueClipperToken({
+      userId: session.user.id,
+      prisma,
+    });
+
+    return {
+      error: null,
+      preview: result.preview,
+      token: result.token,
+    };
+  }
+
   async function deleteAllDataAction(formData: FormData) {
     "use server";
 
@@ -279,10 +310,14 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const userLabel = user.name ?? user.email;
 
   return (
-    <SettingsPageShell
-      activeTab={activeTab}
-      deleteAllDataAction={deleteAllDataAction}
-      notice={notice}
+      <SettingsPageShell
+        activeTab={activeTab}
+        clipperToken={{
+          preview: user.clipperTokenPreview,
+        }}
+        clipperTokenAction={clipperTokenAction}
+        deleteAllDataAction={deleteAllDataAction}
+        notice={notice}
       revokeSessionAction={revokeSessionAction}
       sessions={user.sessions.map((sessionRecord, index) => ({
         detail: formatSessionDetail(sessionRecord.expires),

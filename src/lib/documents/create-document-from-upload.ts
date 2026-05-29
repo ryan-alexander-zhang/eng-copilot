@@ -1,7 +1,5 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
-import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
-import { getOwnerActiveTerms } from "@/lib/highlights/get-owner-active-terms";
-import { parseMarkdownToRenderProjection } from "@/lib/markdown/parse-markdown-to-render-projection";
+import { createMarkdownDocument } from "@/lib/documents/create-markdown-document";
 import { parsePdfToPageProjection, PdfUploadValidationError } from "@/lib/pdf/parse-pdf-to-page-projection";
 
 const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
@@ -32,25 +30,27 @@ export class DocumentUploadValidationError extends Error {
 
 export async function createDocumentFromUpload(input: CreateDocumentFromUploadInput) {
   const format = validateUpload(input.file);
-  const parsedDocument = await parseUploadedDocument({
-    file: input.file,
-    format,
-  });
-  const { activeTerms, excludedTerms, selectedWordListIds } = await getOwnerWordListSelection({
-    ownerId: input.ownerId,
-    prisma: input.prisma,
-  });
-  const highlightMatches = computeHighlightMatches({
-    blocks: parsedDocument.blocks,
-    activeTerms,
-    excludedTerms,
-  });
+  if (format === "MARKDOWN") {
+    const rawMarkdown = await input.file.text();
+
+    return createMarkdownDocument({
+      ownerId: input.ownerId,
+      title: getDocumentTitle(input.file.name),
+      originalName: input.file.name,
+      rawMarkdown,
+      sourceByteSize: input.file.size,
+      prisma: input.prisma,
+    });
+  }
+
+  const parsedDocument = await parsePdfUpload(input.file);
 
   return input.prisma.document.create({
     data: {
       ownerId: input.ownerId,
       title: getDocumentTitle(input.file.name),
       originalName: input.file.name,
+      sourceUrl: null,
       sourceFormat: parsedDocument.sourceFormat,
       rawMarkdown: parsedDocument.rawMarkdown,
       plainText: parsedDocument.plainText,
@@ -68,27 +68,6 @@ export async function createDocumentFromUpload(input: CreateDocumentFromUploadIn
                 selectable: block.selectable,
                 attrs: block.attrs ?? Prisma.JsonNull,
                 text: block.text,
-              })),
-            },
-          }
-        : {}),
-      ...(selectedWordListIds.length > 0
-        ? {
-            activeLists: {
-              create: selectedWordListIds.map((wordListId) => ({
-                wordListId,
-              })),
-            },
-          }
-        : {}),
-      ...(highlightMatches.length > 0
-        ? {
-            highlightMatches: {
-              create: highlightMatches.map((match) => ({
-                blockKey: match.blockKey,
-                startOffset: match.startOffset,
-                endOffset: match.endOffset,
-                term: match.term,
               })),
             },
           }
@@ -139,27 +118,9 @@ function getDocumentTitle(fileName: string) {
   return strippedExtension.length > 0 ? strippedExtension : fileName;
 }
 
-async function parseUploadedDocument(input: {
-  file: File;
-  format: SupportedUploadFormat;
-}) {
-  if (input.format === "MARKDOWN") {
-    const rawMarkdown = await input.file.text();
-    const blocks = parseMarkdownToRenderProjection(rawMarkdown);
-
-    return {
-      sourceFormat: "MARKDOWN" as const,
-      rawMarkdown,
-      plainText: blocks.map((block) => block.text).join("\n\n"),
-      sourceByteSize: input.file.size,
-      pdfData: null,
-      renderProjectionVersion: 2,
-      blocks,
-    };
-  }
-
+async function parsePdfUpload(file: File) {
   try {
-    const pdfArrayBuffer = await input.file.arrayBuffer();
+    const pdfArrayBuffer = await file.arrayBuffer();
     const pdfBytes = new Uint8Array(pdfArrayBuffer);
     const pdfData = Buffer.from(pdfBytes);
     const parsedPdf = await parsePdfToPageProjection(pdfBytes);
@@ -168,7 +129,7 @@ async function parseUploadedDocument(input: {
       sourceFormat: "PDF" as const,
       rawMarkdown: null,
       plainText: parsedPdf.plainText,
-      sourceByteSize: input.file.size,
+      sourceByteSize: file.size,
       pdfData,
       renderProjectionVersion: 3,
       blocks: parsedPdf.blocks,
@@ -180,23 +141,4 @@ async function parseUploadedDocument(input: {
 
     throw error;
   }
-}
-
-async function getOwnerWordListSelection(input: {
-  ownerId: string;
-  prisma: Partial<Pick<PrismaClient, "wordList" | "userWordListPreference" | "vocabularyEntry">>;
-}) {
-  if (!("userWordListPreference" in input.prisma) || !("wordList" in input.prisma)) {
-    return {
-      selectedWordListIds: [],
-      activeTerms: new Set<string>(),
-      excludedTerms: new Set<string>(),
-    };
-  }
-
-  return getOwnerActiveTerms({
-    ownerId: input.ownerId,
-    prisma: input.prisma as Pick<PrismaClient, "wordList" | "userWordListPreference"> &
-      Partial<Pick<PrismaClient, "vocabularyEntry">>,
-  });
 }

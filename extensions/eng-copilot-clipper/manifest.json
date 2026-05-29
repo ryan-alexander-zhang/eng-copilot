@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "eng-copilot Clipper",
+  "description": "Clip the current page into eng-copilot as Markdown.",
+  "version": "0.1.0",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -12,16 +12,16 @@ const hasAppEnv =
 export default defineConfig({
   testDir: "./tests/e2e",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://127.0.0.1:3000",
   },
   webServer: hasAppEnv
     ? {
-        command: "npm run dev -- --hostname localhost --port 3000",
-        url: "http://localhost:3000",
+        command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
+        url: "http://127.0.0.1:3000",
         reuseExistingServer: !process.env.CI,
         env: {
           ...process.env,
-          NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
+          NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://127.0.0.1:3000",
           GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ?? "playwright-google-client-id",
           GOOGLE_CLIENT_SECRET:
             process.env.GOOGLE_CLIENT_SECRET ?? "playwright-google-client-secret",

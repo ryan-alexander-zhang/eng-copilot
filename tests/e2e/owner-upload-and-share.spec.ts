@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import nextEnv from "@next/env";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { expect, test } from "@playwright/test";
+import { hashClipperToken } from "@/lib/clipper/tokens";
 import { computeHighlightMatches } from "@/lib/highlights/compute-highlight-matches";
 import { parseMarkdownToRenderProjection } from "@/lib/markdown/parse-markdown-to-render-projection";
 import { parsePdfToPageProjection } from "@/lib/pdf/parse-pdf-to-page-projection";
@@ -156,21 +157,101 @@ test("owner uploads a document and a shared viewer can read it", async ({ browse
     await ownerContext?.close();
     await anonymousContext?.close();
     await viewerContext?.close();
-    await prisma.session.deleteMany({
+    await cleanupSeededUsersAndSessions({
+      sessionTokens: [ownerSessionToken, viewerSessionToken],
+      userIds: [ownerIdentity?.userId, viewerIdentity?.userId],
+    });
+  }
+});
+
+test("clip API creates a markdown document that opens with source link and highlights", async ({
+  browser,
+  baseURL,
+  request,
+}) => {
+  test.skip(
+    missingAppEnv.length > 0,
+    `E2E requires ${missingAppEnv.join(", ")}. Set app env to run this flow.`,
+  );
+
+  const ownerSessionToken = randomUUID();
+  const clipperToken = `ecp_${randomUUID().replace(/-/g, "")}`;
+  let ownerContext:
+    | Awaited<ReturnType<typeof browser.newContext>>
+    | null = null;
+  let ownerIdentity: { userId: string } | null = null;
+
+  try {
+    const missingPrerequisites = await getMissingPrerequisites();
+
+    test.skip(
+      missingPrerequisites.length > 0,
+      `E2E requires ${missingPrerequisites.join(", ")} before the flow can run.`,
+    );
+
+    ownerContext = await browser.newContext();
+    ownerIdentity = await seedUserWithSession({
+      email: `owner-clip-${randomUUID()}@example.com`,
+      name: "E2E Clipper Owner",
+      sessionToken: ownerSessionToken,
+    });
+    await seedUserWordListPreference({
+      userId: ownerIdentity.userId,
+      wordListSlug: "cet4",
+    });
+    await prisma.user.update({
       where: {
-        sessionToken: {
-          in: [ownerSessionToken, viewerSessionToken],
-        },
+        id: ownerIdentity.userId,
+      },
+      data: {
+        clipperTokenHash: hashClipperToken(clipperToken),
+        clipperTokenPreview: `${clipperToken.slice(0, 6)}…${clipperToken.slice(-4)}`,
+        clipperTokenCreatedAt: new Date(),
       },
     });
-    await prisma.user.deleteMany({
-      where: {
-        id: {
-          in: [ownerIdentity?.userId, viewerIdentity?.userId].filter(
-            (value): value is string => Boolean(value),
-          ),
-        },
+
+    const clipResponse = await request.post("/api/documents/clip", {
+      headers: {
+        authorization: `Bearer ${clipperToken}`,
+        "content-type": "application/json",
       },
+      data: {
+        url: "https://example.com/original-article",
+        title: "Clipped article",
+        markdown: "# Clipped article\n\nability makes progress visible.",
+      },
+    });
+
+    expect(clipResponse.status()).toBe(201);
+
+    const clipPayload = (await clipResponse.json()) as {
+      documentId: string;
+      documentUrl: string;
+    };
+
+    await ownerContext.addCookies([
+      buildSessionCookie({
+        baseURL,
+        sessionToken: ownerSessionToken,
+      }),
+    ]);
+
+    const ownerPage = await ownerContext.newPage();
+    await ownerPage.goto(clipPayload.documentUrl);
+
+    await expect(ownerPage.getByRole("heading", { level: 1, name: "Clipped article" })).toBeVisible();
+    await expect(
+      ownerPage.getByTitle(/Highlights: ability/).filter({ hasText: "ability" }),
+    ).toBeVisible();
+    await expect(ownerPage.getByRole("link", { name: "Open original" })).toHaveAttribute(
+      "href",
+      "https://example.com/original-article",
+    );
+  } finally {
+    await ownerContext?.close();
+    await cleanupSeededUsersAndSessions({
+      sessionTokens: [ownerSessionToken],
+      userIds: [ownerIdentity?.userId],
     });
   }
 });
@@ -310,21 +391,9 @@ test("owner and shared viewer render a seeded PDF document", async ({ browser, b
   } finally {
     await ownerContext?.close();
     await viewerContext?.close();
-    await prisma.session.deleteMany({
-      where: {
-        sessionToken: {
-          in: [ownerSessionToken, viewerSessionToken],
-        },
-      },
-    });
-    await prisma.user.deleteMany({
-      where: {
-        id: {
-          in: [ownerIdentity?.userId, viewerIdentity?.userId].filter(
-            (value): value is string => Boolean(value),
-          ),
-        },
-      },
+    await cleanupSeededUsersAndSessions({
+      sessionTokens: [ownerSessionToken, viewerSessionToken],
+      userIds: [ownerIdentity?.userId, viewerIdentity?.userId],
     });
   }
 });
@@ -483,21 +552,9 @@ test("owner and shared viewer render semantic markdown from a seeded document", 
   } finally {
     await ownerContext?.close();
     await viewerContext?.close();
-    await prisma.session.deleteMany({
-      where: {
-        sessionToken: {
-          in: [ownerSessionToken, viewerSessionToken],
-        },
-      },
-    });
-    await prisma.user.deleteMany({
-      where: {
-        id: {
-          in: [ownerIdentity?.userId, viewerIdentity?.userId].filter(
-            (value): value is string => Boolean(value),
-          ),
-        },
-      },
+    await cleanupSeededUsersAndSessions({
+      sessionTokens: [ownerSessionToken, viewerSessionToken],
+      userIds: [ownerIdentity?.userId, viewerIdentity?.userId],
     });
   }
 });
@@ -508,8 +565,7 @@ function buildSessionCookie(input: { baseURL: string | undefined; sessionToken: 
   return {
     name: "authjs.session-token",
     value: input.sessionToken,
-    domain: url.hostname,
-    path: "/",
+    url: url.toString(),
     httpOnly: true,
     sameSite: "Lax" as const,
   };
@@ -588,61 +644,89 @@ async function seedAnnotationForQuote(input: {
 }
 
 async function getMissingPrerequisites() {
-  const cet4 = await prisma.wordList.findUnique({
-    where: {
-      slug: "cet4",
-    },
-    select: {
-      entries: {
-        where: {
-          term: "ability",
-        },
-        select: {
-          id: true,
+  try {
+    const cet4 = await prisma.wordList.findUnique({
+      where: {
+        slug: "cet4",
+      },
+      select: {
+        entries: {
+          where: {
+            term: "ability",
+          },
+          select: {
+            id: true,
+          },
         },
       },
-    },
-  });
-  const builtInExclusion = await prisma.wordList.findUnique({
-    where: {
-      slug: "builtin-exclusion",
-    },
-    select: {
-      id: true,
-    },
-  });
-  const missing: string[] = [];
+    });
+    const builtInExclusion = await prisma.wordList.findUnique({
+      where: {
+        slug: "builtin-exclusion",
+      },
+      select: {
+        id: true,
+      },
+    });
+    const missing: string[] = [];
 
-  if (!cet4?.entries.length) {
-    missing.push("seeded CET4 word list entries");
+    if (!cet4?.entries.length) {
+      missing.push("seeded CET4 word list entries");
+    }
+
+    if (!builtInExclusion) {
+      missing.push("seeded built-in exclusion list");
+    }
+
+    const [documentProjectionColumn, blockPathColumn] = await Promise.all([
+      prisma.$queryRaw<Array<{ exists: boolean }>>`
+        SELECT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_name = 'Document' AND column_name = 'renderProjectionVersion'
+        ) AS "exists"
+      `,
+      prisma.$queryRaw<Array<{ exists: boolean }>>`
+        SELECT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_name = 'DocumentBlock' AND column_name = 'blockPath'
+        ) AS "exists"
+      `,
+    ]);
+
+    if (!documentProjectionColumn[0]?.exists || !blockPathColumn[0]?.exists) {
+      missing.push("latest projection schema (run npm run db:push)");
+    }
+
+    return missing;
+  } catch {
+    return ["reachable database server"];
   }
+}
 
-  if (!builtInExclusion) {
-    missing.push("seeded built-in exclusion list");
+async function cleanupSeededUsersAndSessions(input: {
+  sessionTokens: string[];
+  userIds: Array<string | null | undefined>;
+}) {
+  try {
+    await prisma.session.deleteMany({
+      where: {
+        sessionToken: {
+          in: input.sessionTokens,
+        },
+      },
+    });
+    await prisma.user.deleteMany({
+      where: {
+        id: {
+          in: input.userIds.filter((value): value is string => Boolean(value)),
+        },
+      },
+    });
+  } catch {
+    return;
   }
-
-  const [documentProjectionColumn, blockPathColumn] = await Promise.all([
-    prisma.$queryRaw<Array<{ exists: boolean }>>`
-      SELECT EXISTS (
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'Document' AND column_name = 'renderProjectionVersion'
-      ) AS "exists"
-    `,
-    prisma.$queryRaw<Array<{ exists: boolean }>>`
-      SELECT EXISTS (
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'DocumentBlock' AND column_name = 'blockPath'
-      ) AS "exists"
-    `,
-  ]);
-
-  if (!documentProjectionColumn[0]?.exists || !blockPathColumn[0]?.exists) {
-    missing.push("latest projection schema (run npm run db:push)");
-  }
-
-  return missing;
 }
 
 async function seedUserWithSession(input: {

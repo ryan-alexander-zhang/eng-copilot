@@ -15,6 +15,10 @@ model User {
   emailVerified DateTime?
   image         String?
   passwordHash  String?                  @db.Text
+  clipperTokenHash String?               @unique
+  clipperTokenPreview String?
+  clipperTokenCreatedAt DateTime?
+  clipperTokenLastUsedAt DateTime?
   accounts      Account[]
   sessions      Session[]
   documents     Document[]
@@ -65,6 +69,7 @@ model Document {
   ownerId          String
   title            String
   originalName     String
+  sourceUrl        String?
   sourceFormat     DocumentSourceFormat @default(MARKDOWN)
   rawMarkdown      String?            @db.Text
   plainText        String             @default("") @db.Text

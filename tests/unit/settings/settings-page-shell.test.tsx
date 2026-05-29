@@ -20,6 +20,14 @@ const baseProps = {
     initial: "JN",
     username: "jane-notes",
   },
+  clipperToken: {
+    preview: null,
+  },
+  clipperTokenAction: async () => ({
+    error: null,
+    preview: null,
+    token: null,
+  }),
   deleteAllDataAction: async () => {},
   revokeSessionAction: async () => {},
   updatePasswordAction: async () => {},
@@ -45,6 +53,8 @@ describe("SettingsPageShell", () => {
 
     expect(screen.getByRole("heading", { name: "Security" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Update password" })).toBeInTheDocument();
+    expect(screen.getByText("Web Clipper")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generate token" })).toBeInTheDocument();
     expect(screen.getByText("Recent sessions")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "View all sessions" })).not.toBeInTheDocument();
   });

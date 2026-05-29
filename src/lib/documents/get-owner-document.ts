@@ -18,6 +18,7 @@ export async function getOwnerDocument(input: GetOwnerDocumentInput) {
       id: true,
       title: true,
       originalName: true,
+      sourceUrl: true,
       sourceFormat: true,
       rawMarkdown: true,
       plainText: true,
