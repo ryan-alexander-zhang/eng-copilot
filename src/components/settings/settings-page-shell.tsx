@@ -52,6 +52,7 @@ type SettingsPageShellProps = {
     initial: string;
     username: string;
   };
+  hasPassword: boolean;
 };
 
 const settingsLinks: Array<{
@@ -91,6 +92,7 @@ export function SettingsPageShell({
   updatePasswordAction,
   updateProfileAction,
   user,
+  hasPassword,
 }: SettingsPageShellProps) {
   return (
     <main className="min-h-screen bg-[#F5F7FB] px-4 py-5 text-[#111827] sm:px-6">
@@ -183,6 +185,7 @@ export function SettingsPageShell({
               <SecurityPanel
                 clipperToken={clipperToken}
                 clipperTokenAction={clipperTokenAction}
+                hasPassword={hasPassword}
                 revokeSessionAction={revokeSessionAction}
                 sessions={sessions}
                 updatePasswordAction={updatePasswordAction}
@@ -312,6 +315,7 @@ function ProfilePanel({
 function SecurityPanel({
   clipperToken,
   clipperTokenAction,
+  hasPassword,
   revokeSessionAction,
   sessions,
   updatePasswordAction,
@@ -319,6 +323,7 @@ function SecurityPanel({
   SettingsPageShellProps,
   | "clipperToken"
   | "clipperTokenAction"
+  | "hasPassword"
   | "revokeSessionAction"
   | "sessions"
   | "updatePasswordAction"
@@ -328,17 +333,21 @@ function SecurityPanel({
       <div className="px-2">
         <h2 className="text-[56px] font-semibold tracking-[-0.07em] text-[#05070B]">Security</h2>
         <p className="mt-3 text-[18px] leading-8 text-[#6B7280]">
-          Manage your password and keep your account secure.
+          {hasPassword
+            ? "Manage your password and keep your account secure."
+            : "Add a password so you can sign in with Google or with your email and password."}
         </p>
       </div>
 
       <section className="rounded-[24px] border border-[#E6EAF1] bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
         <form action={updatePasswordAction}>
           <p className="text-[22px] font-semibold tracking-[-0.04em] text-[#111827]">
-            Change password
+            {hasPassword ? "Change password" : "Set password"}
           </p>
           <p className="mt-2 text-[16px] leading-7 text-[#6B7280]">
-            Use a strong, unique password to protect your account.
+            {hasPassword
+              ? "Use a strong, unique password to protect your account."
+              : "This lets the same account sign in without going through Google every time."}
           </p>
 
           <div className="mt-6 space-y-5">
@@ -368,7 +377,7 @@ function SecurityPanel({
             className="mt-7 inline-flex h-12 min-w-[170px] items-center justify-center rounded-[999px] bg-[#2483E2] px-6 text-[18px] font-semibold text-white transition hover:bg-[#1D74CA]"
             type="submit"
           >
-            Update password
+            {hasPassword ? "Update password" : "Set password"}
           </button>
         </form>
       </section>

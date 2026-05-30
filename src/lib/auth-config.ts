@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import { ProxyAgent } from "undici";
-import { isAllowedSignInEmail } from "@/lib/auth-env";
+import { prisma } from "@/lib/db";
+import { isAllowedSignInEmailForSignIn } from "@/lib/sign-in-allowlist";
 
 const GOOGLE_FETCH_TIMEOUT_MS = 10_000;
 
@@ -38,7 +39,11 @@ export async function canSignIn(
   { profile, user }: SignInCallbackArgs,
   env: NodeJS.ProcessEnv = process.env,
 ) {
-  return isAllowedSignInEmail(user.email ?? profile?.email, env);
+  return isAllowedSignInEmailForSignIn({
+    email: user.email ?? profile?.email,
+    env,
+    prisma,
+  });
 }
 
 export function applySessionUserId({ session, user }: SessionCallbackArgs) {

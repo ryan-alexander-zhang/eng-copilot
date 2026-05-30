@@ -16,6 +16,7 @@ describe("createPasswordSignInSession", () => {
         },
         user: {
           findFirst: vi.fn(async () => ({
+            email: "alex.chen@example.com",
             id: "user-1",
             passwordHash,
           })),
@@ -39,6 +40,7 @@ describe("createPasswordSignInSession", () => {
         },
         user: {
           findFirst: vi.fn(async () => ({
+            email: "alex.chen@example.com",
             id: "user-1",
             passwordHash,
           })),

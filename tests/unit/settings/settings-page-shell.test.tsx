@@ -20,6 +20,7 @@ const baseProps = {
     initial: "JN",
     username: "jane-notes",
   },
+  hasPassword: true,
   clipperToken: {
     preview: null,
   },
@@ -57,6 +58,17 @@ describe("SettingsPageShell", () => {
     expect(screen.getByRole("button", { name: "Generate token" })).toBeInTheDocument();
     expect(screen.getByText("Recent sessions")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "View all sessions" })).not.toBeInTheDocument();
+  });
+
+  it("renders first-time password setup copy for users without a password", () => {
+    render(<SettingsPageShell {...baseProps} activeTab="security" hasPassword={false} />);
+
+    expect(screen.getByRole("button", { name: "Set password" })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Add a password so you can sign in with Google or with your email and password.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("renders the danger zone view", () => {

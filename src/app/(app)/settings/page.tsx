@@ -334,6 +334,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         initial: getUserInitial(userLabel),
         username: resolvedUsername,
       }}
+      hasPassword={Boolean(user.passwordHash)}
     />
   );
 }

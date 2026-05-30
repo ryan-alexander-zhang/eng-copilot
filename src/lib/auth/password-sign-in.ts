@@ -1,8 +1,18 @@
 import { randomBytes } from "node:crypto";
-import { isAllowedSignInEmail } from "@/lib/auth-env";
+import { isAllowedSignInEmailForSignIn } from "@/lib/sign-in-allowlist";
 import { verifyPassword } from "@/lib/passwords";
 
 type PasswordSignInPrisma = {
+  allowedSignInEmail?: {
+    findMany: (args: {
+      orderBy?: {
+        email: "asc" | "desc";
+      };
+      select: {
+        email: true;
+      };
+    }) => Promise<Array<{ email: string }>>;
+  };
   session: {
     create: (args: {
       data: {
@@ -80,7 +90,13 @@ export async function createPasswordSignInSession({
     return null;
   }
 
-  if (!isAllowedSignInEmail(user.email, env)) {
+  if (
+    !(await isAllowedSignInEmailForSignIn({
+      email: user.email,
+      env,
+      prisma,
+    }))
+  ) {
     return null;
   }
 
