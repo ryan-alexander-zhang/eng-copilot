@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getRequiredSession } from "@/lib/auth";
 import { getAllowedSignInEmails } from "@/lib/auth-env";
 import { prisma } from "@/lib/db";
+import { UserMenu } from "@/components/layout/user-menu";
 import {
   isAdminEmail,
   isValidSignInEmail,
@@ -154,7 +155,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <Link className="font-medium text-[#2483E2]" href="/admin">
               Admin
             </Link>
-            <Link href="/settings">Settings</Link>
+            <UserMenu />
           </div>
         </header>
 

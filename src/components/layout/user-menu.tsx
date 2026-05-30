@@ -1,72 +1,260 @@
-"use client";
+import { Prisma } from "@prisma/client";
+import { redirect } from "next/navigation";
+import { issueClipperToken } from "@/lib/clipper/tokens";
+import { getRequiredSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import {
+  hashPassword,
+  isValidPassword,
+  normalizeUsername,
+  verifyPassword,
+} from "@/lib/passwords";
+import type { ClipperTokenActionState } from "@/components/settings/clipper-token-section";
+import { UserMenuClient } from "./user-menu-client";
 
-import Link from "next/link";
-import { ChevronDown, LogOut, Settings } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+type AccountPanel = "api" | "clear-data" | "password" | "profile";
 
-export function UserMenu({ userInitial }: { userInitial: string }) {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
+function buildAccountHref(
+  returnTo: string,
+  panel: AccountPanel,
+  key: "accountError" | "accountMessage",
+  value: string,
+) {
+  const [pathname, queryString = ""] = returnTo.split("?");
+  const params = new URLSearchParams(queryString);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
+  params.delete("account");
+  params.delete("accountError");
+  params.delete("accountMessage");
+  params.set("account", panel);
+  params.set(key, value);
+
+  const nextQuery = params.toString();
+
+  return nextQuery ? `${pathname}?${nextQuery}` : pathname;
+}
+
+function getUserInitial(value: string) {
+  return value.trim().charAt(0).toUpperCase() || "U";
+}
+
+function resolveReturnTo(formData: FormData) {
+  const returnTo = String(formData.get("returnTo") ?? "/documents")
+    .trim()
+    .split("#")[0];
+
+  if (!returnTo.startsWith("/") || returnTo.startsWith("//")) {
+    return "/documents";
+  }
+
+  return returnTo || "/documents";
+}
+
+export async function UserMenu({ userInitial }: { userInitial?: string }) {
+  const session = await getRequiredSession();
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      clipperTokenPreview: true,
+      email: true,
+      image: true,
+      name: true,
+      passwordHash: true,
+      username: true,
+    },
+  });
+
+  if (!user?.email) {
+    redirect("/sign-in");
+  }
+
+  async function updateProfileAction(formData: FormData) {
+    "use server";
+
+    const returnTo = resolveReturnTo(formData);
+    const nextUsername = normalizeUsername(String(formData.get("username") ?? ""));
+    const displayName = String(formData.get("displayName") ?? "").trim();
+
+    if (!nextUsername) {
+      redirect(buildAccountHref(returnTo, "profile", "accountError", "invalid-username"));
     }
 
-    function handlePointerDown(event: MouseEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
+    try {
+      await prisma.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          name: displayName || nextUsername,
+          username: nextUsername,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        redirect(buildAccountHref(returnTo, "profile", "accountError", "username-taken"));
+      }
+
+      throw error;
+    }
+
+    redirect(buildAccountHref(returnTo, "profile", "accountMessage", "profile-saved"));
+  }
+
+  async function updatePasswordAction(formData: FormData) {
+    "use server";
+
+    const returnTo = resolveReturnTo(formData);
+    const currentPassword = String(formData.get("currentPassword") ?? "");
+    const newPassword = String(formData.get("newPassword") ?? "");
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+    if (!isValidPassword(newPassword)) {
+      redirect(
+        buildAccountHref(returnTo, "password", "accountError", "password-policy-invalid"),
+      );
+    }
+
+    if (newPassword !== confirmPassword) {
+      redirect(
+        buildAccountHref(returnTo, "password", "accountError", "confirm-password-mismatch"),
+      );
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        passwordHash: true,
+      },
+    });
+
+    if (currentUser?.passwordHash) {
+      const isCurrentPasswordValid = await verifyPassword(
+        currentPassword,
+        currentUser.passwordHash,
+      );
+
+      if (!isCurrentPasswordValid) {
+        redirect(
+          buildAccountHref(returnTo, "password", "accountError", "current-password-invalid"),
+        );
       }
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
+    await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        passwordHash: await hashPassword(newPassword),
+      },
+    });
 
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
+    redirect(buildAccountHref(returnTo, "password", "accountMessage", "password-updated"));
+  }
+
+  async function clipperTokenAction(
+    _state: ClipperTokenActionState,
+    formData: FormData,
+  ): Promise<ClipperTokenActionState> {
+    "use server";
+
+    const intent = String(formData.get("intent") ?? "");
+
+    if (intent === "delete") {
+      await prisma.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          clipperTokenCreatedAt: null,
+          clipperTokenHash: null,
+          clipperTokenLastUsedAt: null,
+          clipperTokenPreview: null,
+        },
+      });
+
+      return {
+        error: null,
+        hasResult: true,
+        preview: null,
+        token: null,
+      };
+    }
+
+    if (intent !== "generate" && intent !== "rotate") {
+      return {
+        error: "Unable to update the API token.",
+        hasResult: true,
+        preview: user.clipperTokenPreview,
+        token: null,
+      };
+    }
+
+    const result = await issueClipperToken({
+      prisma,
+      userId: session.user.id,
+    });
+
+    return {
+      error: null,
+      hasResult: true,
+      preview: result.preview,
+      token: result.token,
     };
-  }, [isOpen]);
+  }
+
+  async function deleteAllDataAction(formData: FormData) {
+    "use server";
+
+    const returnTo = resolveReturnTo(formData);
+    const deleteConfirmation = String(formData.get("deleteConfirmation") ?? "").trim();
+
+    if (deleteConfirmation !== "DELETE") {
+      redirect(
+        buildAccountHref(
+          returnTo,
+          "clear-data",
+          "accountError",
+          "delete-confirmation-mismatch",
+        ),
+      );
+    }
+
+    await prisma.user.delete({
+      where: {
+        id: session.user.id,
+      },
+    });
+
+    redirect("/sign-in?message=account-deleted");
+  }
+
+  const resolvedUsername = user.username ?? normalizeUsername(user.email.split("@")[0] ?? "user");
+  const resolvedDisplayName = user.name ?? resolvedUsername;
+  const resolvedInitial = getUserInitial(user.name ?? user.email) || userInitial || "U";
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        aria-expanded={isOpen}
-        aria-label="Open user menu"
-        className="inline-flex items-center gap-2 rounded-full px-1 py-1 text-[#4B5563] transition hover:bg-[#F3F4F6]"
-        onClick={() => setIsOpen((open) => !open)}
-        type="button"
-      >
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#F3F4F6] text-[16px] font-medium text-[#374151]">
-          {userInitial}
-        </span>
-        <ChevronDown className="h-4 w-4" strokeWidth={2} />
-      </button>
-
-      {isOpen ? (
-        <div className="absolute right-0 top-[58px] z-30 min-w-[180px] rounded-[16px] border border-[#E5E7EB] bg-white p-1.5 shadow-[0_18px_50px_rgba(15,23,42,0.14)]">
-          <Link
-            className="flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-medium text-[#374151] transition hover:bg-[#F8FAFC]"
-            href="/settings"
-            onClick={() => setIsOpen(false)}
-          >
-            <Settings className="h-4 w-4 text-[#667085]" strokeWidth={2} />
-            Settings
-          </Link>
-          <button
-            className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-[14px] font-medium text-[#E14D45] transition hover:bg-[#FFF5F5]"
-            onClick={() => {
-              setIsOpen(false);
-              void signOut({
-                callbackUrl: "/sign-in",
-              });
-            }}
-            type="button"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={2} />
-            Logout
-          </button>
-        </div>
-      ) : null}
-    </div>
+    <UserMenuClient
+      clipperTokenAction={clipperTokenAction}
+      clipperTokenPreview={user.clipperTokenPreview}
+      deleteAllDataAction={deleteAllDataAction}
+      hasPassword={Boolean(user.passwordHash)}
+      updatePasswordAction={updatePasswordAction}
+      updateProfileAction={updateProfileAction}
+      user={{
+        displayName: resolvedDisplayName,
+        email: user.email,
+        image: user.image,
+        initial: resolvedInitial,
+        username: resolvedUsername,
+      }}
+    />
   );
 }

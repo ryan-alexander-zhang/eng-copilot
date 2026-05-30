@@ -1,7 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { isPasswordPolicyValid } from "./password-rules";
 
 const DERIVED_KEY_LENGTH = 64;
-const MIN_PASSWORD_LENGTH = 8;
 
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -37,5 +37,5 @@ export function normalizeUsername(value: string) {
 }
 
 export function isValidPassword(value: string) {
-  return value.trim().length >= MIN_PASSWORD_LENGTH;
+  return isPasswordPolicyValid(value);
 }
