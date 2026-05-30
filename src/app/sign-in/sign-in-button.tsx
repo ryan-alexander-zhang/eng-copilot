@@ -12,7 +12,7 @@ export default function SignInButton({ callbackUrl }: SignInButtonProps) {
 
   return (
     <button
-      className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-[14px] border border-[#E5E7EB] bg-white px-5 text-[16px] font-medium text-[#111827] shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-70"
+      className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-[14px] border border-[#E4E7EC] bg-white px-5 text-[16px] font-semibold tracking-[-0.02em] text-[#0F172A] transition hover:border-[#BED8EE] hover:shadow-[0_10px_24px_rgba(74,159,216,0.12)] disabled:cursor-not-allowed disabled:opacity-70"
       disabled={pending}
       onClick={() => {
         setPending(true);

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geist.variable} ${inter.variable} ${funnelSans.variable} font-[var(--font-body)] antialiased`}
       >

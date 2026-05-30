@@ -100,67 +100,72 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F7FB] px-4 py-5 text-[#111827] sm:px-6">
-      <div className="mx-auto min-h-[calc(100vh-40px)] w-full max-w-[1500px] overflow-hidden rounded-[30px] border border-[#E6EAF1] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-        <header className="flex h-[78px] items-center justify-between border-b border-[#EEF2F6] px-8">
-          <Link className="text-[22px] font-semibold tracking-[-0.05em]" href="/">
+    <main className="min-h-screen bg-[#F5F7FB] px-4 py-4 text-[#0F172A] sm:px-6">
+      <div
+        className="relative mx-auto grid min-h-[calc(100vh-32px)] w-full max-w-[1000px] place-items-center overflow-hidden rounded-[32px] px-4 py-8 sm:px-6 sm:py-10"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 22%, rgba(74,159,216,0.08) 0, transparent 34%), linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(245,247,251,1) 100%)",
+        }}
+      >
+        <div className="pointer-events-none absolute -left-24 bottom-10 h-60 w-60 rounded-full bg-[#E9F2FB] opacity-90" />
+        <div className="pointer-events-none absolute right-14 top-10 h-36 w-36 rounded-full bg-[#F1F5FB] opacity-80" />
+
+        <section
+          aria-labelledby="signin-title"
+          className="relative z-10 w-full max-w-[430px] rounded-[28px] border border-[#E7EBF2] bg-[rgba(255,255,255,0.94)] px-5 py-8 shadow-[0_40px_100px_rgba(74,159,216,0.12)] sm:px-[34px] sm:py-[42px]"
+        >
+          <Link
+            className="mb-8 inline-block font-[var(--font-display)] text-[26px] font-bold tracking-[-0.06em] text-[#0F172A]"
+            href="/"
+          >
             eng-copilot
           </Link>
-          <nav className="flex items-center gap-8 text-[15px] text-[#6B7280]">
-            <Link className="font-medium text-[#4A9FD8]" href="/sign-in">
-              Sign in
-            </Link>
-            <Link href="/documents">Documents</Link>
-            <Link href="/documents?tab=shared">Shared view</Link>
-          </nav>
-        </header>
 
-        <div className="flex min-h-[calc(100vh-118px)] items-center justify-center px-6 py-12">
-          <div className="w-full max-w-[500px]">
-            <div className="text-center">
-              <p className="text-[18px] text-[#8B93A3]">Sign in to your account</p>
-              <h1 className="mt-4 text-[72px] font-semibold leading-[0.96] tracking-[-0.07em] text-[#05070B]">
-                Welcome back
-              </h1>
-              <p className="mx-auto mt-6 max-w-[520px] text-[18px] leading-8 text-[#8B93A3]">
-                Sign in to access your documents, annotations, and shared reading
-                workspace.
-              </p>
-            </div>
+          <h1
+            className="text-[31px] font-semibold leading-[1.06] tracking-[-0.05em] text-[#0F172A]"
+            id="signin-title"
+          >
+            Welcome back
+          </h1>
+          <p className="mt-3 text-[15px] leading-6 tracking-[-0.02em] text-[#667085]">
+            Sign in to continue to your workspace.
+          </p>
 
-            <section className="mt-12 rounded-[24px] border border-[#E6EAF1] bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-              {errorMessage ? (
-                <p
-                  role="alert"
-                  className="mb-5 rounded-[14px] border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
-                >
-                  {errorMessage}
-                </p>
-              ) : null}
+          {errorMessage ? (
+            <p
+              role="alert"
+              className="mt-6 rounded-[14px] bg-[#FFF4E8] px-4 py-3 text-[13px] leading-5 text-[#7C4A12]"
+            >
+              {errorMessage}
+            </p>
+          ) : null}
 
-              {infoMessage ? (
-                <p className="mb-5 rounded-[14px] border border-[#CBE8D5] bg-[#F1FBF4] px-4 py-3 text-sm text-[#256A3D]">
-                  {infoMessage}
-                </p>
-              ) : null}
+          {infoMessage ? (
+            <p className="mt-6 rounded-[14px] bg-[#ECFDF3] px-4 py-3 text-[13px] leading-5 text-[#166534]">
+              {infoMessage}
+            </p>
+          ) : null}
 
-              <CredentialsSignInForm
-                callbackUrl={callbackUrl ?? "/documents"}
-                signInAction={signInWithPasswordAction}
-              />
+          <CredentialsSignInForm
+            callbackUrl={callbackUrl ?? "/documents"}
+            signInAction={signInWithPasswordAction}
+          />
 
-              <div className="mt-8 flex items-center gap-5">
-                <span className="h-px flex-1 bg-[#E6EAF1]" />
-                <span className="text-[15px] text-[#6B7280]">or</span>
-                <span className="h-px flex-1 bg-[#E6EAF1]" />
-              </div>
-
-              <div className="mt-8">
-                <SignInButton callbackUrl={callbackUrl ?? "/documents"} />
-              </div>
-            </section>
+          <div className="mt-[22px] grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-[13px] text-[#98A2B3]">
+            <span className="h-px bg-[#E6EAF1]" />
+            <span>or</span>
+            <span className="h-px bg-[#E6EAF1]" />
           </div>
-        </div>
+
+          <div className="mt-[22px]">
+            <SignInButton callbackUrl={callbackUrl ?? "/documents"} />
+          </div>
+
+          <p className="mt-7 text-center text-[15px] leading-6 tracking-[-0.02em] text-[#667085]">
+            Need access? Contact your workspace admin.
+          </p>
+        </section>
       </div>
     </main>
   );
