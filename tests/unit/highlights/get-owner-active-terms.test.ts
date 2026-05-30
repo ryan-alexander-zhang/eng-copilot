@@ -5,7 +5,10 @@ describe("getOwnerActiveTerms", () => {
   it("includes owner vocabulary terms attached to selected word lists", async () => {
     const prisma = {
       userWordListPreference: {
-        findMany: vi.fn().mockResolvedValue([{ wordListId: "list_cet6" }]),
+        findMany: vi.fn().mockResolvedValue([
+          { wordListId: "list_cet6" },
+          { wordListId: "list_default" },
+        ]),
       },
       vocabularyEntry: {
         findMany: vi.fn().mockResolvedValue([
@@ -17,11 +20,18 @@ describe("getOwnerActiveTerms", () => {
         findMany: vi.fn().mockResolvedValue([
           {
             id: "list_cet4",
+            ownerId: null,
             entries: [{ term: "revise" }],
           },
           {
             id: "list_cet6",
+            ownerId: null,
             entries: [{ term: "harness" }],
+          },
+          {
+            id: "list_default",
+            ownerId: "user_123",
+            entries: [],
           },
         ]),
         findUnique: vi.fn().mockResolvedValue({
@@ -36,7 +46,7 @@ describe("getOwnerActiveTerms", () => {
         prisma: prisma as never,
       }),
     ).resolves.toEqual({
-      selectedWordListIds: ["list_cet6"],
+      selectedWordListIds: ["list_cet6", "list_default"],
       activeTerms: new Set(["harness", "observability", "interoperability"]),
       excludedTerms: new Set(["ignore-me"]),
     });
@@ -47,7 +57,7 @@ describe("getOwnerActiveTerms", () => {
         wordLists: {
           some: {
             wordListId: {
-              in: ["list_cet6"],
+              in: ["list_default"],
             },
           },
         },
@@ -58,4 +68,3 @@ describe("getOwnerActiveTerms", () => {
     });
   });
 });
-

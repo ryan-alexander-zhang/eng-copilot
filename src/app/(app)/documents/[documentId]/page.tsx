@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
+import { WordListKind } from "@prisma/client";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createAnnotation } from "@/lib/annotations/create-annotation";
@@ -19,6 +20,8 @@ import { moveDocumentToTrash } from "@/lib/documents/move-document-to-trash";
 import { enableDocumentShare } from "@/lib/shares/enable-document-share";
 import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
 import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
+import { getActiveWordListsWithTerms } from "@/lib/word-lists/get-active-word-lists-with-terms";
+import { DEFAULT_WORD_LIST_NAME } from "@/lib/word-lists/service";
 import { DocumentWorkspace } from "@/components/documents/document-workspace";
 import { DocumentUploadSidebar } from "@/components/layout/document-upload-sidebar";
 import { OwnerDocumentsSidebar } from "@/components/layout/owner-documents-sidebar";
@@ -61,7 +64,7 @@ export default async function DocumentPage({
 
   const ownerDocumentId = document.id;
   const ownerId = session.user.id;
-  const [sidebarDocuments, sidebarDocumentCount, activeWordListsWithEntries, userWordListPrefs] = await Promise.all([
+  const [sidebarDocuments, sidebarDocumentCount, activeWordListsWithEntries, availableWordLists, userWordListPrefs] = await Promise.all([
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
@@ -85,20 +88,29 @@ export default async function DocumentPage({
         trashedAt: null,
       },
     }),
+    getActiveWordListsWithTerms({
+      ownerId,
+      prisma,
+      wordListIds: document.activeLists.map((entry) => entry.wordList.id),
+    }),
     prisma.wordList.findMany({
       where: {
-        id: {
-          in: document.activeLists.map((entry) => entry.wordList.id),
-        },
+        kind: WordListKind.POSITIVE,
+        OR: [
+          {
+            slug: {
+              in: BUILT_IN_LISTS.map((list) => list.slug),
+            },
+          },
+          {
+            ownerId,
+          },
+        ],
       },
       select: {
         id: true,
         name: true,
-        entries: {
-          select: {
-            term: true,
-          },
-        },
+        slug: true,
       },
     }),
     prisma.userWordListPreference.findMany({
@@ -106,11 +118,7 @@ export default async function DocumentPage({
         userId: session.user.id,
       },
       select: {
-        wordList: {
-          select: {
-            slug: true,
-          },
-        },
+        wordListId: true,
       },
     }),
     ]);
@@ -291,7 +299,8 @@ export default async function DocumentPage({
             updatedLabel={formatDateTimeLabel(document.updatedAt)}
             wordCount={wordCount}
             wordLists={buildReaderWordLists(
-              userWordListPrefs.map((preference) => preference.wordList.slug),
+              availableWordLists,
+              userWordListPrefs.map((preference) => preference.wordListId),
             )}
           />
         </div>
@@ -350,14 +359,47 @@ function getUserInitial(value: string) {
   return value.trim().charAt(0).toUpperCase() || "U";
 }
 
-function buildReaderWordLists(selectedSlugs: string[]) {
-  const selectedSlugSet = new Set(selectedSlugs);
+function buildReaderWordLists(
+  availableWordLists: Array<{
+    id: string;
+    name: string;
+    slug: string;
+  }>,
+  selectedWordListIds: string[],
+) {
+  const builtInOrderBySlug = new Map(BUILT_IN_LISTS.map((list, index) => [list.slug, index]));
+  const selectedWordListIdSet = new Set(selectedWordListIds);
 
-  return BUILT_IN_LISTS.filter((list) =>
-    ["cet4", "cet6", "ielts", "toefl"].includes(list.slug),
-  ).map((list) => ({
-    id: list.slug,
-    name: list.name,
-    isSelected: selectedSlugSet.has(list.slug),
-  }));
+  return [...availableWordLists]
+    .sort((left, right) => {
+      const leftBuiltInOrder = builtInOrderBySlug.get(left.slug);
+      const rightBuiltInOrder = builtInOrderBySlug.get(right.slug);
+
+      if (leftBuiltInOrder !== undefined && rightBuiltInOrder !== undefined) {
+        return leftBuiltInOrder - rightBuiltInOrder;
+      }
+
+      if (leftBuiltInOrder !== undefined) {
+        return -1;
+      }
+
+      if (rightBuiltInOrder !== undefined) {
+        return 1;
+      }
+
+      if (left.name === DEFAULT_WORD_LIST_NAME && right.name !== DEFAULT_WORD_LIST_NAME) {
+        return -1;
+      }
+
+      if (left.name !== DEFAULT_WORD_LIST_NAME && right.name === DEFAULT_WORD_LIST_NAME) {
+        return 1;
+      }
+
+      return left.name.localeCompare(right.name);
+    })
+    .map((wordList) => ({
+      id: wordList.id,
+      name: wordList.name,
+      isSelected: selectedWordListIdSet.has(wordList.id),
+    }));
 }

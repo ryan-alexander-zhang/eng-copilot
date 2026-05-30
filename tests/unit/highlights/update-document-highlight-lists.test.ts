@@ -2,12 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { updateDocumentHighlightLists } from "@/lib/highlights/update-document-highlight-lists";
 
 describe("updateDocumentHighlightLists", () => {
-  it("rejects submitted list ids that are not selectable built-in positives", async () => {
+  it("rejects submitted list ids that are not selectable word lists", async () => {
     const prisma = createPrismaMock({
       ownedDocument: { id: "doc_123" },
-      selectableBuiltInLists: [
+      selectableWordLists: [
         {
           id: "list_positive",
+          ownerId: null,
           entries: [{ term: "alpha" }],
         },
       ],
@@ -34,9 +35,10 @@ describe("updateDocumentHighlightLists", () => {
   it("recomputes with an empty active term set when no positive lists are selected", async () => {
     const prisma = createPrismaMock({
       ownedDocument: { id: "doc_123" },
-      selectableBuiltInLists: [
+      selectableWordLists: [
         {
           id: "list_positive",
+          ownerId: null,
           entries: [{ term: "alpha" }],
         },
       ],
@@ -71,9 +73,10 @@ describe("updateDocumentHighlightLists", () => {
   it("fails when the built-in exclusion list is missing", async () => {
     const prisma = createPrismaMock({
       ownedDocument: { id: "doc_123" },
-      selectableBuiltInLists: [
+      selectableWordLists: [
         {
           id: "list_positive",
+          ownerId: null,
           entries: [{ term: "alpha" }],
         },
       ],
@@ -98,13 +101,15 @@ describe("updateDocumentHighlightLists", () => {
   it("persists selected lists and recomputes highlights on success", async () => {
     const prisma = createPrismaMock({
       ownedDocument: { id: "doc_123" },
-      selectableBuiltInLists: [
+      selectableWordLists: [
         {
           id: "list_alpha",
+          ownerId: null,
           entries: [{ term: "alpha" }],
         },
         {
           id: "list_beta",
+          ownerId: null,
           entries: [{ term: "beta" }, { term: "beta-2" }],
         },
       ],
@@ -145,13 +150,14 @@ describe("updateDocumentHighlightLists", () => {
     });
   });
 
-  it("includes owner vocabulary terms attached to selected lists", async () => {
+  it("includes owner vocabulary terms attached to selected custom lists", async () => {
     const prisma = createPrismaMock({
       ownedDocument: { id: "doc_123" },
-      selectableBuiltInLists: [
+      selectableWordLists: [
         {
-          id: "list_beta",
-          entries: [{ term: "beta" }],
+          id: "list_default",
+          ownerId: "user_123",
+          entries: [],
         },
       ],
       exclusionList: {
@@ -164,14 +170,14 @@ describe("updateDocumentHighlightLists", () => {
     await updateDocumentHighlightLists({
       documentId: "doc_123",
       ownerId: "user_123",
-      selectedWordListIds: ["list_beta"],
+      selectedWordListIds: ["list_default"],
       prisma: prisma as never,
       recomputeHighlights,
     });
 
     expect(recomputeHighlights).toHaveBeenCalledWith({
       documentId: "doc_123",
-      activeTerms: new Set(["beta", "observability"]),
+      activeTerms: new Set(["observability"]),
       excludedTerms: new Set<string>(),
       prisma: prisma.transactionClient,
     });
@@ -180,8 +186,9 @@ describe("updateDocumentHighlightLists", () => {
 
 function createPrismaMock(input: {
   ownedDocument: { id: string } | null;
-  selectableBuiltInLists: Array<{
+  selectableWordLists: Array<{
     id: string;
+    ownerId: string | null;
     entries: Array<{ term: string }>;
   }>;
   exclusionList: { entries: Array<{ term: string }> } | null;
@@ -189,7 +196,7 @@ function createPrismaMock(input: {
 }) {
   const transactionDocumentWordList = {
     deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
-    createMany: vi.fn().mockResolvedValue({ count: input.selectableBuiltInLists.length }),
+    createMany: vi.fn().mockResolvedValue({ count: input.selectableWordLists.length }),
   };
   const transactionClient = {
     documentWordList: transactionDocumentWordList,
@@ -200,7 +207,7 @@ function createPrismaMock(input: {
       findFirst: vi.fn().mockResolvedValue(input.ownedDocument),
     },
     wordList: {
-      findMany: vi.fn().mockResolvedValue(input.selectableBuiltInLists),
+      findMany: vi.fn().mockResolvedValue(input.selectableWordLists),
       findUnique: vi.fn().mockResolvedValue(input.exclusionList),
     },
     vocabularyEntry: {

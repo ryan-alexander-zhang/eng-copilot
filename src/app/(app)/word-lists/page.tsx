@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { Check, RefreshCw, Search } from "lucide-react";
+import { InlinePopover } from "@/components/vocabulary/inline-popover";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import {
@@ -10,7 +11,9 @@ import {
   formatStorageAmount,
 } from "@/lib/documents/metrics";
 import { getWordListDashboardData } from "@/lib/word-lists/get-word-list-dashboard-data";
+import { createOwnerWordList } from "@/lib/word-lists/service";
 import { updateUserWordListPreferences } from "@/lib/word-lists/update-user-word-list-preferences";
+import { getOptionalFormString } from "@/lib/vocabulary/form";
 import { DocumentUploadSidebar } from "@/components/layout/document-upload-sidebar";
 import { OwnerDocumentsSidebar } from "@/components/layout/owner-documents-sidebar";
 import { OwnerTopBar } from "@/components/layout/owner-top-bar";
@@ -90,6 +93,25 @@ export default async function WordListsPage({
     revalidatePath("/word-lists");
   }
 
+  async function createWordList(formData: FormData) {
+    "use server";
+
+    const name = getOptionalFormString(formData, "name");
+
+    if (name === null) {
+      return;
+    }
+
+    await createOwnerWordList({
+      ownerId: session.user.id,
+      name,
+      prisma,
+    });
+
+    revalidatePath("/vocabulary");
+    revalidatePath("/word-lists");
+  }
+
   return (
     <main className="min-h-screen bg-[#F8FAFC]">
       <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
@@ -121,8 +143,8 @@ export default async function WordListsPage({
                   Manage vocabulary lists used for automatic highlighting in your documents.
                 </p>
                 <p className="mt-2 text-[20px] leading-8 text-[#7B8594]">
-                  Choose which lists should be used when highlighting words in your reading
-                  workspace.
+                  System preset lists like CET4 are shared by everyone. Custom lists belong to you
+                  and can hold the words you save yourself.
                 </p>
               </div>
 
@@ -148,6 +170,30 @@ export default async function WordListsPage({
                     Save selections
                   </button>
                 </form>
+
+                <InlinePopover
+                  panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[320px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                  trigger="New list"
+                  triggerClassName="inline-flex h-11 items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-white px-4 text-[14px] font-medium text-[#4B5563] transition hover:bg-[#F8FAFC]"
+                >
+                  <form action={createWordList} className="grid gap-3">
+                    <input
+                      className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                      name="name"
+                      placeholder="Word list name"
+                      required
+                    />
+                    <p className="text-[13px] leading-6 text-[#64748B]">
+                      New lists are private to you. Only custom lists can receive saved words.
+                    </p>
+                    <button
+                      className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                      type="submit"
+                    >
+                      Create list
+                    </button>
+                  </form>
+                </InlinePopover>
               </div>
 
               <WordListSelectionForm

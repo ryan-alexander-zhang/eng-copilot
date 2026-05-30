@@ -2,7 +2,6 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { WordListKind } from "@prisma/client";
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,7 +26,7 @@ import {
   importVocabularyJson,
   saveVocabularyEntry,
 } from "@/lib/vocabulary/service";
-import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
+import { createOwnerWordList, getOwnerCustomWordLists } from "@/lib/word-lists/service";
 
 const PAGE_SIZE = 8;
 const ACTION_BUTTON_CLASS_NAME =
@@ -61,6 +60,11 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
         source: true,
         word: true,
         wordLists: {
+          where: {
+            wordList: {
+              ownerId: session.user.id,
+            },
+          },
           select: {
             wordList: {
               select: {
@@ -73,21 +77,9 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
         },
       },
     }),
-    prisma.wordList.findMany({
-      where: {
-        kind: WordListKind.POSITIVE,
-        slug: {
-          in: BUILT_IN_LISTS.map((list) => list.slug),
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
+    getOwnerCustomWordLists({
+      ownerId: session.user.id,
+      prisma,
     }),
   ]);
   const query = resolvedSearchParams.q?.trim().toLowerCase() ?? "";
@@ -179,6 +171,25 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
     redirect("/vocabulary");
   }
 
+  async function createWordListAction(formData: FormData) {
+    "use server";
+
+    const name = getOptionalFormString(formData, "name");
+
+    if (name === null) {
+      return;
+    }
+
+    await createOwnerWordList({
+      ownerId: session.user.id,
+      name,
+      prisma,
+    });
+    revalidatePath("/vocabulary");
+    revalidatePath("/word-lists");
+    redirect(currentViewHref);
+  }
+
   async function updateVocabularyEntryAction(formData: FormData) {
     "use server";
 
@@ -240,9 +251,8 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               Vocabulary
             </h1>
             <p className="mt-3 text-[15px] leading-7 text-[#64748B] md:text-[18px]">
-              Save words for review, add them to a Word List, and use external links to look up
-              each word. Words only become eligible for document highlighting after being added to
-              a Word List.
+              Save words for review, add them to your own Word Lists, and use external links to
+              look up each word. System preset lists like CET4 stay shared and read-only.
             </p>
           </div>
 
@@ -291,6 +301,31 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
             <div className="flex flex-wrap items-center gap-3">
               <InlinePopover
                 panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                trigger="New list"
+                triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"
+              >
+                <form action={createWordListAction} className="grid gap-3">
+                  <input
+                    className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                    name="name"
+                    placeholder="Word list name"
+                    required
+                  />
+                  <p className="text-[13px] leading-6 text-[#64748B]">
+                    System preset lists are shared and read-only. Saved words can only be added to
+                    your custom lists.
+                  </p>
+                  <button
+                    className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                    type="submit"
+                  >
+                    Create list
+                  </button>
+                </form>
+              </InlinePopover>
+
+              <InlinePopover
+                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
                 trigger="Add word"
                 triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] bg-[#3B82F6] px-5 text-[14px] font-semibold text-white shadow-[0_10px_24px_rgba(59,130,246,0.28)] transition hover:bg-[#2563EB]"
               >
@@ -309,6 +344,9 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                     name="note"
                     placeholder="Add a note (optional)..."
                   />
+                  <p className="text-[13px] leading-6 text-[#64748B]">
+                    Only your custom lists can receive saved words.
+                  </p>
                   <div className="grid gap-2">
                     {wordLists.map((wordList) => (
                       <label
@@ -551,6 +589,9 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                                   <input name="note" type="hidden" value={entry.note} />
                                   <input name="source" type="hidden" value={entry.source} />
                                   <input name="word" type="hidden" value={entry.word} />
+                                  <p className="text-[12px] leading-5 text-[#64748B]">
+                                    Saved words can only be attached to your custom lists.
+                                  </p>
                                   {wordLists.map((wordList) => (
                                     <label
                                       className="flex items-center gap-2 text-[13px] text-[#475569]"
@@ -605,6 +646,9 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                                     name="note"
                                     placeholder="Add a note..."
                                   />
+                                  <p className="text-[12px] leading-5 text-[#64748B]">
+                                    Saved words can only be attached to your custom lists.
+                                  </p>
                                   <div className="grid gap-2">
                                     {wordLists.map((wordList) => (
                                       <label

@@ -23,6 +23,7 @@ model User {
   sessions      Session[]
   documents     Document[]
   annotations   Annotation[]
+  ownedWordLists WordList[]
   wordListPrefs UserWordListPreference[]
   vocabulary    VocabularyEntry[]
 }
@@ -126,14 +127,18 @@ model DocumentWordList {
 model WordList {
   id                String                    @id @default(cuid())
   slug              String                    @unique
+  ownerId           String?
   name              String
   kind              WordListKind
   createdAt         DateTime                  @default(now())
   updatedAt         DateTime                  @default(now()) @updatedAt
+  owner             User?                     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   entries           WordListEntry[]
   documents         DocumentWordList[]
   userPrefs         UserWordListPreference[]
   vocabularyEntries VocabularyEntryWordList[]
+
+  @@index([ownerId, kind, name])
 }
 
 model WordListEntry {

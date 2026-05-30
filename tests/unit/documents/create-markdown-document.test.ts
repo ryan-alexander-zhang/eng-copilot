@@ -75,7 +75,7 @@ describe("createMarkdownDocument", () => {
           create,
         },
         userWordListPreference: {
-          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_cet6" }]),
+          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_default" }]),
         },
         vocabularyEntry: {
           findMany: vi.fn().mockResolvedValue([{ word: "observability" }]),
@@ -83,7 +83,8 @@ describe("createMarkdownDocument", () => {
         wordList: {
           findMany: vi.fn().mockResolvedValue([
             {
-              id: "list_cet6",
+              id: "list_default",
+              ownerId: "user_123",
               entries: [],
             },
           ]),
@@ -96,6 +97,13 @@ describe("createMarkdownDocument", () => {
 
     expect(create.mock.calls[0]?.[0]).toMatchObject({
       data: {
+        activeLists: {
+          create: [
+            {
+              wordListId: "list_default",
+            },
+          ],
+        },
         highlightMatches: {
           create: [
             {

@@ -1,5 +1,10 @@
-import type { PrismaClient } from "@prisma/client";
+import { WordListKind, type PrismaClient } from "@prisma/client";
 import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
+import {
+  CUSTOM_WORD_LIST_STATUS_LABEL,
+  getCustomWordListDescription,
+  getOwnerCustomWordLists,
+} from "@/lib/word-lists/service";
 
 type WordListDashboardPrisma = Pick<
   PrismaClient,
@@ -19,21 +24,35 @@ export async function getWordListDashboardData(input: {
   ownerId: string;
   prisma: WordListDashboardPrisma;
 }) {
+  const customWordLists = await getOwnerCustomWordLists({
+    ownerId: input.ownerId,
+    prisma: input.prisma,
+  });
   const [wordLists, selectedPrefs, documents] = await Promise.all([
     input.prisma.wordList.findMany({
       where: {
-        slug: {
-          in: BUILT_IN_LISTS.map((list) => list.slug),
-        },
+        kind: WordListKind.POSITIVE,
+        OR: [
+          {
+            slug: {
+              in: BUILT_IN_LISTS.map((list) => list.slug),
+            },
+          },
+          {
+            ownerId: input.ownerId,
+          },
+        ],
       },
       select: {
         id: true,
         slug: true,
         name: true,
+        ownerId: true,
         updatedAt: true,
-        entries: {
+        _count: {
           select: {
-            term: true,
+            entries: true,
+            vocabularyEntries: true,
           },
         },
       },
@@ -62,7 +81,7 @@ export async function getWordListDashboardData(input: {
     }),
   ]);
   const selectedWordListIds = new Set(selectedPrefs.map((preference) => preference.wordListId));
-  const lists = BUILT_IN_LISTS.map((catalogEntry) => {
+  const builtInLists = BUILT_IN_LISTS.map((catalogEntry) => {
     const wordList = wordLists.find((candidate) => candidate.slug === catalogEntry.slug);
 
     if (!wordList) {
@@ -76,10 +95,24 @@ export async function getWordListDashboardData(input: {
       description: catalogEntry.description,
       updatedAt: wordList.updatedAt,
       syncedLabel: catalogEntry.syncedLabel,
-      wordCount: wordList.entries.length,
+      wordCount: wordList._count.entries,
       isSelected: selectedWordListIds.has(wordList.id),
     };
   }).filter((wordList): wordList is NonNullable<typeof wordList> => wordList !== null);
+  const customWordListIds = new Set(customWordLists.map((wordList) => wordList.id));
+  const customLists = wordLists
+    .filter((wordList) => customWordListIds.has(wordList.id))
+    .map((wordList) => ({
+      id: wordList.id,
+      slug: wordList.slug,
+      name: wordList.name,
+      description: getCustomWordListDescription(wordList.name),
+      updatedAt: wordList.updatedAt,
+      syncedLabel: CUSTOM_WORD_LIST_STATUS_LABEL,
+      wordCount: wordList._count.vocabularyEntries,
+      isSelected: selectedWordListIds.has(wordList.id),
+    }));
+  const lists = [...builtInLists, ...customLists];
   const documentsWithHighlights = documents.filter((document) => document.highlightMatches.length > 0);
   const coverageRatio =
     documents.length === 0 ? 0 : documentsWithHighlights.length / documents.length;

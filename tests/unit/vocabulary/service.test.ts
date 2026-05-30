@@ -14,7 +14,10 @@ describe("saveVocabularyEntry", () => {
         ownerId: "user_123",
         word: " Observability ",
         note: "Useful in academic writing",
-        wordListSlugs: ["cet6", "ielts"],
+        wordListSlugs: [
+          "user-user_123-default-word-list",
+          "user-user_123-academic-review",
+        ],
         source: "plugin",
         prisma: prisma as never,
         recomputeOwnerHighlights: vi.fn(),
@@ -23,7 +26,10 @@ describe("saveVocabularyEntry", () => {
       note: "Useful in academic writing",
       word: "observability",
       source: "plugin",
-      wordListSlugs: ["cet6", "ielts"],
+      wordListSlugs: [
+        "user-user_123-default-word-list",
+        "user-user_123-academic-review",
+      ],
     });
 
     expect(prisma.transactionVocabularyEntry.upsert).toHaveBeenCalledWith({
@@ -61,25 +67,25 @@ describe("saveVocabularyEntry", () => {
       data: [
         {
           vocabularyEntryId: "entry_123",
-          wordListId: "list_cet6",
+          wordListId: "list_default",
         },
         {
           vocabularyEntryId: "entry_123",
-          wordListId: "list_ielts",
+          wordListId: "list_academic_review",
         },
       ],
       skipDuplicates: true,
     });
   });
 
-  it("rejects unknown word-list slugs", async () => {
+  it("rejects system word-list slugs", async () => {
     const prisma = createVocabularyPrismaMock();
 
     await expect(
       saveVocabularyEntry({
         ownerId: "user_123",
         word: "revise",
-        wordListSlugs: ["not-real"],
+        wordListSlugs: ["cet6"],
         prisma: prisma as never,
         recomputeOwnerHighlights: vi.fn(),
       }),
@@ -102,13 +108,13 @@ describe("importVocabularyJson", () => {
           {
             word: "Revise",
             note: "first note",
-            wordListSlugs: ["cet4"],
+            wordListSlugs: ["user-user_123-default-word-list"],
             source: "import",
           },
           {
             word: " revise ",
             note: "last note wins",
-            wordListSlugs: ["cet6"],
+            wordListSlugs: ["user-user_123-academic-review"],
             source: "plugin",
           },
         ],
@@ -146,12 +152,12 @@ describe("exportVocabularyJson", () => {
         wordLists: [
           {
             wordList: {
-              slug: "cet6",
+              slug: "user-user_123-default-word-list",
             },
           },
           {
             wordList: {
-              slug: "ielts",
+              slug: "user-user_123-academic-review",
             },
           },
         ],
@@ -174,7 +180,10 @@ describe("exportVocabularyJson", () => {
           note: "Useful in academic writing",
           word: "observability",
           source: "manual",
-          wordListSlugs: ["cet6", "ielts"],
+          wordListSlugs: [
+            "user-user_123-default-word-list",
+            "user-user_123-academic-review",
+          ],
         },
       ],
     });
@@ -184,9 +193,8 @@ describe("exportVocabularyJson", () => {
 function createVocabularyPrismaMock() {
   const now = new Date("2026-05-09T00:00:00.000Z");
   const selectableLists = [
-    { id: "list_cet4", slug: "cet4" },
-    { id: "list_cet6", slug: "cet6" },
-    { id: "list_ielts", slug: "ielts" },
+    { id: "list_default", slug: "user-user_123-default-word-list" },
+    { id: "list_academic_review", slug: "user-user_123-academic-review" },
   ];
   const transactionVocabularyEntry = {
     upsert: vi.fn().mockResolvedValue({
@@ -209,6 +217,12 @@ function createVocabularyPrismaMock() {
 
   return {
     wordList: {
+      upsert: vi.fn().mockResolvedValue({
+        id: "list_default",
+        name: "Default Word List",
+        slug: "user-user_123-default-word-list",
+        updatedAt: now,
+      }),
       findMany: vi.fn().mockResolvedValue(selectableLists),
     },
     $transaction: vi.fn(async (callback: (tx: typeof transactionClient) => Promise<unknown>) =>

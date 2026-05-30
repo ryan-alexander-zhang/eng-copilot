@@ -9,16 +9,24 @@ export async function getOwnerActiveTerms(input: {
   prisma: OwnerActiveTermsPrisma;
   selectedWordListIds?: string[];
 }) {
-  const [selectableBuiltInLists, exclusionList, preferredLists] = await Promise.all([
+  const [selectableWordLists, exclusionList, preferredLists] = await Promise.all([
     input.prisma.wordList.findMany({
       where: {
         kind: WordListKind.POSITIVE,
-        slug: {
-          in: BUILT_IN_LISTS.map((list) => list.slug),
-        },
+        OR: [
+          {
+            slug: {
+              in: BUILT_IN_LISTS.map((list) => list.slug),
+            },
+          },
+          {
+            ownerId: input.ownerId,
+          },
+        ],
       },
       select: {
         id: true,
+        ownerId: true,
         entries: {
           select: {
             term: true,
@@ -54,7 +62,7 @@ export async function getOwnerActiveTerms(input: {
     throw new Error("Built-in exclusion list not found");
   }
 
-  const selectableWordListIds = new Set(selectableBuiltInLists.map((wordList) => wordList.id));
+  const selectableWordListIds = new Set(selectableWordLists.map((wordList) => wordList.id));
   const requestedWordListIds =
     input.selectedWordListIds ?? preferredLists.map((list) => list.wordListId);
 
@@ -65,16 +73,27 @@ export async function getOwnerActiveTerms(input: {
   const selectedWordListIds = requestedWordListIds.filter((wordListId) =>
     selectableWordListIds.has(wordListId),
   );
-  const selectedWordListIdSet = new Set(selectedWordListIds);
+  const selectableBuiltInLists = selectableWordLists.filter((wordList) => wordList.ownerId === null);
+  const selectableCustomLists = selectableWordLists.filter(
+    (wordList) => wordList.ownerId === input.ownerId,
+  );
+  const selectedBuiltInWordListIdSet = new Set(
+    selectedWordListIds.filter((wordListId) =>
+      selectableBuiltInLists.some((wordList) => wordList.id === wordListId),
+    ),
+  );
+  const selectedCustomWordListIds = selectedWordListIds.filter((wordListId) =>
+    selectableCustomLists.some((wordList) => wordList.id === wordListId),
+  );
   const vocabularyEntries =
-    selectedWordListIds.length > 0 && input.prisma.vocabularyEntry
+    selectedCustomWordListIds.length > 0 && input.prisma.vocabularyEntry
       ? await input.prisma.vocabularyEntry.findMany({
           where: {
             ownerId: input.ownerId,
             wordLists: {
               some: {
                 wordListId: {
-                  in: selectedWordListIds,
+                  in: selectedCustomWordListIds,
                 },
               },
             },
@@ -89,7 +108,7 @@ export async function getOwnerActiveTerms(input: {
     selectedWordListIds,
     activeTerms: new Set([
       ...selectableBuiltInLists.flatMap((wordList) =>
-        selectedWordListIdSet.has(wordList.id)
+        selectedBuiltInWordListIdSet.has(wordList.id)
           ? wordList.entries.map((entry) => entry.term)
           : [],
       ),

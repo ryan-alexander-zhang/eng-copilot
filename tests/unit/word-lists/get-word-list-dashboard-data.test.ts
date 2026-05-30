@@ -7,18 +7,42 @@ describe("getWordListDashboardData", () => {
       ownerId: "user_123",
       prisma: {
         wordList: {
+          upsert: vi.fn().mockResolvedValue({
+            id: "list_default",
+            name: "Default Word List",
+            slug: "user-user_123-default-word-list",
+            updatedAt: new Date("2026-05-10T00:00:00.000Z"),
+          }),
           findMany: vi.fn().mockResolvedValue([
             {
-              entries: [{ term: "alpha" }, { term: "beta" }],
               id: "list_cet4",
               name: "CET4",
+              ownerId: null,
               slug: "cet4",
               updatedAt: new Date("2026-05-10T00:00:00.000Z"),
+              _count: {
+                entries: 2,
+                vocabularyEntries: 0,
+              },
+            },
+            {
+              id: "list_default",
+              name: "Default Word List",
+              ownerId: "user_123",
+              slug: "user-user_123-default-word-list",
+              updatedAt: new Date("2026-05-10T00:00:00.000Z"),
+              _count: {
+                entries: 0,
+                vocabularyEntries: 3,
+              },
             },
           ]),
         },
         userWordListPreference: {
-          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_cet4" }]),
+          findMany: vi.fn().mockResolvedValue([
+            { wordListId: "list_cet4" },
+            { wordListId: "list_default" },
+          ]),
         },
         document: {
           findMany: vi.fn().mockResolvedValue([]),
@@ -26,7 +50,7 @@ describe("getWordListDashboardData", () => {
       },
     });
 
-    expect(result.lists).toEqual([
+    expect(result.lists).toEqual(expect.arrayContaining([
       expect.objectContaining({
         id: "list_cet4",
         isSelected: true,
@@ -34,7 +58,13 @@ describe("getWordListDashboardData", () => {
         slug: "cet4",
         wordCount: 2,
       }),
-    ]);
-    expect(result.totalSelectedWords).toBe(2);
+      expect.objectContaining({
+        id: "list_default",
+        isSelected: true,
+        name: "Default Word List",
+        wordCount: 3,
+      }),
+    ]));
+    expect(result.totalSelectedWords).toBe(5);
   });
 });

@@ -4,6 +4,7 @@ import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildMatchedWords } from "@/lib/documents/build-matched-words";
 import { getOwnerDocument } from "@/lib/documents/get-owner-document";
+import { getActiveWordListsWithTerms } from "@/lib/word-lists/get-active-word-lists-with-terms";
 import { OwnerTopBar } from "@/components/layout/owner-top-bar";
 
 const READER_MATCHED_WORD_ORDER = [
@@ -39,24 +40,11 @@ export default async function MatchedWordsPage({
   }
 
   const activeWordListIds = document.activeLists.map((entry) => entry.wordList.id);
-  const activeWordLists =
-    activeWordListIds.length > 0
-      ? await prisma.wordList.findMany({
-          where: {
-            id: {
-              in: activeWordListIds,
-            },
-          },
-          select: {
-            name: true,
-            entries: {
-              select: {
-                term: true,
-              },
-            },
-          },
-        })
-      : [];
+  const activeWordLists = await getActiveWordListsWithTerms({
+    ownerId: session.user.id,
+    prisma,
+    wordListIds: activeWordListIds,
+  });
   const { matchedWordCount, matchedWords } = buildMatchedWords({
     activeWordLists,
     highlightMatches: document.highlightMatches,

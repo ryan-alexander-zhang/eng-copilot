@@ -2,7 +2,7 @@ import { Prisma, WordListKind, type PrismaClient } from "@prisma/client";
 import { recomputeDocumentHighlights } from "@/lib/highlights/recompute-document-highlights";
 import { getOwnerActiveTerms } from "@/lib/highlights/get-owner-active-terms";
 import { normalizeVocabularyWord } from "@/lib/vocabulary/normalize-word";
-import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
+import { ensureOwnerDefaultWordList } from "@/lib/word-lists/service";
 
 const VOCABULARY_JSON_VERSION = 1;
 
@@ -53,7 +53,11 @@ export async function saveVocabularyEntry(input: VocabularyEntryInput) {
   const normalizedWord = getRequiredNormalizedWord(input.word);
   const note = normalizeVocabularyNote(input.note);
   const source = normalizeVocabularySource(input.source);
-  const selectedWordLists = await getSelectableWordLists(input.prisma, input.wordListSlugs ?? []);
+  const selectedWordLists = await getSelectableWordLists({
+    ownerId: input.ownerId,
+    prisma: input.prisma,
+    wordListSlugs: input.wordListSlugs ?? [],
+  });
 
   const entry = await input.prisma.$transaction(async (tx) => {
     const savedEntry = input.entryId
@@ -186,6 +190,11 @@ export async function exportVocabularyJson(input: {
       source: true,
       word: true,
       wordLists: {
+        where: {
+          wordList: {
+            ownerId: input.ownerId,
+          },
+        },
         select: {
           wordList: {
             select: {
@@ -268,17 +277,23 @@ function parseVocabularyJson(payload: unknown): VocabularyJson {
 }
 
 async function getSelectableWordLists(
-  prisma: Pick<PrismaClient, "wordList">,
-  wordListSlugs: string[],
+  input: {
+    ownerId: string;
+    prisma: Pick<PrismaClient, "wordList">;
+    wordListSlugs: string[];
+  },
 ) {
-  const normalizedSlugs = [...new Set(wordListSlugs.map((slug) => slug.trim().toLowerCase()))]
+  await ensureOwnerDefaultWordList({
+    ownerId: input.ownerId,
+    prisma: input.prisma,
+  });
+
+  const normalizedSlugs = [...new Set(input.wordListSlugs.map((slug) => slug.trim().toLowerCase()))]
     .filter((slug) => slug.length > 0);
-  const selectableWordLists = await prisma.wordList.findMany({
+  const selectableWordLists = await input.prisma.wordList.findMany({
     where: {
+      ownerId: input.ownerId,
       kind: WordListKind.POSITIVE,
-      slug: {
-        in: BUILT_IN_LISTS.map((list) => list.slug),
-      },
     },
     select: {
       id: true,

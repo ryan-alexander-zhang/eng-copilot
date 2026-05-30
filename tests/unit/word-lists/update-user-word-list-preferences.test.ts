@@ -8,7 +8,7 @@ describe("updateUserWordListPreferences", () => {
 
     await updateUserWordListPreferences({
       ownerId: "user_123",
-      selectedWordListIds: ["list_cet6"],
+      selectedWordListIds: ["list_cet6", "list_default"],
       prisma: prisma as never,
       recomputeHighlights,
     });
@@ -51,7 +51,13 @@ function createPrismaMock() {
       findMany: vi.fn().mockResolvedValue([
         {
           id: "list_cet6",
+          ownerId: null,
           entries: [{ term: "harness" }],
+        },
+        {
+          id: "list_default",
+          ownerId: "user_123",
+          entries: [],
         },
       ]),
       findUnique: vi.fn().mockResolvedValue({
@@ -64,4 +70,3 @@ function createPrismaMock() {
     transactionClient,
   };
 }
-

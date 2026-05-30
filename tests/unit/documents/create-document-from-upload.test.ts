@@ -121,7 +121,7 @@ describe("createDocumentFromUpload", () => {
           create,
         },
         userWordListPreference: {
-          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_cet6" }]),
+          findMany: vi.fn().mockResolvedValue([{ wordListId: "list_default" }]),
         },
         vocabularyEntry: {
           findMany: vi.fn().mockResolvedValue([{ word: "observability" }]),
@@ -129,7 +129,8 @@ describe("createDocumentFromUpload", () => {
         wordList: {
           findMany: vi.fn().mockResolvedValue([
             {
-              id: "list_cet6",
+              id: "list_default",
+              ownerId: "user_123",
               entries: [],
             },
           ]),

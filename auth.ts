@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
 import { applySessionUserId, canSignIn, createGoogleAuthFetch } from "@/lib/auth-config";
 import { assertValidAuthEnv, getAuthEnv } from "@/lib/auth-env";
+import { ensureOwnerDefaultWordList } from "@/lib/word-lists/service";
 
 assertValidAuthEnv();
 
@@ -27,6 +28,14 @@ export const authConfig = {
   callbacks: {
     signIn: canSignIn,
     session: applySessionUserId,
+  },
+  events: {
+    createUser: async ({ user }) => {
+      await ensureOwnerDefaultWordList({
+        ownerId: user.id,
+        prisma,
+      });
+    },
   },
 } satisfies NextAuthConfig;
 

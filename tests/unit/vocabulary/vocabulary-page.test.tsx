@@ -39,6 +39,7 @@ vi.mock("@/lib/db", () => ({
       findMany: vi.fn(),
     },
     wordList: {
+      upsert: vi.fn(),
       findMany: vi.fn(),
     },
   },
@@ -54,16 +55,21 @@ afterEach(() => {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(prisma.wordList.upsert).mockResolvedValue({
+    id: "list_default",
+    name: "Default Word List",
+    slug: "user-user_123-default-word-list",
+  } as never);
   vi.mocked(prisma.wordList.findMany).mockResolvedValue([
     {
-      id: "list_cet6",
-      name: "CET6",
-      slug: "cet6",
+      id: "list_default",
+      name: "Default Word List",
+      slug: "user-user_123-default-word-list",
     },
     {
-      id: "list_ielts",
-      name: "IELTS",
-      slug: "ielts",
+      id: "list_academic_review",
+      name: "Academic Review",
+      slug: "user-user_123-academic-review",
     },
   ] as never);
   vi.mocked(prisma.vocabularyEntry.findMany).mockResolvedValue([
@@ -76,16 +82,16 @@ beforeEach(() => {
       wordLists: [
         {
           wordList: {
-            id: "list_cet6",
-            name: "CET6",
-            slug: "cet6",
+            id: "list_default",
+            name: "Default Word List",
+            slug: "user-user_123-default-word-list",
           },
         },
         {
           wordList: {
-            id: "list_ielts",
-            name: "IELTS",
-            slug: "ielts",
+            id: "list_academic_review",
+            name: "Academic Review",
+            slug: "user-user_123-academic-review",
           },
         },
       ],
@@ -125,10 +131,11 @@ describe("VocabularyPage", () => {
       "href",
       "https://youglish.com/pronounce/observability/english/uk",
     );
+    expect(screen.getByText("New list")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Copy observability" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Edit observability" })).toBeInTheDocument();
-    expect(screen.getAllByText("CET6").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("IELTS").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Default Word List").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Academic Review").length).toBeGreaterThan(0);
   });
 
   it("keeps the vocabulary table card at content height when pagination is absent", async () => {
