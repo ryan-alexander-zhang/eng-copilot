@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import CredentialsSignInForm from "./credentials-sign-in-form";
 import SignInButton from "./sign-in-button";
+import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createPasswordSignInSession } from "@/lib/auth/password-sign-in";
 
@@ -43,6 +44,15 @@ function getSignInMessage(message: string | undefined) {
 }
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
+  try {
+    await getRequiredSession();
+    redirect("/documents");
+  } catch (error) {
+    if (!(error instanceof UnauthenticatedError)) {
+      throw error;
+    }
+  }
+
   const resolvedSearchParams = await searchParams;
   const callbackUrl = Array.isArray(resolvedSearchParams?.callbackUrl)
     ? resolvedSearchParams.callbackUrl[0]
