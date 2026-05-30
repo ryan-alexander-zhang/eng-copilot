@@ -92,6 +92,53 @@ describe("DocumentWorkspace", () => {
     );
   });
 
+  it("uses a dedicated sharing button and keeps delete in the header more-actions menu", async () => {
+    const moveToTrashAction = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <DocumentWorkspace
+        annotations={[]}
+        annotationIndexHref="/annotations?document=doc_1"
+        blocks={[]}
+        createAction={vi.fn().mockResolvedValue(undefined)}
+        deleteAction={vi.fn().mockResolvedValue(undefined)}
+        documentId="doc_1"
+        enableShareAction={vi.fn().mockResolvedValue({
+          isActive: true,
+          token: "share-token",
+        })}
+        highlightMatches={[]}
+        matchedWordCount={0}
+        matchedWords={[]}
+        matchedWordsHref="/documents/doc_1/matched-words"
+        moveToTrashAction={moveToTrashAction}
+        onMoveToTrashSuccess={() => {}}
+        rawMarkdown="# Title"
+        readingMinutes={1}
+        revokeShareAction={vi.fn().mockResolvedValue(null)}
+        share={null}
+        title="Title"
+        updateAction={vi.fn().mockResolvedValue(undefined)}
+        updatedLabel="Today at 10:24 AM"
+        wordCount={1}
+        wordLists={[]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /^Sharing$/i }));
+
+    expect(screen.getByText('Share "Title"')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Done" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "More actions for Title" }));
+    expect(screen.getAllByRole("button", { name: /^Sharing$/i })).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: /^Delete$/i }));
+
+    await waitFor(() => {
+      expect(moveToTrashAction).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("shows search result count and next-result navigation in the workspace", () => {
     const rawMarkdown = "Learning is valuable.\n\nValuable habits compound.";
 

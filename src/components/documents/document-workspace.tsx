@@ -9,11 +9,15 @@ import {
   Lightbulb,
   Link2,
   List,
-  MoreHorizontal,
   Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnnotationEditorPanel } from "@/components/documents/annotation-editor-panel";
+import {
+  DocumentMoreActionsMenu,
+  DocumentShareButton,
+  type DocumentShareState,
+} from "@/components/documents/document-more-actions-menu";
 import { AnnotationPanel } from "@/components/documents/annotation-panel";
 import {
   type AnnotationDraft,
@@ -43,7 +47,7 @@ type DocumentWorkspaceProps = {
   createAction: (formData: FormData) => Promise<void>;
   deleteAction: (formData: FormData) => Promise<void>;
   documentId: string;
-  enableShareAction: () => Promise<void>;
+  enableShareAction: () => Promise<DocumentShareState>;
   highlightMatches: ReaderHighlightMatch[];
   initialSelectedAnnotationId?: string | null;
   matchedWordCount: number;
@@ -56,14 +60,13 @@ type DocumentWorkspaceProps = {
   pdfSourceUrl?: string | null;
   rawMarkdown?: string | null;
   readingMinutes: number;
-  revokeShareAction: () => Promise<void>;
-  share: {
-    isActive: boolean;
-    token: string;
-  } | null;
+  revokeShareAction: () => Promise<DocumentShareState>;
+  share: DocumentShareState;
   sourceUrl?: string | null;
   sourceFormat?: ReaderSourceFormat;
   title: string;
+  moveToTrashAction?: () => Promise<void>;
+  onMoveToTrashSuccess?: () => void;
   updateAction: (formData: FormData) => Promise<void>;
   updatedLabel: string;
   wordLists: Array<{
@@ -87,6 +90,8 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
     matchedWordCount,
     matchedWords,
     matchedWordsHref,
+    moveToTrashAction,
+    onMoveToTrashSuccess,
     pdfSourceUrl,
     rawMarkdown,
     readingMinutes,
@@ -103,6 +108,7 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearchMatchIndex, setActiveSearchMatchIndex] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [shareState, setShareState] = useState<DocumentShareState>(share);
   const [isTipDismissed, setIsTipDismissed] = useState(() => {
     if (typeof window === "undefined") {
       return false;
@@ -240,12 +246,14 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
             </button>
           </div>
 
-          <form action={share?.isActive ? revokeShareAction : enableShareAction}>
-            <button className="inline-flex h-10 items-center gap-2 rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#374151]" type="submit">
-              <Link2 className="h-4 w-4" strokeWidth={2} />
-              Share read-only
-            </button>
-          </form>
+          <DocumentShareButton
+            enableShareAction={enableShareAction}
+            onShareChange={setShareState}
+            revokeShareAction={revokeShareAction}
+            share={shareState}
+            shareLabel={title}
+            variant="toolbar-button"
+          />
 
           {sourceUrl ? (
             <Link
@@ -259,9 +267,17 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
             </Link>
           ) : null}
 
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#6B7280]" type="button">
-            <MoreHorizontal className="h-4 w-4" strokeWidth={2} />
-          </button>
+          <DocumentMoreActionsMenu
+            moveToTrashAction={moveToTrashAction ?? (async () => {})}
+            onMoveToTrashSuccess={
+              moveToTrashAction
+                ? (onMoveToTrashSuccess ?? (() => {
+                    window.location.assign("/documents");
+                  }))
+                : undefined
+            }
+            triggerLabel={`More actions for ${title}`}
+          />
         </div>
 
         <div className="mt-6">

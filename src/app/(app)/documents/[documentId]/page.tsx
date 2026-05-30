@@ -15,6 +15,7 @@ import {
 } from "@/lib/documents/metrics";
 import { buildMatchedWords } from "@/lib/documents/build-matched-words";
 import { getOwnerDocument } from "@/lib/documents/get-owner-document";
+import { moveDocumentToTrash } from "@/lib/documents/move-document-to-trash";
 import { enableDocumentShare } from "@/lib/shares/enable-document-share";
 import { revokeDocumentShare } from "@/lib/shares/revoke-document-share";
 import { BUILT_IN_LISTS } from "@/lib/word-lists/catalog";
@@ -184,25 +185,55 @@ export default async function DocumentPage({
   async function enableShareAction() {
     "use server";
 
-    await enableDocumentShare({
+    const share = await enableDocumentShare({
       documentId: ownerDocumentId,
       ownerId,
       prisma,
     });
 
     revalidatePath(`/documents/${ownerDocumentId}`);
+
+    return {
+      isActive: share.isActive,
+      token: share.token,
+    };
   }
 
   async function revokeShareAction() {
     "use server";
 
-    await revokeDocumentShare({
+    const share = await revokeDocumentShare({
       documentId: ownerDocumentId,
       ownerId,
       prisma,
     });
 
     revalidatePath(`/documents/${ownerDocumentId}`);
+
+    return share
+      ? {
+          isActive: share.isActive,
+          token: share.token,
+        }
+      : null;
+  }
+
+  async function moveToTrashAction() {
+    "use server";
+
+    const result = await moveDocumentToTrash({
+      documentId: ownerDocumentId,
+      ownerId,
+      prisma,
+    });
+
+    revalidatePath("/documents");
+    revalidatePath("/word-lists");
+    revalidatePath("/annotations");
+
+    if (result.shareToken) {
+      revalidatePath(`/shared/${result.shareToken}`);
+    }
   }
 
   return (
@@ -244,6 +275,7 @@ export default async function DocumentPage({
             matchedWords={matchedWordItems}
             matchedWordCount={matchedWordCount}
             matchedWordsHref={`/documents/${document.id}/matched-words`}
+            moveToTrashAction={moveToTrashAction}
             pdfSourceUrl={
               document.sourceFormat === "PDF" ? `/api/documents/${document.id}/pdf` : null
             }
