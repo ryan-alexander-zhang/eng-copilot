@@ -81,5 +81,5 @@ export async function isAllowedSignInEmailForSignIn({
     return envAllowedEmails.has(normalizedEmail);
   }
 
-  return true;
+  return false;
 }

@@ -8,6 +8,9 @@ describe("createPasswordSignInSession", () => {
     const passwordHash = await hashPassword("eng-copilot-dev");
 
     const result = await createPasswordSignInSession({
+      env: {
+        ALLOWED_SIGN_IN_EMAILS: "alex.chen@example.com",
+      },
       identifier: "alex.chen@example.com",
       password: "eng-copilot-dev",
       prisma: {

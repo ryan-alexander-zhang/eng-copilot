@@ -13,14 +13,14 @@ function createPrisma(emails: string[] = []) {
 }
 
 describe("isAllowedSignInEmailForSignIn", () => {
-  it("allows sign-in for everyone when no allowlist is configured", async () => {
+  it("denies sign-in when no allowlist is configured", async () => {
     const result = await isAllowedSignInEmailForSignIn({
       email: "reader@example.com",
       env: {},
       prisma: createPrisma(),
     });
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it("always allows the hardcoded admin email", async () => {
