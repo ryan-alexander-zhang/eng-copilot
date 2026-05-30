@@ -192,7 +192,7 @@ export async function UserMenu({ userInitial }: { userInitial?: string }) {
       return {
         error: "Unable to update the API token.",
         hasResult: true,
-        preview: user.clipperTokenPreview,
+        preview: user?.clipperTokenPreview ?? null,
         token: null,
       };
     }

@@ -31,6 +31,10 @@ export const authConfig = {
   },
   events: {
     createUser: async ({ user }) => {
+      if (!user.id) {
+        return;
+      }
+
       await ensureOwnerDefaultWordList({
         ownerId: user.id,
         prisma,

@@ -367,7 +367,9 @@ function buildReaderWordLists(
   }>,
   selectedWordListIds: string[],
 ) {
-  const builtInOrderBySlug = new Map(BUILT_IN_LISTS.map((list, index) => [list.slug, index]));
+  const builtInOrderBySlug = new Map<string, number>(
+    BUILT_IN_LISTS.map((list, index) => [list.slug, index]),
+  );
   const selectedWordListIdSet = new Set(selectedWordListIds);
 
   return [...availableWordLists]
