@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "if [ \"$VERCEL\" = \"1\" ]; then npm run build:vercel; else next build; fi",
-    "build:vercel": "prisma generate && prisma db push && npm run db:seed && next build",
+    "build:vercel": "prisma generate && prisma db push --accept-data-loss && npm run db:seed && next build",
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
