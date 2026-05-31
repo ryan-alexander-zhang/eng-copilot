@@ -1,0 +1,96 @@
+name: Release Browser Extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/release-browser-extension.yml
+      - extensions/eng-copilot-clipper/**
+      - package-lock.json
+      - package.json
+      - scripts/build-clipper-extension.mjs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-browser-extension
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build browser extension
+        run: npm run build:clipper
+
+      - name: Stamp packaged extension version
+        env:
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          node --input-type=module <<'EOF'
+          import { readFile, writeFile } from "node:fs/promises";
+
+          const manifestPath = "extensions/eng-copilot-clipper/dist/manifest.json";
+          const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+          const versionParts = String(manifest.version ?? "0.1.0")
+            .split(".")
+            .map((part) => Number.parseInt(part, 10));
+          const major = Number.isFinite(versionParts[0]) ? versionParts[0] : 0;
+          const minor = Number.isFinite(versionParts[1]) ? versionParts[1] : 1;
+          const patch = Number.isFinite(versionParts[2]) ? versionParts[2] : 0;
+          const build = Math.max(0, Number(process.env.GITHUB_RUN_NUMBER ?? "0") % 65535);
+
+          manifest.version = [major, minor, patch, build].join(".");
+
+          await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+          EOF
+
+      - name: Package release zip
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp -R extensions/eng-copilot-clipper/dist release/eng-copilot-clipper
+          (
+            cd release
+            zip -r eng-copilot-clipper.zip eng-copilot-clipper
+          )
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          tag="browser-extension-${GITHUB_RUN_NUMBER}"
+          title="Browser Extension build #${GITHUB_RUN_NUMBER}"
+          notes="Automated browser extension release for ${GITHUB_SHA}."
+
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            gh release upload "${tag}" \
+              release/eng-copilot-clipper.zip \
+              --clobber
+            exit 0
+          fi
+
+          gh release create "${tag}" \
+            release/eng-copilot-clipper.zip \
+            --latest \
+            --notes "${notes}" \
+            --target "${GITHUB_SHA}" \
+            --title "${title}"

@@ -6,9 +6,14 @@ import {
   CheckCircle2,
   ChevronDown,
   CircleUserRound,
+  Copy,
+  Download,
+  ExternalLink,
+  Info,
   KeyRound,
   LockKeyhole,
   LogOut,
+  Puzzle,
   Trash2,
   X,
 } from "lucide-react";
@@ -17,15 +22,22 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { getPasswordValidationState } from "@/lib/password-rules";
+import type { BrowserExtensionLinks } from "@/lib/browser-extension-links";
 import {
   ClipperTokenSection,
   type ClipperTokenActionState,
 } from "@/components/settings/clipper-token-section";
 import { PasswordField } from "@/components/settings/settings-form-controls";
 
-type AccountPanel = "api" | "clear-data" | "password" | "profile";
+type AccountPanel =
+  | "api"
+  | "browser-extension"
+  | "clear-data"
+  | "password"
+  | "profile";
 
 type UserMenuClientProps = {
+  browserExtensionLinks: BrowserExtensionLinks;
   clipperTokenAction: (
     state: ClipperTokenActionState,
     formData: FormData,
@@ -85,6 +97,7 @@ function getAccountPanel(value: string | null): AccountPanel | null {
     value === "profile" ||
     value === "password" ||
     value === "api" ||
+    value === "browser-extension" ||
     value === "clear-data"
   ) {
     return value;
@@ -154,6 +167,7 @@ function getNotice(error: string | null, message: string | null) {
 }
 
 export function UserMenuClient({
+  browserExtensionLinks,
   clipperTokenAction,
   clipperTokenPreview: initialClipperTokenPreview,
   deleteAllDataAction,
@@ -264,6 +278,11 @@ export function UserMenuClient({
               onClick={() => openPanel("api")}
             />
             <MenuItem
+              icon={<Puzzle className="h-4 w-4 text-[#667085]" strokeWidth={2} />}
+              label="Browser Extension"
+              onClick={() => openPanel("browser-extension")}
+            />
+            <MenuItem
               className="text-[#E14D45] hover:bg-[#FFF5F5]"
               icon={<Trash2 className="h-4 w-4" strokeWidth={2} />}
               label="Clear all data"
@@ -296,7 +315,9 @@ export function UserMenuClient({
               }}
             >
               <div
-                className="w-full max-h-[calc(100vh-32px)] max-w-[500px] overflow-y-auto rounded-[34px] border border-[#E6EAF1] bg-[rgba(255,255,255,0.97)] px-8 py-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)] sm:px-8 sm:py-7"
+                className={`w-full max-h-[calc(100vh-32px)] overflow-y-auto rounded-[34px] border border-[#E6EAF1] bg-[rgba(255,255,255,0.97)] px-8 py-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)] sm:px-8 sm:py-7 ${
+                  activePanel === "browser-extension" ? "max-w-[940px]" : "max-w-[500px]"
+                }`}
               >
                 <div className="flex items-start justify-between gap-6 border-b border-[#EEF2F6] pb-6">
                   <div>
@@ -307,6 +328,8 @@ export function UserMenuClient({
                           ? "Password"
                           : activePanel === "api"
                             ? "API token"
+                            : activePanel === "browser-extension"
+                              ? "Install Browser Extension"
                             : "Clear all data"}
                     </h2>
                     <p className="mt-2 text-[16px] leading-7 text-[#8A94A6]">
@@ -318,6 +341,8 @@ export function UserMenuClient({
                             : "Set a password to sign in with your email and password."
                           : activePanel === "api"
                             ? "Generate or rotate your API token. Only one active token is allowed."
+                            : activePanel === "browser-extension"
+                              ? "Follow the steps below to download and install the extension."
                             : "This permanently deletes your documents, annotations, and saved account data."}
                     </p>
                   </div>
@@ -359,6 +384,13 @@ export function UserMenuClient({
                       preview={clipperTokenPreview}
                     />
                   </div>
+                ) : null}
+                {activePanel === "browser-extension" ? (
+                  <BrowserExtensionPanel
+                    downloadUrl={browserExtensionLinks.downloadUrl}
+                    onClose={closePanel}
+                    supportUrl={browserExtensionLinks.supportUrl}
+                  />
                 ) : null}
                 {activePanel === "clear-data" ? (
                   <ClearDataPanel
@@ -646,6 +678,258 @@ function PasswordPanel({
         Your password is encrypted and stored securely.
       </p>
     </form>
+  );
+}
+
+function BrowserExtensionPanel({
+  downloadUrl,
+  onClose,
+  supportUrl,
+}: {
+  downloadUrl: string | null;
+  onClose: () => void;
+  supportUrl: string | null;
+}) {
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+
+  useEffect(() => {
+    if (copyState === "idle") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setCopyState("idle");
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [copyState]);
+
+  async function copyDownloadLink() {
+    if (!downloadUrl) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(downloadUrl);
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
+  }
+
+  return (
+    <div className="space-y-8 pt-6">
+      {!downloadUrl ? (
+        <div
+          className="rounded-[18px] border border-[#F4C7C7] bg-[#FFF5F5] px-5 py-4 text-[15px] text-[#B42318]"
+          role="alert"
+        >
+          Set <code className="font-semibold">BROWSER_EXTENSION_DOWNLOAD_URL</code> to
+          enable the browser extension download link.
+        </div>
+      ) : null}
+      {copyState === "error" ? (
+        <div
+          className="rounded-[18px] border border-[#F4C7C7] bg-[#FFF5F5] px-5 py-4 text-[15px] text-[#B42318]"
+          role="alert"
+        >
+          Unable to copy the extension download link.
+        </div>
+      ) : null}
+
+      <section className="space-y-4">
+        <div>
+          <p className="text-[17px] font-semibold text-[#111827]">Extension download link</p>
+        </div>
+        <div className="rounded-[24px] border border-[#E6EAF1] bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.06)]">
+          <div className="flex items-center gap-3 rounded-[18px] border border-[#D8DEE8] bg-[#FCFDFF] px-4 py-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#F4F7FC] text-[#667085]">
+              <Puzzle className="h-5 w-5" strokeWidth={2} />
+            </div>
+            <div className="min-w-0 flex-1">
+              {downloadUrl ? (
+                <a
+                  className="inline-flex max-w-full items-center gap-2 overflow-hidden text-[15px] font-medium text-[#2F6FEB] hover:text-[#1D4ED8]"
+                  href={downloadUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span className="truncate">{downloadUrl}</span>
+                  <ExternalLink className="h-4 w-4 shrink-0" strokeWidth={2} />
+                </a>
+              ) : (
+                <p className="text-[15px] text-[#98A2B3]">Download link not configured yet.</p>
+              )}
+            </div>
+            <button
+              aria-label="Copy extension download link"
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-[14px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#667085] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:text-[#B6BFCC]"
+              disabled={!downloadUrl}
+              onClick={() => {
+                void copyDownloadLink();
+              }}
+              type="button"
+            >
+              {copyState === "copied" ? (
+                "Copied"
+              ) : (
+                <>
+                  <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
+                  Copy
+                </>
+              )}
+            </button>
+          </div>
+          <p className="mt-4 text-[15px] leading-7 text-[#8A94A6]">
+            Download the packaged extension, extract it locally, and load the unpacked
+            folder in Chrome developer mode.
+          </p>
+        </div>
+      </section>
+
+      <section className="space-y-5 border-t border-[#EEF2F6] pt-7">
+        <div>
+          <p className="text-[17px] font-semibold text-[#111827]">Installation guide</p>
+        </div>
+        <div className="space-y-6">
+          <InstallationStep
+            description="Click the link above to download the .zip package to your computer."
+            step={1}
+            title="Download the extension package"
+          />
+          <InstallationStep
+            description="Unzip the downloaded package so you have a local folder that contains manifest.json."
+            step={2}
+            title="Extract the downloaded folder"
+          />
+          <InstallationStep
+            description={
+              <>
+                In Chrome, type <code className="font-medium text-[#2F6FEB]">chrome://extensions</code> in the address bar and press Enter.
+              </>
+            }
+            step={3}
+            title="Open Chrome extensions page"
+          />
+          <InstallationStep
+            content={
+              <div className="mt-4 rounded-[20px] border border-[#E6EAF1] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-full bg-[conic-gradient(from_210deg,#EA4335,#FBBC05,#34A853,#4285F4,#EA4335)]" />
+                    <div>
+                      <p className="text-[18px] font-semibold text-[#111827]">Extensions</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 rounded-full bg-[#F8FAFC] px-4 py-2.5">
+                    <span className="text-[14px] font-medium text-[#475467]">Developer mode</span>
+                    <span className="relative inline-flex h-7 w-12 rounded-full bg-[#2F6FEB]">
+                      <span className="absolute right-1 top-1 h-5 w-5 rounded-full bg-white" />
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-start">
+                  <span className="inline-flex items-center gap-2 rounded-[14px] border border-[#D8DEE8] bg-[#FCFDFF] px-4 py-2.5 text-[14px] font-medium text-[#344054]">
+                    <Download className="h-4 w-4" strokeWidth={2} />
+                    Load unpacked
+                  </span>
+                </div>
+              </div>
+            }
+            description='Turn on the "Developer mode" toggle in the top-right corner, then click "Load unpacked".'
+            step={4}
+            title="Enable Developer mode"
+          />
+          <InstallationStep
+            content={
+              <div className="mt-4 rounded-[20px] border border-[#E6EAF1] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[#F4F7FC] text-[#98A2B3]">
+                      <Download className="h-6 w-6" strokeWidth={2} />
+                    </div>
+                    <p className="truncate text-[16px] font-medium text-[#475467]">
+                      eng-copilot-clipper/
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 rounded-[18px] bg-[#F8FAFC] px-4 py-3 text-[#667085]">
+                    <span className="text-[16px]">Select folder</span>
+                    <Puzzle className="h-5 w-5" strokeWidth={2} />
+                  </div>
+                </div>
+              </div>
+            }
+            description="Choose the extracted extension folder. Chrome will load it immediately and the extension icon will appear in your toolbar."
+            step={5}
+            title="Select the unpacked folder"
+          />
+        </div>
+      </section>
+
+      <div className="rounded-[22px] border border-[#D8E6FF] bg-[#F5F9FF] px-5 py-4">
+        <div className="flex items-start gap-3">
+          <Info className="mt-0.5 h-5 w-5 text-[#2F6FEB]" strokeWidth={2} />
+          <div className="text-[15px] leading-7 text-[#62718C]">
+            <p className="font-semibold text-[#2F6FEB]">Need help?</p>
+            {supportUrl ? (
+              <p className="mt-1">
+                If you encounter any issues,{" "}
+                <a
+                  className="font-medium text-[#2F6FEB] hover:text-[#1D4ED8]"
+                  href={supportUrl}
+                  rel="noreferrer"
+                  target={supportUrl.startsWith("mailto:") ? undefined : "_blank"}
+                >
+                  Contact support
+                </a>
+                .
+              </p>
+            ) : (
+              <p className="mt-1">
+                If you encounter any issues, please contact your support team.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <button
+        className="inline-flex h-14 w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+        onClick={onClose}
+        type="button"
+      >
+        Close
+      </button>
+    </div>
+  );
+}
+
+function InstallationStep({
+  content,
+  description,
+  step,
+  title,
+}: {
+  content?: ReactNode;
+  description: ReactNode;
+  step: number;
+  title: string;
+}) {
+  return (
+    <div className="grid gap-4 md:grid-cols-[56px_minmax(0,1fr)]">
+      <div className="flex items-start md:justify-center">
+        <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#EEF4FF] text-[20px] font-semibold text-[#2F6FEB]">
+          {step}
+        </div>
+      </div>
+      <div className="pb-1">
+        <p className="text-[20px] font-semibold tracking-[-0.03em] text-[#111827]">{title}</p>
+        <div className="mt-2 text-[15px] leading-7 text-[#8A94A6]">{description}</div>
+        {content}
+      </div>
+    </div>
   );
 }
 

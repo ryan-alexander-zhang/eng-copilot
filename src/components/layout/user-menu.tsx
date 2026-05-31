@@ -9,6 +9,7 @@ import {
   normalizeUsername,
   verifyPassword,
 } from "@/lib/passwords";
+import { getBrowserExtensionLinks } from "@/lib/browser-extension-links";
 import type { ClipperTokenActionState } from "@/components/settings/clipper-token-section";
 import { UserMenuClient } from "./user-menu-client";
 
@@ -242,6 +243,7 @@ export async function UserMenu({ userInitial }: { userInitial?: string }) {
 
   return (
     <UserMenuClient
+      browserExtensionLinks={getBrowserExtensionLinks()}
       clipperTokenAction={clipperTokenAction}
       clipperTokenPreview={user.clipperTokenPreview}
       deleteAllDataAction={deleteAllDataAction}
