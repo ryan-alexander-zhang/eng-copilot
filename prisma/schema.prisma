@@ -148,6 +148,7 @@ model WordListEntry {
   wordList   WordList @relation(fields: [wordListId], references: [id], onDelete: Cascade)
 
   @@unique([wordListId, term])
+  @@index([term])
 }
 
 model UserWordListPreference {
@@ -174,6 +175,7 @@ model VocabularyEntry {
 
   @@unique([ownerId, word])
   @@index([ownerId, createdAt])
+  @@index([word])
 }
 
 model VocabularyEntryWordList {

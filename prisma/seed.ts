@@ -39,6 +39,7 @@ async function refreshWordList(
     terms: string[];
   },
 ) {
+  const terms = Array.from(new Set(input.terms));
   const wordList = await tx.wordList.upsert({
     where: { slug: input.slug },
     update: { name: input.name, kind: input.kind },
@@ -53,9 +54,9 @@ async function refreshWordList(
     where: { wordListId: wordList.id },
   });
 
-  if (input.terms.length > 0) {
+  if (terms.length > 0) {
     await tx.wordListEntry.createMany({
-      data: input.terms.map((term) => ({
+      data: terms.map((term) => ({
         wordListId: wordList.id,
         term,
       })),
