@@ -1,17 +1,40 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { signIn } from "next-auth/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { signIn, signOut } from "next-auth/react";
 import LandingPage from "@/app/page";
 import SignInPage from "@/app/sign-in/page";
 import SignInButton from "@/app/sign-in/sign-in-button";
+import { UnauthenticatedError, getRequiredSession } from "@/lib/auth";
 
 vi.mock("next-auth/react", () => ({
   signIn: vi.fn(),
+  signOut: vi.fn(),
 }));
+
+vi.mock("@/lib/browser-extension-links", () => ({
+  getBrowserExtensionLinks: () => ({
+    downloadUrl: null,
+    supportUrl: "mailto:ryan.alexander.zhang@gmail.com",
+  }),
+}));
+
+vi.mock("@/lib/auth", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/auth")>("@/lib/auth");
+
+  return {
+    ...actual,
+    getRequiredSession: vi.fn(),
+  };
+});
+
+beforeEach(() => {
+  vi.mocked(getRequiredSession).mockRejectedValue(new UnauthenticatedError());
+});
 
 afterEach(() => {
   cleanup();
+  vi.clearAllMocks();
 });
 
 describe("LandingPage", () => {
@@ -40,7 +63,7 @@ describe("SignInButton", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Sign in to access your documents, annotations, and shared reading workspace."),
+      screen.getByText("Sign in to continue to your workspace."),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Email or username")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
@@ -48,7 +71,7 @@ describe("SignInButton", () => {
     expect(
       screen.getByRole("button", { name: "Continue with Google" }),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Remember me")).not.toBeInTheDocument();
+    expect(screen.getByText("Remember me")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Forgot password?" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Pricing" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Create account" })).not.toBeInTheDocument();
@@ -94,12 +117,59 @@ describe("SignInButton", () => {
   });
 
   it("shows an access denied message when the email is not allowed", async () => {
-    render(await SignInPage({ searchParams: Promise.resolve({ error: "AccessDenied" }) }));
-
-    expect(
-      screen.getByRole("alert", {
-        name: "",
+    render(
+      await SignInPage({
+        searchParams: Promise.resolve({
+          error: "AccessDenied",
+        }),
       }),
-    ).toHaveTextContent("This email address is not allowed to sign in.");
+    );
+
+    expect(screen.getByRole("heading", { name: "Access Denied" })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Your account is not authorized to access this application. Please contact the administrator to request access.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "ryan.alexander.zhang@gmail.com" })).toHaveAttribute(
+      "href",
+      "mailto:ryan.alexander.zhang@gmail.com",
+    );
+    expect(screen.queryByRole("button", { name: "Continue with Google" })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Email or username")).not.toBeInTheDocument();
+  });
+
+  it("lets denied users restart Google sign-in with account selection", async () => {
+    render(
+      await SignInPage({
+        searchParams: Promise.resolve({
+          callbackUrl: "/shared/token",
+          error: "AccessDenied",
+        }),
+      }),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "signing in again" }));
+
+    expect(vi.mocked(signIn)).toHaveBeenCalledWith("google", {
+      callbackUrl: "/shared/token",
+      prompt: "select_account",
+    });
+  });
+
+  it("lets denied users sign out back to the sign-in page", async () => {
+    render(
+      await SignInPage({
+        searchParams: Promise.resolve({
+          error: "AccessDenied",
+        }),
+      }),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "signing out" }));
+
+    expect(vi.mocked(signOut)).toHaveBeenCalledWith({
+      callbackUrl: "/sign-in",
+    });
   });
 });
