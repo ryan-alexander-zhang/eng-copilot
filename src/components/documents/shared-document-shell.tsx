@@ -8,7 +8,6 @@ import { AnnotationPanel } from "@/components/documents/annotation-panel";
 import {
   type ReaderBlock,
   type ReaderHighlightMatch,
-  type ReaderSourceFormat,
   DocumentReader,
 } from "@/components/documents/document-reader";
 import {
@@ -31,10 +30,8 @@ type SharedDocumentShellProps = {
   originalName: string;
   ownerInitials: string;
   ownerLabel: string;
-  pdfSourceUrl?: string | null;
   rawMarkdown?: string | null;
   readingMinutes: number;
-  sourceFormat?: ReaderSourceFormat;
   title: string;
   token: string;
   updatedAt: Date;
@@ -51,10 +48,8 @@ export function SharedDocumentShell({
   originalName,
   ownerInitials,
   ownerLabel,
-  pdfSourceUrl,
   rawMarkdown,
   readingMinutes,
-  sourceFormat = "MARKDOWN",
   title,
   token,
   updatedAt,
@@ -128,10 +123,8 @@ export function SharedDocumentShell({
               footer={undefined}
               highlightMatches={highlightMatches}
               onSelectAnnotation={(annotationId) => setSelectedAnnotationId(annotationId)}
-              pdfSourceUrl={pdfSourceUrl}
               rawMarkdown={rawMarkdown}
               showTitle={false}
-              sourceFormat={sourceFormat}
               title={title}
             />
           </div>

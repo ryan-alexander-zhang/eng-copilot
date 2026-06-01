@@ -81,12 +81,8 @@ export default async function SharedDocumentPage({
           originalName={document.originalName}
           ownerInitials={ownerInitials}
           ownerLabel={ownerLabel}
-          pdfSourceUrl={
-            document.sourceFormat === "PDF" ? `/api/shared/${token}/pdf` : null
-          }
           rawMarkdown={document.rawMarkdown}
           readingMinutes={readingMinutes}
-          sourceFormat={document.sourceFormat}
           title={document.title}
           token={token}
           updatedAt={document.updatedAt}

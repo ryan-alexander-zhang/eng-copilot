@@ -13,6 +13,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
     input.prisma.document.findMany({
       where: {
         ownerId: input.ownerId,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
       },
       select: {
@@ -26,6 +27,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
           ownerId: {
             not: input.ownerId,
           },
+          sourceFormat: "MARKDOWN",
           trashedAt: null,
         },
       },
@@ -35,6 +37,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
         isActive: true,
         document: {
           ownerId: input.ownerId,
+          sourceFormat: "MARKDOWN",
           trashedAt: null,
         },
       },
@@ -42,6 +45,7 @@ export async function getLibrarySidebarData(input: GetLibrarySidebarDataInput) {
     input.prisma.document.count({
       where: {
         ownerId: input.ownerId,
+        sourceFormat: "MARKDOWN",
         trashedAt: {
           not: null,
         },

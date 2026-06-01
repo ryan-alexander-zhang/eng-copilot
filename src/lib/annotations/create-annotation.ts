@@ -1,5 +1,4 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
-import type { PdfAnnotationAnchor } from "@/lib/markdown/types";
 
 type CreateAnnotationInput = {
   documentId: string;
@@ -11,7 +10,6 @@ type CreateAnnotationInput = {
   note: string;
   tags?: string[];
   color?: string;
-  anchorData?: PdfAnnotationAnchor | null;
   prisma: Pick<PrismaClient, "annotation" | "document">;
 };
 
@@ -22,7 +20,6 @@ export async function createAnnotation(input: CreateAnnotationInput) {
       ownerId: input.ownerId,
     },
     select: {
-      sourceFormat: true,
       blocks: {
         orderBy: {
           sortOrder: "asc",
@@ -46,10 +43,6 @@ export async function createAnnotation(input: CreateAnnotationInput) {
     endBlockKey: input.endBlockKey,
     endOffset: input.endOffset,
   });
-  const anchorData = normalizeAnchorData({
-    anchorData: input.anchorData,
-    sourceFormat: document.sourceFormat,
-  });
 
   return input.prisma.annotation.create({
     data: {
@@ -63,7 +56,7 @@ export async function createAnnotation(input: CreateAnnotationInput) {
       note: input.note.trim(),
       tags: normalizeTags(input.tags),
       color: input.color?.trim() || "yellow",
-      anchorData: anchorData ?? Prisma.JsonNull,
+      anchorData: Prisma.JsonNull,
     },
   });
 }
@@ -146,38 +139,4 @@ function normalizeTags(tags?: string[]) {
   }
 
   return [...uniqueTags];
-}
-
-function normalizeAnchorData(input: {
-  anchorData?: PdfAnnotationAnchor | null;
-  sourceFormat: "MARKDOWN" | "PDF";
-}) {
-  if (input.sourceFormat === "MARKDOWN") {
-    return null;
-  }
-
-  if (!isPdfAnnotationAnchor(input.anchorData)) {
-    throw new Error("Invalid PDF annotation anchor");
-  }
-
-  return input.anchorData;
-}
-
-function isPdfAnnotationAnchor(value: unknown): value is PdfAnnotationAnchor {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "kind" in value &&
-    value.kind === "pdf-page-text-v1" &&
-    "startPageNumber" in value &&
-    Number.isInteger(value.startPageNumber) &&
-    "startRunIndex" in value &&
-    Number.isInteger(value.startRunIndex) &&
-    "endPageNumber" in value &&
-    Number.isInteger(value.endPageNumber) &&
-    "endRunIndex" in value &&
-    Number.isInteger(value.endRunIndex) &&
-    "rects" in value &&
-    Array.isArray(value.rects)
-  );
 }

@@ -224,6 +224,7 @@ export async function recomputeOwnerVocabularyHighlights(input: {
   const documents = await input.prisma.document.findMany({
     where: {
       ownerId: input.ownerId,
+      sourceFormat: "MARKDOWN",
       trashedAt: null,
     },
     select: {

@@ -19,6 +19,7 @@ export default async function ReadOnlyLinksPage() {
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
         share: {
           is: {

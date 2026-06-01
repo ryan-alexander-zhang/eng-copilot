@@ -19,6 +19,7 @@ export default async function TrashPage() {
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        sourceFormat: "MARKDOWN",
         trashedAt: {
           not: null,
         },

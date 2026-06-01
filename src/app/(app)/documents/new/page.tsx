@@ -19,7 +19,7 @@ export default function NewDocumentPage() {
     const file = formData.get("file");
 
     if (!(file instanceof File) || file.size === 0) {
-      return { error: "Choose a Markdown or PDF file to upload" };
+      return { error: "Choose a Markdown file to upload" };
     }
 
     try {
@@ -53,8 +53,8 @@ export default function NewDocumentPage() {
           Add a document
         </h1>
         <p className="mt-4 max-w-xl text-base leading-8 text-zinc-600">
-          Bring in one Markdown or PDF file. We&apos;ll turn it into a clear reading view you can
-          highlight, annotate, and share.
+          Bring in one Markdown file. We&apos;ll turn it into a clear reading view you can highlight,
+          annotate, and share.
         </p>
         <div className="surface-card-muted mt-6 space-y-3">
           <p className="text-sm font-semibold text-zinc-900">What happens next</p>

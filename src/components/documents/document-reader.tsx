@@ -8,12 +8,10 @@ import {
   useState,
 } from "react";
 import { DocumentMarkdownPreview } from "@/components/documents/document-markdown-preview";
-import { DocumentPdfPreview } from "@/components/documents/document-pdf-preview";
 import type { ReaderSearchMatch } from "@/lib/documents/build-reader-search-matches";
-import type { PdfAnnotationAnchor, ProjectionBlock } from "@/lib/markdown/types";
+import type { ProjectionBlock } from "@/lib/markdown/types";
 
 export type ReaderBlock = ProjectionBlock;
-export type ReaderSourceFormat = "MARKDOWN" | "PDF";
 
 export type ReaderHighlightMatch = {
   id?: string;
@@ -25,7 +23,6 @@ export type ReaderHighlightMatch = {
 
 export type ReaderAnnotation = {
   id: string;
-  anchorData?: PdfAnnotationAnchor | null;
   color?: string | null;
   startBlockKey: string;
   startOffset: number;
@@ -41,7 +38,6 @@ type AnnotationSegment = {
 };
 
 export type AnnotationDraft = {
-  anchorData?: PdfAnnotationAnchor | null;
   quote: string;
   startBlockKey: string;
   startOffset: number;
@@ -139,11 +135,9 @@ export function DocumentReader({
   highlightMatches,
   onCreateDraft,
   onSelectAnnotation,
-  pdfSourceUrl,
   rawMarkdown,
   searchMatches = [],
   showTitle = true,
-  sourceFormat = "MARKDOWN",
   title,
 }: {
   activeAnnotationId?: string | null;
@@ -159,11 +153,9 @@ export function DocumentReader({
   highlightMatches: ReaderHighlightMatch[];
   onCreateDraft?: (draft: AnnotationDraft) => void;
   onSelectAnnotation?: (annotationId: string) => void;
-  pdfSourceUrl?: string | null;
   rawMarkdown?: string | null;
   searchMatches?: ReaderSearchMatch[];
   showTitle?: boolean;
-  sourceFormat?: ReaderSourceFormat;
   title?: string;
 }) {
   const previewRef = useRef<HTMLDivElement>(null);
@@ -176,7 +168,6 @@ export function DocumentReader({
   const searchMatchesByBlock = groupByBlock(searchMatches);
   const normalizedRawMarkdown = rawMarkdown ?? "";
   const hiddenFirstHeading =
-    sourceFormat === "MARKDOWN" &&
     title &&
     blocks[0]?.kind === "heading" &&
     blocks[0].text.trim().toLowerCase() === title.trim().toLowerCase()
@@ -274,33 +265,17 @@ export function DocumentReader({
         {visibleBlockCount === 0 ? (
           <p className="text-[15px] text-[#6B7280]">No readable content.</p>
         ) : (
-          <>
-            {sourceFormat === "PDF" && pdfSourceUrl ? (
-              <DocumentPdfPreview
-                activeAnnotationId={activeAnnotationId}
-                activeSearchMatchId={activeSearchMatchId}
-                annotationSegmentsByBlock={annotationSegments}
-                annotations={annotations}
-                blocks={blocks}
-                highlightMatchesByBlock={highlightMatchesByBlock}
-                onSelectAnnotation={onSelectAnnotation}
-                pdfSourceUrl={pdfSourceUrl}
-                searchMatchesByBlock={searchMatchesByBlock}
-              />
-            ) : (
-              <DocumentMarkdownPreview
-                activeAnnotationId={activeAnnotationId}
-                activeSearchMatchId={activeSearchMatchId}
-                annotationSegmentsByBlock={annotationSegments}
-                blocks={blocks}
-                hiddenBlockKeys={hiddenBlockKeys}
-                highlightMatchesByBlock={highlightMatchesByBlock}
-                onSelectAnnotation={onSelectAnnotation}
-                rawMarkdown={normalizedRawMarkdown}
-                searchMatchesByBlock={searchMatchesByBlock}
-              />
-            )}
-          </>
+          <DocumentMarkdownPreview
+            activeAnnotationId={activeAnnotationId}
+            activeSearchMatchId={activeSearchMatchId}
+            annotationSegmentsByBlock={annotationSegments}
+            blocks={blocks}
+            hiddenBlockKeys={hiddenBlockKeys}
+            highlightMatchesByBlock={highlightMatchesByBlock}
+            onSelectAnnotation={onSelectAnnotation}
+            rawMarkdown={normalizedRawMarkdown}
+            searchMatchesByBlock={searchMatchesByBlock}
+          />
         )}
       </div>
 
@@ -313,7 +288,7 @@ export function DocumentReader({
             <span>•</span>
             <span>Last edited {footer.updatedLabel}</span>
           </div>
-          {sourceFormat === "MARKDOWN" && normalizedRawMarkdown.length > 0 ? (
+          {normalizedRawMarkdown.length > 0 ? (
             <button
               className="inline-flex items-center gap-2 text-[#4B5563]"
               onClick={() => setIsRawMarkdownOpen(true)}
@@ -545,9 +520,6 @@ function CreateAnnotationDialog({
           <input name="startOffset" type="hidden" value={draft.startOffset.toString()} />
           <input name="endBlockKey" type="hidden" value={draft.endBlockKey} />
           <input name="endOffset" type="hidden" value={draft.endOffset.toString()} />
-          {draft.anchorData ? (
-            <input name="anchorData" type="hidden" value={JSON.stringify(draft.anchorData)} />
-          ) : null}
           <div className="space-y-2">
             <label className="field-label" htmlFor="annotation-note">
               Note
@@ -656,7 +628,6 @@ function getSelectionDraft(root: HTMLDivElement | null): AnnotationDraft | null 
   }
 
   return {
-    anchorData: buildPdfSelectionAnchor(root, range),
     quote,
     startBlockKey: start.blockKey,
     startOffset: start.offset,
@@ -746,81 +717,4 @@ function groupByBlock<T extends { blockKey: string }>(items: T[]) {
 
 function isValidRange(offset: number, textLength: number) {
   return Number.isInteger(offset) && offset >= 0 && offset <= textLength;
-}
-
-function buildPdfSelectionAnchor(root: HTMLDivElement, range: Range) {
-  const startSlice = resolveSliceElement(range.startContainer);
-  const endSlice = resolveSliceElement(range.endContainer);
-
-  if (!startSlice || !endSlice) {
-    return null;
-  }
-
-  const startRunIndex = Number(startSlice.dataset.runIndex);
-  const endRunIndex = Number(endSlice.dataset.runIndex);
-  const startPageNumber = Number(startSlice.dataset.pageNumber);
-  const endPageNumber = Number(endSlice.dataset.pageNumber);
-
-  if (
-    Number.isNaN(startRunIndex) ||
-    Number.isNaN(endRunIndex) ||
-    Number.isNaN(startPageNumber) ||
-    Number.isNaN(endPageNumber)
-  ) {
-    return null;
-  }
-
-  const rects = normalizePdfSelectionRects(root, range);
-
-  if (rects.length === 0) {
-    return null;
-  }
-
-  return {
-    kind: "pdf-page-text-v1" as const,
-    startPageNumber,
-    startRunIndex,
-    endPageNumber,
-    endRunIndex,
-    rects,
-  };
-}
-
-function normalizePdfSelectionRects(root: HTMLDivElement, range: Range) {
-  const pages = [
-    ...root.querySelectorAll<HTMLElement>("[data-pdf-page-number]"),
-  ].map((page) => ({
-    pageNumber: Number(page.dataset.pdfPageNumber),
-    rect: page.getBoundingClientRect(),
-  }));
-
-  return [...range.getClientRects()].flatMap((rect) => {
-    const page = pages.find(
-      (candidate) =>
-        rect.left >= candidate.rect.left - 1 &&
-        rect.right <= candidate.rect.right + 1 &&
-        rect.top >= candidate.rect.top - 1 &&
-        rect.bottom <= candidate.rect.bottom + 1,
-    );
-
-    if (!page || Number.isNaN(page.pageNumber)) {
-      return [];
-    }
-
-    return [
-      {
-        pageNumber: page.pageNumber,
-        x: rect.left - page.rect.left,
-        y: rect.top - page.rect.top,
-        width: rect.width,
-        height: rect.height,
-      },
-    ];
-  });
-}
-
-function resolveSliceElement(node: Node) {
-  const element = node instanceof Element ? node : node.parentElement;
-
-  return element?.closest<HTMLElement>("[data-slice-start]");
 }

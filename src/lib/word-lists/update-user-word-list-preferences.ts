@@ -23,6 +23,7 @@ export async function updateUserWordListPreferences(
   const ownedDocuments = await input.prisma.document.findMany({
     where: {
       ownerId: input.ownerId,
+      sourceFormat: "MARKDOWN",
       trashedAt: null,
     },
     select: {

@@ -19,6 +19,7 @@ export default async function SharedWithMePage() {
           ownerId: {
             not: session.user.id,
           },
+          sourceFormat: "MARKDOWN",
           trashedAt: null,
         },
       },

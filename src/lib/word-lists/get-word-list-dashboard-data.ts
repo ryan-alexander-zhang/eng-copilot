@@ -68,6 +68,7 @@ export async function getWordListDashboardData(input: {
     input.prisma.document.findMany({
       where: {
         ownerId: input.ownerId,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
       },
       select: {

@@ -24,19 +24,18 @@ export function UploadForm({
           Document file
         </label>
         <input
-          accept=".md,.markdown,.mdown,.mkd,.pdf,text/markdown,application/pdf"
+          accept=".md,.markdown,.mdown,.mkd,text/markdown"
           className="field-file"
           id="file"
           name="file"
           required
           type="file"
         />
-        <p className="text-xs text-zinc-500">Accepted: .md, .markdown, .mdown, .mkd, .pdf</p>
+        <p className="text-xs text-zinc-500">Accepted: .md, .markdown, .mdown, .mkd</p>
       </div>
       <div className="rounded-[1.25rem] border border-zinc-200/80 bg-zinc-50 px-4 py-4 text-sm leading-7 text-zinc-600">
         <p className="font-medium text-zinc-900">Before you upload</p>
-        <p className="mt-2">Use one Markdown or text-based PDF file up to 10 MB.</p>
-        <p>Scanned PDFs are not supported yet.</p>
+        <p className="mt-2">Use one Markdown file up to 10 MB.</p>
       </div>
       {state.error ? (
         <p

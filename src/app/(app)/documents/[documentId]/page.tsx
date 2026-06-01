@@ -6,7 +6,6 @@ import { prisma } from "@/lib/db";
 import { createAnnotation } from "@/lib/annotations/create-annotation";
 import { deleteAnnotation } from "@/lib/annotations/delete-annotation";
 import { updateAnnotation } from "@/lib/annotations/update-annotation";
-import type { PdfAnnotationAnchor } from "@/lib/markdown/types";
 import {
   countWords,
   estimateReadingMinutes,
@@ -68,6 +67,7 @@ export default async function DocumentPage({
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
       },
       orderBy: {
@@ -85,6 +85,7 @@ export default async function DocumentPage({
     prisma.document.count({
       where: {
         ownerId: session.user.id,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
       },
     }),
@@ -154,7 +155,6 @@ export default async function DocumentPage({
       note: getOptionalString(formData, "note"),
       tags: getStringList(formData, "tags"),
       color: getOptionalString(formData, "color") || "yellow",
-      anchorData: getOptionalJson(formData, "anchorData"),
       prisma,
     });
 
@@ -284,16 +284,12 @@ export default async function DocumentPage({
             matchedWordCount={matchedWordCount}
             matchedWordsHref={`/documents/${document.id}/matched-words`}
             moveToTrashAction={moveToTrashAction}
-            pdfSourceUrl={
-              document.sourceFormat === "PDF" ? `/api/documents/${document.id}/pdf` : null
-            }
             rawMarkdown={document.rawMarkdown}
             readingMinutes={readingMinutes}
             revokeShareAction={revokeShareAction}
             share={document.share}
             initialSelectedAnnotationId={initialSelectedAnnotationId}
             sourceUrl={document.sourceUrl}
-            sourceFormat={document.sourceFormat}
             title={document.title}
             updateAction={updateAnnotationAction}
             updatedLabel={formatDateTimeLabel(document.updatedAt)}
@@ -327,16 +323,6 @@ function getOptionalString(formData: FormData, fieldName: string) {
   }
 
   return value;
-}
-
-function getOptionalJson(formData: FormData, fieldName: string) {
-  const value = getOptionalString(formData, fieldName);
-
-  if (!value) {
-    return null;
-  }
-
-  return JSON.parse(value) as PdfAnnotationAnchor;
 }
 
 export function getRequiredInteger(formData: FormData, fieldName: string) {

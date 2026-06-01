@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { describe, expect, it, vi } from "vitest";
 import { createDocumentFromUpload } from "@/lib/documents/create-document-from-upload";
-import { createTextPdf } from "../../fixtures/pdf-fixtures";
 
 describe("createDocumentFromUpload", () => {
   it("rejects unsupported files", async () => {
@@ -15,7 +14,7 @@ describe("createDocumentFromUpload", () => {
       }),
     ).rejects.toMatchObject({
       name: "DocumentUploadValidationError",
-      message: "Only Markdown and PDF files are supported",
+      message: "Only Markdown files are supported",
     });
   });
 
@@ -152,55 +151,6 @@ describe("createDocumentFromUpload", () => {
       ],
     });
   });
-
-  it("creates a PDF document with per-page projection blocks", async () => {
-    const pageText = "Hello PDF with enough text to count.";
-    const pdfBytes = createTextPdf([pageText]);
-    const file = createPdfFile(pdfBytes, "lesson.pdf");
-    const create = vi.fn().mockResolvedValue({ id: "pdf_123" });
-
-    const result = await createDocumentFromUpload({
-      ownerId: "user_123",
-      file,
-      prisma: {
-        document: {
-          create,
-        },
-      } as never,
-    });
-
-    expect(result).toEqual({ id: "pdf_123" });
-    expect(create).toHaveBeenCalledTimes(1);
-    expect(create.mock.calls[0][0]).toMatchObject({
-      data: {
-        ownerId: "user_123",
-        title: "lesson",
-        originalName: "lesson.pdf",
-        sourceUrl: null,
-        sourceFormat: "PDF",
-        rawMarkdown: null,
-        plainText: pageText,
-        sourceByteSize: pdfBytes.length,
-        renderProjectionVersion: 3,
-        blocks: {
-          create: [
-            {
-              blockKey: expect.stringMatching(/^pdf-page:1:[0-9a-f]{8}$/),
-              blockPath: "page:1",
-              sortOrder: 0,
-              kind: "pdf-page",
-              selectable: true,
-              attrs: expect.objectContaining({
-                pageNumber: 1,
-              }),
-              text: pageText,
-            },
-          ],
-        },
-      },
-    });
-    expect(create.mock.calls[0][0].data.pdfData).toBeInstanceOf(Buffer);
-  });
 });
 
 function createFile(contents: string, name: string, type: string) {
@@ -208,20 +158,5 @@ function createFile(contents: string, name: string, type: string) {
 
   return Object.assign(file, {
     text: vi.fn().mockResolvedValue(contents),
-  });
-}
-
-function createPdfFile(contents: Uint8Array, name: string) {
-  const file = new File([contents], name, { type: "application/pdf" });
-
-  return Object.assign(file, {
-    arrayBuffer: vi
-      .fn()
-      .mockResolvedValue(
-        contents.buffer.slice(
-          contents.byteOffset,
-          contents.byteOffset + contents.byteLength,
-        ) as ArrayBuffer,
-      ),
   });
 }

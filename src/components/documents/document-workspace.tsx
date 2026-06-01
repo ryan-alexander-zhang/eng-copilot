@@ -24,7 +24,6 @@ import {
   type ReaderAnnotation,
   type ReaderBlock,
   type ReaderHighlightMatch,
-  type ReaderSourceFormat,
   DocumentReader,
 } from "@/components/documents/document-reader";
 import { buildReaderSearchMatches } from "@/lib/documents/build-reader-search-matches";
@@ -57,13 +56,11 @@ type DocumentWorkspaceProps = {
     term: string;
   }>;
   matchedWordsHref: string;
-  pdfSourceUrl?: string | null;
   rawMarkdown?: string | null;
   readingMinutes: number;
   revokeShareAction: () => Promise<DocumentShareState>;
   share: DocumentShareState;
   sourceUrl?: string | null;
-  sourceFormat?: ReaderSourceFormat;
   title: string;
   moveToTrashAction?: () => Promise<void>;
   onMoveToTrashSuccess?: () => void;
@@ -92,13 +89,11 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
     matchedWordsHref,
     moveToTrashAction,
     onMoveToTrashSuccess,
-    pdfSourceUrl,
     rawMarkdown,
     readingMinutes,
     revokeShareAction,
     share,
     sourceUrl,
-    sourceFormat = "MARKDOWN",
     title,
     updateAction,
     updatedLabel,
@@ -305,10 +300,8 @@ export function DocumentWorkspace(props: DocumentWorkspaceProps) {
                 mode: "edit",
               });
             }}
-            pdfSourceUrl={pdfSourceUrl}
             rawMarkdown={rawMarkdown}
             searchMatches={searchResult.matches}
-            sourceFormat={sourceFormat}
             title={title}
           />
         </div>

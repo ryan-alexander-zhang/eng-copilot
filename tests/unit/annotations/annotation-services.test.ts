@@ -101,84 +101,7 @@ describe("createAnnotation", () => {
     ).rejects.toThrow("Invalid annotation range");
   });
 
-  it("persists PDF anchor data for PDF documents", async () => {
-    const create = vi.fn().mockResolvedValue({ id: "ann_pdf" });
-    const anchorData = {
-      kind: "pdf-page-text-v1" as const,
-      startPageNumber: 1,
-      startRunIndex: 0,
-      endPageNumber: 1,
-      endRunIndex: 1,
-      rects: [
-        {
-          pageNumber: 1,
-          x: 12,
-          y: 18,
-          width: 40,
-          height: 16,
-        },
-      ],
-    };
-
-    await expect(
-      createAnnotation({
-        documentId: "doc_pdf",
-        ownerId: "user_123",
-        startBlockKey: "pdf-page:1",
-        startOffset: 0,
-        endBlockKey: "pdf-page:1",
-        endOffset: 7,
-        note: " note ",
-        anchorData,
-        prisma: {
-          document: {
-            findFirst: vi.fn().mockResolvedValue({
-              sourceFormat: "PDF",
-              blocks: [{ blockKey: "pdf-page:1", text: "ability improves culture" }],
-            }),
-          },
-          annotation: {
-            create,
-          },
-        } as never,
-      }),
-    ).resolves.toEqual({ id: "ann_pdf" });
-
-    expect(create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        quote: "ability",
-        note: "note",
-        anchorData,
-      }),
-    });
-  });
-
-  it("rejects PDF annotations without a valid PDF anchor", async () => {
-    await expect(
-      createAnnotation({
-        documentId: "doc_pdf",
-        ownerId: "user_123",
-        startBlockKey: "pdf-page:1",
-        startOffset: 0,
-        endBlockKey: "pdf-page:1",
-        endOffset: 7,
-        note: "note",
-        prisma: {
-          document: {
-            findFirst: vi.fn().mockResolvedValue({
-              sourceFormat: "PDF",
-              blocks: [{ blockKey: "pdf-page:1", text: "ability improves culture" }],
-            }),
-          },
-          annotation: {
-            create: vi.fn(),
-          },
-        } as never,
-      }),
-    ).rejects.toThrow("Invalid PDF annotation anchor");
-  });
-
-  it("drops PDF anchor data for markdown documents", async () => {
+  it("drops unused anchor data when creating markdown annotations", async () => {
     const create = vi.fn().mockResolvedValue({ id: "ann_md" });
 
     await expect(
@@ -190,14 +113,6 @@ describe("createAnnotation", () => {
         endBlockKey: "paragraph:0",
         endOffset: 5,
         note: "note",
-        anchorData: {
-          kind: "pdf-page-text-v1",
-          startPageNumber: 1,
-          startRunIndex: 0,
-          endPageNumber: 1,
-          endRunIndex: 0,
-          rects: [],
-        },
         prisma: {
           document: {
             findFirst: vi.fn().mockResolvedValue({

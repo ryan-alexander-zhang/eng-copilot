@@ -52,6 +52,7 @@ export default async function DocumentsPage({
     prisma.document.findMany({
       where: {
         ownerId: session.user.id,
+        sourceFormat: "MARKDOWN",
         trashedAt: null,
       },
       orderBy: {

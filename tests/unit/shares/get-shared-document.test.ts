@@ -103,8 +103,9 @@ describe("getSharedDocument", () => {
       token: "live",
     });
 
-    const { trashedAt, ...expectedDocument } = sharedDocument;
+    const { sourceFormat, trashedAt, ...expectedDocument } = sharedDocument;
 
+    expect(sourceFormat).toBe("MARKDOWN");
     expect(trashedAt).toBeNull();
     expect(result).toEqual(expectedDocument);
     expect(findUnique).toHaveBeenCalledWith({
@@ -204,6 +205,24 @@ describe("getSharedDocument", () => {
           isActive: true,
           document: {
             trashedAt: new Date("2026-04-20T00:00:00.000Z"),
+          },
+        }),
+      },
+    } as never;
+
+    await expect(getSharedDocument({ prisma, token: "live" })).rejects.toThrow(
+      "SHARE_NOT_FOUND",
+    );
+  });
+
+  it("rejects shared documents that are not markdown", async () => {
+    const prisma = {
+      documentShare: {
+        findUnique: vi.fn().mockResolvedValue({
+          isActive: true,
+          document: {
+            sourceFormat: "PDF",
+            trashedAt: null,
           },
         }),
       },
