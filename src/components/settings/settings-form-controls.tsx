@@ -26,14 +26,14 @@ export function PasswordField({
 
   return (
     <div>
-      <label className="block text-[16px] font-semibold text-[#111827]" htmlFor={id}>
+      <label className="block text-[16px] font-semibold text-[var(--foreground)]" htmlFor={id}>
         {label}
       </label>
       <div className="relative mt-3">
         <input
           autoComplete={autoComplete}
           aria-label={label}
-          className="h-[54px] w-full rounded-[18px] border border-[#D8DEE8] bg-white px-4 pr-12 text-[16px] text-[#111827] outline-none transition placeholder:text-[#B0B8C6] focus:border-[#4A9FD8] focus:ring-4 focus:ring-[#4A9FD8]/10"
+          className="field-input h-[54px] rounded-[18px] px-4 pr-12 text-[16px] placeholder:text-[var(--muted)]"
           id={id}
           name={name}
           onChange={onChange}
@@ -43,7 +43,7 @@ export function PasswordField({
         />
         <button
           aria-label={isVisible ? `Hide ${label}` : `Show ${label}`}
-          className="absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9AA3B2] transition hover:bg-[#F4F6FA] hover:text-[#667085]"
+          className="icon-ghost-button text-muted absolute right-3 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full"
           onClick={() => setIsVisible((visible) => !visible)}
           type="button"
         >
@@ -55,7 +55,7 @@ export function PasswordField({
         </button>
       </div>
       {description ? (
-        <p className="mt-1.5 text-[14px] leading-6 text-[#9AA3B2]">{description}</p>
+        <p className="text-muted mt-1.5 text-[14px] leading-6">{description}</p>
       ) : null}
     </div>
   );

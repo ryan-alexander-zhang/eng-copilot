@@ -250,47 +250,47 @@ export function UserMenuClient({
         <button
           aria-expanded={isMenuOpen}
           aria-label="Open user menu"
-          className="inline-flex items-center gap-2 rounded-full px-1 py-1 text-[#4B5563] transition hover:bg-[#F3F4F6]"
+          className="text-soft inline-flex items-center gap-2 rounded-full px-1 py-1 transition hover:bg-[var(--surface-soft)]"
           onClick={() => setIsMenuOpen((open) => !open)}
           type="button"
         >
-          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#F3F4F6] text-[16px] font-medium text-[#374151]">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--surface-soft)] text-[16px] font-medium text-[var(--accent-strong)]">
             {user.initial}
           </span>
           <ChevronDown className="h-4 w-4" strokeWidth={2} />
         </button>
 
         {isMenuOpen ? (
-          <div className="absolute right-0 top-[58px] z-30 min-w-[220px] rounded-[18px] border border-[#E5E7EB] bg-white p-1.5 shadow-[0_18px_50px_rgba(15,23,42,0.14)]">
+          <div className="absolute right-0 top-[58px] z-30 min-w-[220px] rounded-[18px] border border-[var(--border)] bg-[var(--surface-strong)] p-1.5 shadow-[0_18px_50px_rgba(97,52,18,0.14)]">
             <MenuItem
-              icon={<CircleUserRound className="h-4 w-4 text-[#667085]" strokeWidth={2} />}
+              icon={<CircleUserRound className="h-4 w-4 text-[var(--muted)]" strokeWidth={2} />}
               label="Profile"
               onClick={() => openPanel("profile")}
             />
             <MenuItem
-              icon={<LockKeyhole className="h-4 w-4 text-[#667085]" strokeWidth={2} />}
+              icon={<LockKeyhole className="h-4 w-4 text-[var(--muted)]" strokeWidth={2} />}
               label="Password"
               onClick={() => openPanel("password")}
             />
             <MenuItem
-              icon={<KeyRound className="h-4 w-4 text-[#667085]" strokeWidth={2} />}
+              icon={<KeyRound className="h-4 w-4 text-[var(--muted)]" strokeWidth={2} />}
               label="API"
               onClick={() => openPanel("api")}
             />
             <MenuItem
-              icon={<Puzzle className="h-4 w-4 text-[#667085]" strokeWidth={2} />}
+              icon={<Puzzle className="h-4 w-4 text-[var(--muted)]" strokeWidth={2} />}
               label="Browser Extension"
               onClick={() => openPanel("browser-extension")}
             />
             <MenuItem
-              className="text-[#E14D45] hover:bg-[#FFF5F5]"
+              className="text-[var(--error-foreground)] hover:bg-[var(--error-bg)]"
               icon={<Trash2 className="h-4 w-4" strokeWidth={2} />}
               label="Clear all data"
               onClick={() => openPanel("clear-data")}
             />
-            <div className="my-1 border-t border-[#EEF2F6]" />
+            <div className="my-1 border-t border-[var(--border)]" />
             <MenuItem
-              className="text-[#E14D45] hover:bg-[#FFF5F5]"
+              className="text-[var(--error-foreground)] hover:bg-[var(--error-bg)]"
               icon={<LogOut className="h-4 w-4" strokeWidth={2} />}
               label="Log out"
               onClick={() => {
@@ -307,7 +307,7 @@ export function UserMenuClient({
       {activePanel && typeof document !== "undefined"
         ? createPortal(
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F172A]/28 p-4 backdrop-blur-[7px]"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(33,25,16,0.24)] p-4 backdrop-blur-[7px]"
               onMouseDown={(event) => {
                 if (event.target === event.currentTarget) {
                   closePanel();
@@ -315,13 +315,13 @@ export function UserMenuClient({
               }}
             >
               <div
-                className={`w-full max-h-[calc(100vh-32px)] overflow-y-auto rounded-[34px] border border-[#E6EAF1] bg-[rgba(255,255,255,0.97)] px-8 py-6 shadow-[0_30px_80px_rgba(15,23,42,0.18)] sm:px-8 sm:py-7 ${
+                className={`w-full max-h-[calc(100vh-32px)] overflow-y-auto rounded-[34px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,253,249,0.98),rgba(255,245,233,0.94))] px-8 py-6 shadow-[0_30px_80px_rgba(97,52,18,0.16)] sm:px-8 sm:py-7 ${
                   activePanel === "browser-extension" ? "max-w-[940px]" : "max-w-[500px]"
                 }`}
               >
-                <div className="flex items-start justify-between gap-6 border-b border-[#EEF2F6] pb-6">
+                <div className="flex items-start justify-between gap-6 border-b border-[var(--border)] pb-6">
                   <div>
-                    <h2 className="text-[25px] font-semibold tracking-[-0.05em] text-[#111827]">
+                    <h2 className="display-copy text-[25px] font-semibold tracking-[-0.05em] text-[var(--foreground)]">
                       {activePanel === "profile"
                         ? "Profile"
                         : activePanel === "password"
@@ -332,7 +332,7 @@ export function UserMenuClient({
                               ? "Install Browser Extension"
                             : "Clear all data"}
                     </h2>
-                    <p className="mt-2 text-[16px] leading-7 text-[#8A94A6]">
+                    <p className="text-muted mt-2 text-[16px] leading-7">
                       {activePanel === "profile"
                         ? "View and update your profile information."
                         : activePanel === "password"
@@ -349,7 +349,7 @@ export function UserMenuClient({
 
                   <button
                     aria-label="Close account panel"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E5E7EB] text-[#98A2B3] transition hover:bg-[#F8FAFC] hover:text-[#4B5563]"
+                    className="control-icon-button h-12 w-12 rounded-full"
                     onClick={closePanel}
                     type="button"
                   >
@@ -422,7 +422,7 @@ function MenuItem({
 }) {
   return (
     <button
-      className={`flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-[14px] font-medium text-[#374151] transition hover:bg-[#F8FAFC] ${className}`}
+      className={`flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-[14px] font-medium text-[var(--foreground-soft)] transition hover:bg-[var(--surface-soft)] ${className}`}
       onClick={onClick}
       type="button"
     >
@@ -448,8 +448,8 @@ function NoticeBanner({
     <div
       className={`rounded-[18px] border px-5 py-4 text-[15px] ${
         notice.tone === "success"
-          ? "border-[#CBE8D5] bg-[#F1FBF4] text-[#256A3D]"
-          : "border-[#F4C7C7] bg-[#FFF5F5] text-[#B42318]"
+          ? "border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-foreground)]"
+          : "border-[var(--error-border)] bg-[var(--error-bg)] text-[var(--error-foreground)]"
       }`}
     >
       {notice.message}
@@ -480,7 +480,7 @@ function ProfilePanel({
 
       <div className="space-y-2.5">
         <div>
-          <p className="text-[17px] font-semibold text-[#111827]">Avatar</p>
+          <p className="text-[17px] font-semibold text-[var(--foreground)]">Avatar</p>
         </div>
         <div>
           {user.image ? (
@@ -491,7 +491,7 @@ function ProfilePanel({
               src={user.image}
             />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#EEE7FF] text-[24px] font-semibold text-[#7C5CE0]">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[24px] font-semibold text-[var(--accent-strong)]">
               {user.initial}
             </div>
           )}
@@ -501,7 +501,7 @@ function ProfilePanel({
       <ProfileField label="Email">
         <input
           aria-label="Email"
-          className="h-[54px] w-full rounded-[18px] border border-[#E6EAF1] bg-[#F8FAFC] px-4 text-[16px] text-[#6B7280] outline-none"
+          className="field-input text-soft h-[54px] rounded-[18px] bg-[var(--surface-soft)] px-4 text-[16px]"
           defaultValue={user.email}
           readOnly
           type="email"
@@ -511,7 +511,7 @@ function ProfilePanel({
       <ProfileField label="Username">
         <input
           aria-label="Username"
-          className="h-[54px] w-full rounded-[18px] border border-[#D8DEE8] bg-white px-4 text-[16px] text-[#111827] outline-none transition focus:border-[#4A9FD8] focus:ring-4 focus:ring-[#4A9FD8]/10"
+          className="field-input h-[54px] rounded-[18px] px-4 text-[16px]"
           defaultValue={user.username}
           name="username"
           type="text"
@@ -521,7 +521,7 @@ function ProfilePanel({
       <ProfileField label="Nickname">
         <input
           aria-label="Nickname"
-          className="h-[54px] w-full rounded-[18px] border border-[#D8DEE8] bg-white px-4 text-[16px] text-[#111827] outline-none transition focus:border-[#4A9FD8] focus:ring-4 focus:ring-[#4A9FD8]/10"
+          className="field-input h-[54px] rounded-[18px] px-4 text-[16px]"
           defaultValue={user.displayName}
           name="displayName"
           type="text"
@@ -530,13 +530,13 @@ function ProfilePanel({
 
       <div className="space-y-3 pt-0.5">
         <button
-          className="inline-flex h-[52px] w-full items-center justify-center rounded-full bg-[#3FA1F4] px-6 text-[18px] font-medium text-white transition hover:bg-[#3495E7]"
+          className="button-primary h-[52px] w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
           type="submit"
         >
           Save changes
         </button>
         <button
-          className="inline-flex h-[52px] w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+          className="button-secondary h-[52px] w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
           onClick={onClose}
           type="button"
         >
@@ -603,15 +603,17 @@ function PasswordPanel({
           placeholder="Enter your new password"
           value={newPassword}
         />
-        <div className="space-y-2.5 pt-0.5 text-[15px] text-[#62718C]">
+        <div className="text-soft space-y-2.5 pt-0.5 text-[15px]">
           <p
             className={`flex items-center gap-3 ${
-              passwordValidation.hasMinimumLength ? "text-[#62718C]" : "text-[#98A2B3]"
+              passwordValidation.hasMinimumLength ? "text-soft" : "text-muted"
             }`}
           >
             <CheckCircle2
               className={`h-5 w-5 ${
-                passwordValidation.hasMinimumLength ? "text-[#6AD38D]" : "text-[#D0D5DD]"
+                passwordValidation.hasMinimumLength
+                  ? "text-[var(--accent)]"
+                  : "text-[rgba(184,119,58,0.24)]"
               }`}
               strokeWidth={2}
             />
@@ -619,12 +621,14 @@ function PasswordPanel({
           </p>
           <p
             className={`flex items-center gap-3 ${
-              passwordValidation.hasUppercase ? "text-[#62718C]" : "text-[#98A2B3]"
+              passwordValidation.hasUppercase ? "text-soft" : "text-muted"
             }`}
           >
             <CheckCircle2
               className={`h-5 w-5 ${
-                passwordValidation.hasUppercase ? "text-[#6AD38D]" : "text-[#D0D5DD]"
+                passwordValidation.hasUppercase
+                  ? "text-[var(--accent)]"
+                  : "text-[rgba(184,119,58,0.24)]"
               }`}
               strokeWidth={2}
             />
@@ -632,12 +636,14 @@ function PasswordPanel({
           </p>
           <p
             className={`flex items-center gap-3 ${
-              passwordValidation.hasNumber ? "text-[#62718C]" : "text-[#98A2B3]"
+              passwordValidation.hasNumber ? "text-soft" : "text-muted"
             }`}
           >
             <CheckCircle2
               className={`h-5 w-5 ${
-                passwordValidation.hasNumber ? "text-[#6AD38D]" : "text-[#D0D5DD]"
+                passwordValidation.hasNumber
+                  ? "text-[var(--accent)]"
+                  : "text-[rgba(184,119,58,0.24)]"
               }`}
               strokeWidth={2}
             />
@@ -658,14 +664,14 @@ function PasswordPanel({
 
       <div className="space-y-3 pt-2">
         <button
-          className="inline-flex h-[52px] w-full items-center justify-center rounded-full bg-[#3FA1F4] px-6 text-[18px] font-medium text-white transition hover:bg-[#3495E7] disabled:cursor-not-allowed disabled:bg-[#DCEEFF] disabled:text-[#7AA9D2]"
+          className="button-primary h-[52px] w-full justify-center px-6 text-[18px] tracking-[-0.02em] disabled:bg-[var(--accent-soft)] disabled:text-[var(--accent-soft-strong)]"
           disabled={!isSubmitEnabled}
           type="submit"
         >
           Save password
         </button>
         <button
-          className="inline-flex h-[52px] w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+          className="button-secondary h-[52px] w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
           onClick={onClose}
           type="button"
         >
@@ -673,7 +679,7 @@ function PasswordPanel({
         </button>
       </div>
 
-      <p className="flex items-center justify-center gap-2 pt-1 text-[15px] text-[#98A2B3]">
+      <p className="text-muted flex items-center justify-center gap-2 pt-1 text-[15px]">
         <LockKeyhole className="h-4 w-4" strokeWidth={2} />
         Your password is encrypted and stored securely.
       </p>
@@ -723,7 +729,7 @@ function BrowserExtensionPanel({
     <div className="space-y-8 pt-6">
       {!downloadUrl ? (
         <div
-          className="rounded-[18px] border border-[#F4C7C7] bg-[#FFF5F5] px-5 py-4 text-[15px] text-[#B42318]"
+          className="rounded-[18px] border border-[var(--error-border)] bg-[var(--error-bg)] px-5 py-4 text-[15px] text-[var(--error-foreground)]"
           role="alert"
         >
           Set <code className="font-semibold">BROWSER_EXTENSION_DOWNLOAD_URL</code> to
@@ -732,7 +738,7 @@ function BrowserExtensionPanel({
       ) : null}
       {copyState === "error" ? (
         <div
-          className="rounded-[18px] border border-[#F4C7C7] bg-[#FFF5F5] px-5 py-4 text-[15px] text-[#B42318]"
+          className="rounded-[18px] border border-[var(--error-border)] bg-[var(--error-bg)] px-5 py-4 text-[15px] text-[var(--error-foreground)]"
           role="alert"
         >
           Unable to copy the extension download link.
@@ -741,17 +747,19 @@ function BrowserExtensionPanel({
 
       <section className="space-y-4">
         <div>
-          <p className="text-[17px] font-semibold text-[#111827]">Extension download link</p>
+          <p className="text-[17px] font-semibold text-[var(--foreground)]">
+            Extension download link
+          </p>
         </div>
-        <div className="rounded-[24px] border border-[#E6EAF1] bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.06)]">
-          <div className="flex items-center gap-3 rounded-[18px] border border-[#D8DEE8] bg-[#FCFDFF] px-4 py-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#F4F7FC] text-[#667085]">
+        <div className="rounded-[24px] border border-[var(--border)] bg-[rgba(255,253,249,0.96)] p-4 shadow-[0_12px_32px_rgba(97,52,18,0.08)]">
+          <div className="flex items-center gap-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-strong)] px-4 py-3">
+            <div className="icon-chip icon-chip-accent flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px]">
               <Puzzle className="h-5 w-5" strokeWidth={2} />
             </div>
             <div className="min-w-0 flex-1">
               {downloadUrl ? (
                 <a
-                  className="inline-flex max-w-full items-center gap-2 overflow-hidden text-[15px] font-medium text-[#2F6FEB] hover:text-[#1D4ED8]"
+                  className="link-accent inline-flex max-w-full items-center gap-2 overflow-hidden text-[15px] font-medium"
                   href={downloadUrl}
                   rel="noreferrer"
                   target="_blank"
@@ -760,12 +768,12 @@ function BrowserExtensionPanel({
                   <ExternalLink className="h-4 w-4 shrink-0" strokeWidth={2} />
                 </a>
               ) : (
-                <p className="text-[15px] text-[#98A2B3]">Download link not configured yet.</p>
+                <p className="text-muted text-[15px]">Download link not configured yet.</p>
               )}
             </div>
             <button
               aria-label="Copy extension download link"
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-[14px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#667085] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:text-[#B6BFCC]"
+              className="button-secondary h-11 shrink-0 rounded-[14px] px-4 text-[14px] disabled:text-[var(--muted)]"
               disabled={!downloadUrl}
               onClick={() => {
                 void copyDownloadLink();
@@ -782,16 +790,18 @@ function BrowserExtensionPanel({
               )}
             </button>
           </div>
-          <p className="mt-4 text-[15px] leading-7 text-[#8A94A6]">
+          <p className="text-muted mt-4 text-[15px] leading-7">
             Download the packaged extension, extract it locally, and load the unpacked
             folder in Chrome developer mode.
           </p>
         </div>
       </section>
 
-      <section className="space-y-5 border-t border-[#EEF2F6] pt-7">
+      <section className="space-y-5 border-t border-[var(--border)] pt-7">
         <div>
-          <p className="text-[17px] font-semibold text-[#111827]">Installation guide</p>
+          <p className="text-[17px] font-semibold text-[var(--foreground)]">
+            Installation guide
+          </p>
         </div>
         <div className="space-y-6">
           <InstallationStep
@@ -807,7 +817,11 @@ function BrowserExtensionPanel({
           <InstallationStep
             description={
               <>
-                In Chrome, type <code className="font-medium text-[#2F6FEB]">chrome://extensions</code> in the address bar and press Enter.
+                In Chrome, type{" "}
+                <code className="font-medium text-[var(--accent-strong)]">
+                  chrome://extensions
+                </code>{" "}
+                in the address bar and press Enter.
               </>
             }
             step={3}
@@ -815,23 +829,25 @@ function BrowserExtensionPanel({
           />
           <InstallationStep
             content={
-              <div className="mt-4 rounded-[20px] border border-[#E6EAF1] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+              <div className="mt-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-strong)] p-4 shadow-[0_10px_30px_rgba(97,52,18,0.06)]">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-full bg-[conic-gradient(from_210deg,#EA4335,#FBBC05,#34A853,#4285F4,#EA4335)]" />
                     <div>
-                      <p className="text-[18px] font-semibold text-[#111827]">Extensions</p>
+                      <p className="text-[18px] font-semibold text-[var(--foreground)]">
+                        Extensions
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between gap-3 rounded-full bg-[#F8FAFC] px-4 py-2.5">
-                    <span className="text-[14px] font-medium text-[#475467]">Developer mode</span>
-                    <span className="relative inline-flex h-7 w-12 rounded-full bg-[#2F6FEB]">
+                  <div className="flex items-center justify-between gap-3 rounded-full bg-[var(--surface-soft)] px-4 py-2.5">
+                    <span className="text-soft text-[14px] font-medium">Developer mode</span>
+                    <span className="relative inline-flex h-7 w-12 rounded-full bg-[var(--accent)]">
                       <span className="absolute right-1 top-1 h-5 w-5 rounded-full bg-white" />
                     </span>
                   </div>
                 </div>
                 <div className="mt-4 flex justify-start">
-                  <span className="inline-flex items-center gap-2 rounded-[14px] border border-[#D8DEE8] bg-[#FCFDFF] px-4 py-2.5 text-[14px] font-medium text-[#344054]">
+                  <span className="text-soft inline-flex items-center gap-2 rounded-[14px] border border-[var(--border)] bg-[var(--surface-strong)] px-4 py-2.5 text-[14px] font-medium">
                     <Download className="h-4 w-4" strokeWidth={2} />
                     Load unpacked
                   </span>
@@ -844,17 +860,17 @@ function BrowserExtensionPanel({
           />
           <InstallationStep
             content={
-              <div className="mt-4 rounded-[20px] border border-[#E6EAF1] bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
+              <div className="mt-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-strong)] p-4 shadow-[0_10px_30px_rgba(97,52,18,0.06)]">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[#F4F7FC] text-[#98A2B3]">
+                    <div className="icon-chip icon-chip-accent flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px]">
                       <Download className="h-6 w-6" strokeWidth={2} />
                     </div>
-                    <p className="truncate text-[16px] font-medium text-[#475467]">
+                    <p className="text-soft truncate text-[16px] font-medium">
                       eng-copilot-clipper/
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 rounded-[18px] bg-[#F8FAFC] px-4 py-3 text-[#667085]">
+                  <div className="text-soft flex items-center gap-4 rounded-[18px] bg-[var(--surface-soft)] px-4 py-3">
                     <span className="text-[16px]">Select folder</span>
                     <Puzzle className="h-5 w-5" strokeWidth={2} />
                   </div>
@@ -868,16 +884,16 @@ function BrowserExtensionPanel({
         </div>
       </section>
 
-      <div className="rounded-[22px] border border-[#D8E6FF] bg-[#F5F9FF] px-5 py-4">
+      <div className="rounded-[22px] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-5 py-4">
         <div className="flex items-start gap-3">
-          <Info className="mt-0.5 h-5 w-5 text-[#2F6FEB]" strokeWidth={2} />
-          <div className="text-[15px] leading-7 text-[#62718C]">
-            <p className="font-semibold text-[#2F6FEB]">Need help?</p>
+          <Info className="mt-0.5 h-5 w-5 text-[var(--warning-foreground)]" strokeWidth={2} />
+          <div className="text-[15px] leading-7 text-[var(--warning-foreground)]">
+            <p className="font-semibold">Need help?</p>
             {supportUrl ? (
               <p className="mt-1">
                 If you encounter any issues,{" "}
                 <a
-                  className="font-medium text-[#2F6FEB] hover:text-[#1D4ED8]"
+                  className="font-medium underline underline-offset-4"
                   href={supportUrl}
                   rel="noreferrer"
                   target={supportUrl.startsWith("mailto:") ? undefined : "_blank"}
@@ -896,7 +912,7 @@ function BrowserExtensionPanel({
       </div>
 
       <button
-        className="inline-flex h-14 w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+        className="button-secondary h-14 w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
         onClick={onClose}
         type="button"
       >
@@ -920,13 +936,15 @@ function InstallationStep({
   return (
     <div className="grid gap-4 md:grid-cols-[56px_minmax(0,1fr)]">
       <div className="flex items-start md:justify-center">
-        <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#EEF4FF] text-[20px] font-semibold text-[#2F6FEB]">
+        <div className="step-badge h-11 w-11 text-[20px] font-semibold">
           {step}
         </div>
       </div>
       <div className="pb-1">
-        <p className="text-[20px] font-semibold tracking-[-0.03em] text-[#111827]">{title}</p>
-        <div className="mt-2 text-[15px] leading-7 text-[#8A94A6]">{description}</div>
+        <p className="text-[20px] font-semibold tracking-[-0.03em] text-[var(--foreground)]">
+          {title}
+        </p>
+        <div className="text-muted mt-2 text-[15px] leading-7">{description}</div>
         {content}
       </div>
     </div>
@@ -956,7 +974,7 @@ function ClearDataPanel({
       <input name="returnTo" type="hidden" value={returnTo} />
       <NoticeBanner notice={notice} />
 
-      <div className="space-y-3 text-[17px] leading-8 text-[#5F6471]">
+      <div className="text-soft space-y-3 text-[17px] leading-8">
         <p>
           This will permanently delete all of your current data, including annotations,
           highlights, saved words, and saved content.
@@ -976,10 +994,13 @@ function ClearDataPanel({
       </div>
 
       <div>
-        <label className="block text-[18px] font-semibold text-[#111827]" htmlFor="deleteConfirmation">
+        <label
+          className="block text-[18px] font-semibold text-[var(--foreground)]"
+          htmlFor="deleteConfirmation"
+        >
           Confirm to continue
         </label>
-        <p className="mt-2 text-[16px] text-[#98A2B3]">Type DELETE to confirm</p>
+        <p className="text-muted mt-2 text-[16px]">Type DELETE to confirm</p>
         <div className="relative mt-4">
           <input
             aria-label="Delete confirmation"
@@ -1000,7 +1021,7 @@ function ClearDataPanel({
         </div>
       </div>
 
-      <label className="flex items-center gap-4 text-[17px] text-[#374151]">
+      <label className="flex items-center gap-4 text-[17px] text-[var(--foreground-soft)]">
         <span
           className={`inline-flex h-8 w-8 items-center justify-center rounded-[10px] ${
             isAcknowledged ? "bg-[#EF4444] text-white" : "border border-[#F6B4B4] bg-white text-transparent"
@@ -1026,7 +1047,7 @@ function ClearDataPanel({
           Clear all data
         </button>
         <button
-          className="inline-flex h-14 w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+          className="button-secondary h-14 w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
           onClick={onClose}
           type="button"
         >
@@ -1047,7 +1068,7 @@ function ProfileField({
   return (
     <div className="space-y-2">
       <div>
-        <p className="text-[17px] font-semibold text-[#111827]">{label}</p>
+        <p className="text-[17px] font-semibold text-[var(--foreground)]">{label}</p>
       </div>
       {children}
     </div>

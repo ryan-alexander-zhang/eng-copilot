@@ -88,12 +88,21 @@ export function ClipperTokenSection({
       {toast ? (
         <div
           aria-live={toast.kind === "error" ? "assertive" : "polite"}
-          className="pointer-events-none fixed right-6 top-6 z-[80] max-w-sm rounded-[16px] border px-4 py-3 shadow-[0_20px_40px_rgba(15,23,42,0.16)]"
+          className="pointer-events-none fixed right-6 top-6 z-[80] max-w-sm rounded-[16px] border px-4 py-3 shadow-[0_20px_40px_rgba(97,52,18,0.14)]"
           role={toast.kind === "error" ? "alert" : "status"}
           style={{
-            backgroundColor: toast.kind === "error" ? "#FEF2F2" : "#ECFDF3",
-            borderColor: toast.kind === "error" ? "#FECACA" : "#A7F3D0",
-            color: toast.kind === "error" ? "#B42318" : "#027A48",
+            backgroundColor:
+              toast.kind === "error"
+                ? "var(--error-bg)"
+                : "var(--warning-bg)",
+            borderColor:
+              toast.kind === "error"
+                ? "var(--error-border)"
+                : "var(--warning-border)",
+            color:
+              toast.kind === "error"
+                ? "var(--error-foreground)"
+                : "var(--warning-foreground)",
           }}
         >
           <p className="text-[14px] font-medium leading-6">{toast.message}</p>
@@ -103,16 +112,18 @@ export function ClipperTokenSection({
       {isConfigured ? (
         <>
           <div>
-            <p className="text-[17px] font-semibold text-[#111827]">Current token</p>
-            <div className="mt-4 flex min-h-[56px] flex-col justify-center rounded-[18px] border border-[#F4C777] bg-[#FFFDF8] px-5 py-3">
+            <p className="text-[17px] font-semibold text-[var(--foreground)]">
+              Current token
+            </p>
+            <div className="mt-4 flex min-h-[56px] flex-col justify-center rounded-[18px] border border-[var(--warning-border)] bg-[var(--surface-soft)] px-5 py-3">
               <div className="flex items-center gap-4">
-                <code className="min-w-0 flex-1 overflow-x-auto text-[18px] tracking-[0.04em] text-[#111827]">
+                <code className="min-w-0 flex-1 overflow-x-auto text-[18px] tracking-[0.04em] text-[var(--foreground)]">
                   {displayToken}
                 </code>
                 {canCopyToken ? (
                   <button
                     aria-label="Copy token"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] text-[#8A94A6] transition hover:bg-white"
+                    className="icon-ghost-button text-muted inline-flex h-11 w-11 items-center justify-center rounded-[12px]"
                     onClick={() => {
                       void copyToken();
                     }}
@@ -125,7 +136,7 @@ export function ClipperTokenSection({
                     <input name="intent" type="hidden" value="delete" />
                     <button
                       aria-label="Delete token"
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] text-[#D14343] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] text-[#D14343] transition hover:bg-[var(--error-bg)] disabled:cursor-not-allowed disabled:opacity-70"
                       disabled={pending}
                       type="submit"
                     >
@@ -138,19 +149,19 @@ export function ClipperTokenSection({
           </div>
         </>
       ) : (
-        <div className="rounded-[22px] border border-[#E6EAF1] bg-white px-5 py-4">
-          <p className="text-[18px] font-semibold text-[#111827]">No token yet</p>
-          <p className="mt-2 text-[16px] leading-8 text-[#6B7280]">
+        <div className="panel-card-accent rounded-[22px] px-5 py-4">
+          <p className="text-[18px] font-semibold text-[var(--foreground)]">No token yet</p>
+          <p className="text-soft mt-2 text-[16px] leading-8">
             Generate a token when you&apos;re ready to connect the clipper or API client.
           </p>
         </div>
       )}
 
       {!isConfigured ? (
-        <div className="rounded-[22px] border border-[#CFE2FF] bg-[#F4F9FF] p-5">
+        <div className="rounded-[22px] border border-[var(--warning-border)] bg-[var(--warning-bg)] p-5">
           <div className="flex items-start gap-4">
-            <Info className="mt-0.5 h-6 w-6 text-[#3FA1F4]" strokeWidth={2} />
-            <p className="text-[16px] leading-8 text-[#62718C]">
+            <Info className="mt-0.5 h-6 w-6 text-[var(--warning-foreground)]" strokeWidth={2} />
+            <p className="text-[16px] leading-8 text-[var(--warning-foreground)]">
               Only one token can be active at a time. The full token is only shown once
               after generation.
             </p>
@@ -159,7 +170,7 @@ export function ClipperTokenSection({
       ) : null}
 
       {state.token ? (
-        <div className="rounded-[18px] border border-[#CBE8D5] bg-[#F1FBF4] px-5 py-4 text-[#256A3D]">
+        <div className="rounded-[18px] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-5 py-4 text-[var(--warning-foreground)]">
           <p className="flex items-center gap-2 text-[15px] font-semibold">
             <CheckCircle2 className="h-5 w-5" strokeWidth={2} />
             This is the only time the full token will be shown. Use the copy button now.
@@ -169,7 +180,7 @@ export function ClipperTokenSection({
 
       {state.error ? (
         <p
-          className="rounded-[18px] border border-[#F4C7C7] bg-[#FFF5F5] px-5 py-4 text-[15px] text-[#B42318]"
+          className="rounded-[18px] border border-[var(--error-border)] bg-[var(--error-bg)] px-5 py-4 text-[15px] text-[var(--error-foreground)]"
           role="alert"
         >
           {state.error}
@@ -180,7 +191,7 @@ export function ClipperTokenSection({
         <form action={formAction}>
           <input name="intent" type="hidden" value={isConfigured ? "rotate" : "generate"} />
           <button
-            className="inline-flex h-14 w-full items-center justify-center rounded-full bg-[#3FA1F4] px-6 text-[18px] font-medium text-white transition hover:bg-[#3495E7] disabled:cursor-not-allowed disabled:opacity-70"
+            className="button-primary h-14 w-full justify-center px-6 text-[18px] tracking-[-0.02em] disabled:bg-[var(--accent-soft)] disabled:text-[var(--accent-soft-strong)]"
             disabled={pending}
             type="submit"
           >
@@ -190,7 +201,7 @@ export function ClipperTokenSection({
 
         {onClose ? (
           <button
-            className="inline-flex h-14 w-full items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-6 text-[18px] font-medium text-[#111827] transition hover:bg-[#F8FAFC]"
+            className="button-secondary h-14 w-full justify-center px-6 text-[18px] tracking-[-0.02em]"
             onClick={onClose}
             type="button"
           >
