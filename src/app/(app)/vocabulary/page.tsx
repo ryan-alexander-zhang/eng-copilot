@@ -30,7 +30,7 @@ import { createOwnerWordList, getOwnerCustomWordLists } from "@/lib/word-lists/s
 
 const PAGE_SIZE = 8;
 const ACTION_BUTTON_CLASS_NAME =
-  "inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#E6EBF2] bg-white text-[#64748B] transition hover:border-[#D5DEEA] hover:bg-[#F8FAFC] hover:text-[#0F172A]";
+  "control-icon-button h-9 w-9 rounded-[10px]";
 
 type VocabularyPageProps = {
   searchParams: Promise<{
@@ -241,8 +241,8 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
   }
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC]">
-      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
+    <main className="app-shell">
+      <div className="app-frame">
         <OwnerTopBar activeTab="vocabulary" showSearch={false} userInitial={userInitial} />
 
         <section className="px-6 py-8 md:px-8 md:py-10 xl:px-12">
@@ -261,11 +261,11 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               <div className="relative min-w-0 flex-1 lg:max-w-[320px]">
                 <Search
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94A3B8]"
+                  className="text-muted pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
                   strokeWidth={2}
                 />
                 <input
-                  className="h-11 w-full rounded-[14px] border border-[#E3E8F1] bg-white pl-11 pr-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                  className="field-input h-11 rounded-[14px] pl-11 pr-4 text-[14px]"
                   defaultValue={resolvedSearchParams.q ?? ""}
                   name="q"
                   placeholder="Search vocabulary..."
@@ -300,23 +300,23 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
 
             <div className="flex flex-wrap items-center gap-3">
               <InlinePopover
-                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                panelClassName="popover-panel absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px]"
                 trigger="New list"
-                triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"
+                triggerClassName="control-button h-11 px-5"
               >
                 <form action={createWordListAction} className="grid gap-3">
                   <input
-                    className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                    className="field-input h-11 rounded-[12px] px-4 text-[14px]"
                     name="name"
                     placeholder="Word list name"
                     required
                   />
-                  <p className="text-[13px] leading-6 text-[#64748B]">
+                  <p className="text-muted text-[13px] leading-6">
                     System preset lists are shared and read-only. Saved words can only be added to
                     your custom lists.
                   </p>
                   <button
-                    className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                    className="control-button control-button-primary h-10 rounded-[12px] px-4 text-[13px] font-semibold"
                     type="submit"
                   >
                     Create list
@@ -325,36 +325,36 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               </InlinePopover>
 
               <InlinePopover
-                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                panelClassName="popover-panel absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[340px]"
                 trigger="Add word"
-                triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] bg-[#3B82F6] px-5 text-[14px] font-semibold text-white shadow-[0_10px_24px_rgba(59,130,246,0.28)] transition hover:bg-[#2563EB]"
+                triggerClassName="control-button control-button-primary h-11 px-5 font-semibold"
               >
                 <form
                   action={addVocabularyWordAction}
                   className="grid gap-3"
                 >
                   <input
-                    className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                    className="field-input h-11 rounded-[12px] px-4 text-[14px]"
                     name="word"
                     placeholder="Add a word..."
                     required
                   />
                   <textarea
-                    className="min-h-[92px] w-full rounded-[12px] border border-[#E3E8F1] px-4 py-3 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                    className="field-textarea min-h-[92px] rounded-[12px] px-4 py-3 text-[14px]"
                     name="note"
                     placeholder="Add a note (optional)..."
                   />
-                  <p className="text-[13px] leading-6 text-[#64748B]">
+                  <p className="text-muted text-[13px] leading-6">
                     Only your custom lists can receive saved words.
                   </p>
                   <div className="grid gap-2">
                     {wordLists.map((wordList) => (
                       <label
-                        className="inline-flex items-center gap-2 text-[13px] text-[#475569]"
+                        className="text-soft inline-flex items-center gap-2 text-[13px]"
                         key={wordList.id}
                       >
                         <input
-                          className="h-4 w-4 rounded border-[#CBD5E1]"
+                          className="checkbox-accent h-4 w-4 rounded"
                           name="wordListSlug"
                           type="checkbox"
                           value={wordList.slug}
@@ -364,7 +364,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                     ))}
                   </div>
                   <button
-                    className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                    className="control-button control-button-primary h-10 rounded-[12px] px-4 text-[13px] font-semibold"
                     type="submit"
                   >
                     Save word
@@ -373,27 +373,27 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               </InlinePopover>
 
               <InlinePopover
-                panelClassName="absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[360px] rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                panelClassName="popover-panel absolute right-0 top-[calc(100%+0.75rem)] z-20 w-[360px]"
                 trigger="Import"
-                triggerClassName="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"
+                triggerClassName="control-button h-11 px-5"
               >
                 <form
                   action={importVocabularyAction}
                   className="grid gap-3"
                 >
-                  <p className="text-[13px] leading-6 text-[#64748B]">
+                  <p className="text-muted text-[13px] leading-6">
                     Upload a vocabulary JSON export to merge its words into your library.
                   </p>
                   <input
                     aria-label="Vocabulary JSON file"
                     accept="application/json,.json"
-                    className="block w-full rounded-[12px] border border-[#E3E8F1] bg-[#F8FAFC] px-3 py-2 text-[13px] text-[#475569] file:mr-3 file:rounded-[10px] file:border-0 file:bg-[#EEF4FF] file:px-3 file:py-2 file:text-[13px] file:font-medium file:text-[#2563EB] hover:file:bg-[#E5EEFF]"
+                    className="field-file block rounded-[12px] bg-[var(--surface-soft)] px-3 py-2 text-[13px] text-[var(--foreground-soft)] file:mr-3 file:rounded-[10px] file:border-0 file:bg-[var(--accent-soft)] file:px-3 file:py-2 file:text-[13px] file:font-medium file:text-[var(--accent-strong)] hover:file:bg-[var(--surface-soft)]"
                     name="vocabularyFile"
                     required
                     type="file"
                   />
                   <button
-                    className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                    className="control-button control-button-primary h-10 rounded-[12px] px-4 text-[13px] font-semibold"
                     type="submit"
                   >
                     Import JSON
@@ -402,7 +402,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               </InlinePopover>
 
               <Link
-                className="inline-flex h-11 items-center justify-center rounded-[14px] border border-[#E3E8F1] bg-white px-5 text-[14px] font-medium text-[#475569] transition hover:bg-[#F8FAFC]"
+                className="control-button h-11 px-5"
                 href="/api/vocabulary"
               >
                 Export
@@ -448,7 +448,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                   ))}
                 </div>
                 <Link
-                  className="mt-5 inline-flex text-[14px] font-medium text-[#2563EB]"
+                  className="link-accent mt-5 inline-flex text-[14px] font-medium"
                   href="/word-lists"
                 >
                   View all word lists →
@@ -475,7 +475,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                       <th className="w-12 border-b border-[#EEF2F7] px-4 py-4">
                         <input
                           aria-label="Select all vocabulary entries"
-                          className="h-4 w-4 rounded border-[#CBD5E1]"
+                          className="checkbox-accent h-4 w-4 rounded"
                           type="checkbox"
                         />
                       </th>
@@ -504,7 +504,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                           <td className="border-b border-[#EEF2F7] px-4 py-4 align-top">
                             <input
                               aria-label={`Select ${entry.word}`}
-                              className="mt-1 h-4 w-4 rounded border-[#CBD5E1]"
+                              className="checkbox-accent mt-1 h-4 w-4 rounded"
                               type="checkbox"
                             />
                           </td>
@@ -544,7 +544,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               {buildVocabularyLookupLinks(entry.word).map((link) => (
                                 <a
                                   aria-label={`${link.label} lookup for ${entry.word}`}
-                                  className="group relative inline-flex h-8 w-8 items-center justify-center rounded-[10px] border border-[#E3E8F1] bg-white transition hover:border-[#D5DEEA] hover:bg-[#F8FAFC] focus:outline-none focus:ring-4 focus:ring-[#DCE8FF]"
+                                  className="control-icon-button group relative h-8 w-8 rounded-[10px]"
                                   href={link.href}
                                   key={link.href}
                                   rel="noreferrer"
@@ -583,23 +583,23 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               >
                                 <form
                                   action={updateVocabularyWordListsAction}
-                                  className="absolute right-0 top-11 z-30 grid w-[220px] gap-3 rounded-[16px] border border-[#E6EBF2] bg-white p-3 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                                  className="popover-panel absolute right-0 top-11 z-30 grid w-[220px] gap-3 p-3"
                                 >
                                   <input name="entryId" type="hidden" value={entry.id} />
                                   <input name="note" type="hidden" value={entry.note} />
                                   <input name="source" type="hidden" value={entry.source} />
                                   <input name="word" type="hidden" value={entry.word} />
-                                  <p className="text-[12px] leading-5 text-[#64748B]">
+                                  <p className="text-muted text-[12px] leading-5">
                                     Saved words can only be attached to your custom lists.
                                   </p>
                                   {wordLists.map((wordList) => (
                                     <label
-                                      className="flex items-center gap-2 text-[13px] text-[#475569]"
+                                      className="text-soft flex items-center gap-2 text-[13px]"
                                       key={wordList.id}
                                     >
                                       <input
                                         defaultChecked={selectedSlugs.has(wordList.slug)}
-                                        className="h-4 w-4 rounded border-[#CBD5E1]"
+                                        className="checkbox-accent h-4 w-4 rounded"
                                         name="wordListSlug"
                                         type="checkbox"
                                         value={wordList.slug}
@@ -608,7 +608,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                                     </label>
                                   ))}
                                   <button
-                                    className="inline-flex h-9 items-center justify-center rounded-[10px] bg-[#0F172A] px-3 text-[13px] font-semibold text-white"
+                                    className="control-button control-button-primary h-9 rounded-[10px] px-3 text-[13px] font-semibold"
                                     type="submit"
                                   >
                                     Save lists
@@ -630,34 +630,34 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               >
                                 <form
                                   action={updateVocabularyEntryAction}
-                                  className="absolute right-0 top-11 z-30 grid w-[340px] gap-3 rounded-[18px] border border-[#E6EBF2] bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
+                                  className="popover-panel absolute right-0 top-11 z-30 grid w-[340px] gap-3"
                                 >
                                   <input name="entryId" type="hidden" value={entry.id} />
                                   <input name="source" type="hidden" value={entry.source} />
                                   <input
-                                    className="h-11 w-full rounded-[12px] border border-[#E3E8F1] px-4 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                                    className="field-input h-11 rounded-[12px] px-4 text-[14px]"
                                     defaultValue={entry.word}
                                     name="word"
                                     required
                                   />
                                   <textarea
-                                    className="min-h-[92px] w-full rounded-[12px] border border-[#E3E8F1] px-4 py-3 text-[14px] text-[#0F172A] outline-none transition focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+                                    className="field-textarea min-h-[92px] rounded-[12px] px-4 py-3 text-[14px]"
                                     defaultValue={entry.note}
                                     name="note"
                                     placeholder="Add a note..."
                                   />
-                                  <p className="text-[12px] leading-5 text-[#64748B]">
+                                  <p className="text-muted text-[12px] leading-5">
                                     Saved words can only be attached to your custom lists.
                                   </p>
                                   <div className="grid gap-2">
                                     {wordLists.map((wordList) => (
                                       <label
-                                        className="flex items-center gap-2 text-[13px] text-[#475569]"
+                                        className="text-soft flex items-center gap-2 text-[13px]"
                                         key={wordList.id}
                                       >
                                         <input
                                           defaultChecked={selectedSlugs.has(wordList.slug)}
-                                          className="h-4 w-4 rounded border-[#CBD5E1]"
+                                          className="checkbox-accent h-4 w-4 rounded"
                                           name="wordListSlug"
                                           type="checkbox"
                                           value={wordList.slug}
@@ -667,7 +667,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                                     ))}
                                   </div>
                                   <button
-                                    className="inline-flex h-10 items-center justify-center rounded-[12px] bg-[#0F172A] px-4 text-[13px] font-semibold text-white"
+                                    className="control-button control-button-primary h-10 rounded-[12px] px-4 text-[13px] font-semibold"
                                     type="submit"
                                   >
                                     Save changes
@@ -750,7 +750,7 @@ function SummaryRow({
 function HowItWorksStep({ children, index }: { children: ReactNode; index: number }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F0FF] text-[13px] font-semibold text-[#2563EB]">
+      <span className="step-badge h-7 w-7 text-[13px]">
         {index}
       </span>
       <span className="max-w-[170px] text-[14px] leading-6 text-[#475569]">{children}</span>
@@ -780,10 +780,8 @@ function PaginationLink({
   return (
     <Link
       aria-current={isActive ? "page" : undefined}
-      className={`inline-flex h-10 min-w-10 items-center justify-center rounded-[12px] border px-3 text-[14px] font-medium transition ${
-        isActive
-          ? "border-[#C9DAFF] bg-[#F4F8FF] text-[#2563EB]"
-          : "border-[#E3E8F1] bg-white text-[#475569] hover:bg-[#F8FAFC]"
+      className={`pagination-link h-10 min-w-10 rounded-[12px] px-3 text-[14px] ${
+        isActive ? "pagination-link-active" : ""
       }`}
       href={createVocabularyPageHref({
         page,

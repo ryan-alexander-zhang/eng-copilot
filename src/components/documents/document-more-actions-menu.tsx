@@ -78,15 +78,15 @@ export function DocumentShareButton({
       <button
         className={
           variant === "menu-item"
-            ? "flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[14px] font-medium text-[#374151] transition hover:bg-[#F8FAFC]"
-            : "inline-flex h-10 items-center gap-2 rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#374151] disabled:cursor-not-allowed disabled:opacity-70"
+            ? "menu-item"
+            : "control-button h-10 gap-2 rounded-[12px] px-4 disabled:cursor-not-allowed disabled:opacity-70"
         }
         disabled={isPending}
         onClick={() => setIsShareModalOpen(true)}
         type="button"
       >
         <Share2
-          className={variant === "menu-item" ? "h-4 w-4 text-[#667085]" : "h-4 w-4"}
+          className={variant === "menu-item" ? "menu-item-icon h-4 w-4" : "h-4 w-4"}
           strokeWidth={2}
         />
         Sharing
@@ -94,22 +94,22 @@ export function DocumentShareButton({
 
       {isShareModalOpen && typeof document !== "undefined"
         ? createPortal(
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F172A]/20 p-4 backdrop-blur-[2px]">
-              <div className="w-full max-w-[520px] rounded-[20px] border border-[#E5E7EB] bg-white p-6 shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
-                <h2 className="text-[20px] font-semibold text-[#111827]">{`Share "${shareLabel}"`}</h2>
-                <p className="mt-2 text-[14px] text-[#667085]">
+            <div className="modal-overlay">
+              <div className="modal-panel max-w-[520px]">
+                <h2 className="text-[20px] font-semibold">{`Share "${shareLabel}"`}</h2>
+                <p className="text-muted mt-2 text-[14px]">
                   Anyone with the link can view (read-only).
                 </p>
 
-                <div className="mt-5 overflow-hidden rounded-[12px] border border-[#E5E7EB]">
-                  <div className="flex items-center bg-white">
+                <div className="modal-input-group mt-5">
+                  <div className="flex items-center bg-[var(--surface-strong)]">
                     <input
-                      className="h-11 flex-1 border-0 bg-transparent px-4 text-[13px] text-[#667085] outline-none"
+                      className="text-muted h-11 flex-1 border-0 bg-transparent px-4 text-[13px] outline-none"
                       readOnly
                       value={isShareActive ? shareUrl : ""}
                     />
                     <button
-                      className="inline-flex h-11 items-center justify-center border-l border-[#E5E7EB] bg-[#F8FAFC] px-4 text-[13px] font-medium text-[#4B5563] transition hover:bg-[#F3F4F6] disabled:cursor-not-allowed disabled:text-[#9CA3AF]"
+                      className="modal-input-action h-11 disabled:cursor-not-allowed disabled:opacity-45"
                       disabled={!isShareActive || !shareUrl || isPending}
                       onClick={() => {
                         void handleCopyLink();
@@ -121,17 +121,17 @@ export function DocumentShareButton({
                   </div>
                 </div>
 
-                <div className="mt-6 border-t border-[#EEF2F6] pt-5">
-                  <p className="text-[13px] font-semibold text-[#344054]">Link settings</p>
+                <div className="mt-6 border-t border-[color:var(--border)] pt-5">
+                  <p className="text-soft text-[13px] font-semibold">Link settings</p>
                   <div className="mt-4 flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
                       <CheckCircle2
-                        className="mt-0.5 h-4 w-4 text-[#98A2B3]"
+                        className="text-muted mt-0.5 h-4 w-4"
                         strokeWidth={2}
                       />
                       <div>
-                        <p className="text-[14px] font-medium text-[#344054]">Read-only</p>
-                        <p className="mt-1 text-[13px] text-[#98A2B3]">
+                        <p className="text-soft text-[14px] font-medium">Read-only</p>
+                        <p className="text-muted mt-1 text-[13px]">
                           Viewers can only read, cannot edit or add annotations.
                         </p>
                       </div>
@@ -139,8 +139,8 @@ export function DocumentShareButton({
                     <button
                       aria-checked={isShareActive}
                       aria-label="Read-only"
-                      className={`relative mt-0.5 inline-flex h-6 w-11 rounded-full transition ${
-                        isShareActive ? "bg-[#4F9CF9]" : "bg-[#D0D5DD]"
+                      className={`toggle-switch mt-0.5 ${
+                        isShareActive ? "toggle-switch-active" : ""
                       }`}
                       disabled={isPending}
                       onClick={handleToggleShare}
@@ -158,7 +158,7 @@ export function DocumentShareButton({
 
                 <div className="mt-7 flex justify-end">
                   <button
-                    className="inline-flex h-10 min-w-[92px] items-center justify-center rounded-[8px] bg-[#2F80ED] px-5 text-[14px] font-medium text-white transition hover:bg-[#256ED1]"
+                    className="control-button control-button-primary h-10 min-w-[92px] rounded-[8px] px-5 text-[14px] font-medium"
                     onClick={() => setIsShareModalOpen(false)}
                     type="button"
                   >
@@ -226,7 +226,7 @@ export function DocumentMoreActionsMenu({
         aria-label={triggerLabel}
         className={
           triggerClassName ??
-          "inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#6B7280]"
+          "control-icon-button h-10 w-10 rounded-[12px]"
         }
         onClick={() => setIsMenuOpen((open) => !open)}
         type="button"
@@ -235,10 +235,10 @@ export function DocumentMoreActionsMenu({
       </button>
 
       {isMenuOpen ? (
-        <div className="absolute right-0 top-11 z-20 min-w-[176px] rounded-[14px] border border-[#E5E7EB] bg-white p-1.5 shadow-[0_16px_40px_rgba(15,23,42,0.14)]">
+        <div className="menu-panel absolute right-0 top-11 z-20 min-w-[176px]">
           {children}
           <button
-            className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[14px] font-medium text-[#E14D45] transition hover:bg-[#FFF5F5]"
+            className="menu-item menu-item-danger"
             disabled={isPending}
             onClick={handleMoveToTrash}
             type="button"

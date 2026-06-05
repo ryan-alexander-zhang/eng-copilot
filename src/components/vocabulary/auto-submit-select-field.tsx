@@ -70,7 +70,7 @@ export function AutoSubmitSelectField({
       {name ? <input name={name} ref={inputRef} type="hidden" value={currentValue} /> : null}
       <button
         aria-expanded={isOpen}
-        className="flex h-11 w-full items-center justify-between rounded-[14px] border border-[#E3E8F1] bg-white px-4 text-[14px] font-medium text-[#475569] outline-none transition hover:bg-[#F8FAFC] focus:border-[#BFD3FF] focus:ring-4 focus:ring-[#DCE8FF]"
+        className="select-trigger"
         onClick={() => setIsOpen((open) => !open)}
         title={selectedTitle}
         type="button"
@@ -78,14 +78,14 @@ export function AutoSubmitSelectField({
         <span className="truncate">{selectedOption?.label}</span>
         <ChevronDown
           aria-hidden="true"
-          className={`h-4 w-4 text-[#94A3B8] transition ${isOpen ? "rotate-180" : ""}`}
+          className={`text-muted h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`}
           strokeWidth={2}
         />
       </button>
 
       {isOpen ? (
         <div
-          className={`absolute left-0 top-[calc(100%+0.5rem)] z-20 w-full max-h-[320px] overflow-y-auto rounded-[16px] border border-[#E3E8F1] bg-white p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)] ${panelClassName ?? ""}`.trim()}
+          className={`select-panel ${panelClassName ?? ""}`.trim()}
           role="listbox"
         >
           {options.map((option) => {
@@ -96,11 +96,7 @@ export function AutoSubmitSelectField({
             return (
               <button
                 aria-selected={isSelected}
-                className={`flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-[14px] transition ${
-                  isSelected
-                    ? "bg-[#EEF4FF] font-medium text-[#2563EB]"
-                    : "text-[#475569] hover:bg-[#F8FAFC]"
-                }`}
+                className={`select-option ${isSelected ? "select-option-active" : ""}`}
                 key={option.value}
                 onClick={() => {
                   if (inputRef.current) {

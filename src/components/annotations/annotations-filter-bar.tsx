@@ -46,6 +46,11 @@ export function AnnotationsFilterBar({
   useEffect(() => {
     const nextParams = new URLSearchParams(currentQueryString);
     const value = deferredQuery.trim();
+    const currentValue = (nextParams.get("q") ?? "").trim();
+
+    if (value === currentValue) {
+      return;
+    }
 
     if (!value) {
       nextParams.delete("q");
@@ -96,9 +101,9 @@ export function AnnotationsFilterBar({
     <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row xl:items-center">
         <div className="relative w-full xl:max-w-[274px]">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" strokeWidth={2} />
+          <Search className="text-muted pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2" strokeWidth={2} />
           <input
-            className="h-11 w-full rounded-[12px] border border-[#E5E7EB] bg-white pl-11 pr-4 text-[14px] text-[#111827] outline-none transition focus:border-[#BFDBFE] focus:ring-4 focus:ring-[#DBEAFE]"
+            className="field-input h-11 rounded-[12px] pl-11 pr-4 text-[14px]"
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search annotations..."
             type="search"
@@ -142,7 +147,7 @@ export function AnnotationsFilterBar({
           value={sort}
         />
         <button
-          className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] border border-[#E5E7EB] bg-white text-[#4B5563]"
+          className="control-icon-button h-11 w-11"
           type="button"
         >
           <List className="h-4 w-4" strokeWidth={2} />

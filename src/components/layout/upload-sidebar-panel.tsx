@@ -34,7 +34,7 @@ export function UploadSidebarPanel({
         type="file"
       />
       <button
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-[#3D8CEB] text-[14px] font-semibold text-white transition hover:bg-[#357FDE] disabled:cursor-not-allowed disabled:opacity-70"
+        className="button-primary flex h-11 w-full items-center justify-center gap-2 rounded-[10px] text-[14px] disabled:cursor-not-allowed disabled:opacity-70"
         disabled={pending}
         onClick={() => inputRef.current?.click()}
         type="button"
@@ -44,24 +44,33 @@ export function UploadSidebarPanel({
       </button>
 
       <button
-        className="flex min-h-[150px] w-full flex-col items-center justify-center rounded-[14px] border border-dashed border-[#D6DCE5] bg-white px-6 text-center transition hover:border-[#BFC8D6] hover:bg-[#FBFCFE]"
+        className="flex min-h-[150px] w-full flex-col items-center justify-center rounded-[14px] border border-dashed bg-[var(--surface-strong)] px-6 text-center transition hover:bg-[var(--surface-soft)]"
         onClick={() => inputRef.current?.click()}
+        style={{ borderColor: "var(--border)" }}
         type="button"
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E4E8F0] bg-[#F9FAFB] text-[#6B7280]">
+        <div
+          className="text-muted flex h-10 w-10 items-center justify-center rounded-full border bg-[var(--surface-soft)]"
+          style={{ borderColor: "var(--border)" }}
+        >
           <ArrowUpFromLine className="h-4 w-4" strokeWidth={2} />
         </div>
-        <p className="mt-4 text-[15px] font-medium leading-6 text-[#374151]">
+        <p className="text-soft mt-4 text-[15px] font-medium leading-6">
           Drop Markdown files here
           <br />
           or click to browse
         </p>
-        <p className="mt-4 text-[12px] text-[#9CA3AF]">Supports Markdown files up to 10 MB</p>
+        <p className="text-muted mt-4 text-[12px]">Supports Markdown files up to 10 MB</p>
       </button>
 
       {state.error ? (
         <p
-          className="rounded-[12px] border border-[#F3C5C5] bg-[#FEF2F2] px-4 py-3 text-[13px] text-[#B42318]"
+          className="rounded-[12px] border px-4 py-3 text-[13px]"
+          style={{
+            backgroundColor: "var(--error-bg)",
+            borderColor: "var(--error-border)",
+            color: "var(--error-foreground)",
+          }}
           role="alert"
         >
           {state.error}

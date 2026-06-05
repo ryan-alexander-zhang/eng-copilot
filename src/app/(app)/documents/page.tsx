@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   BookOpenCheck,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   FileSearch,
@@ -11,6 +10,10 @@ import {
   Link2,
   MessageSquareText,
 } from "lucide-react";
+import {
+  AutoSubmitSelectField,
+  type AutoSubmitSelectOption,
+} from "@/components/vocabulary/auto-submit-select-field";
 import { getRequiredSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLibrarySidebarData } from "@/lib/documents/get-library-sidebar-data";
@@ -27,6 +30,11 @@ import { DocumentTableRowActions } from "@/components/documents/document-table-r
 import { LibraryPageShell } from "@/components/layout/library-page-shell";
 
 const PAGE_SIZE = 8;
+const DOCUMENT_SORT_OPTIONS: AutoSubmitSelectOption[] = [
+  { label: "Sort: Last edited", value: "last-edited" },
+  { label: "Sort: Created", value: "created" },
+  { label: "Sort: Title", value: "title" },
+];
 
 export default async function DocumentsPage({
   searchParams,
@@ -198,10 +206,10 @@ export default async function DocumentsPage({
       userInitial={userInitial}
     >
       <div className="w-full">
-        <h1 className="text-[58px] font-semibold tracking-[-0.06em] text-[#111827]">
+        <h1 className="text-[58px] font-semibold tracking-[-0.06em]">
           Documents
         </h1>
-        <p className="mt-3 text-[22px] leading-8 text-[#7B8594]">
+        <p className="text-muted mt-3 text-[22px] leading-8">
           Manage your reading files, annotations, and sharing settings.
         </p>
 
@@ -214,19 +222,19 @@ export default async function DocumentsPage({
           <StatCard
             icon={<MessageSquareText className="h-5 w-5" strokeWidth={2} />}
             label="Total annotations"
-            tint="green"
+            tint="success"
             value={formatCompactNumber(totalAnnotations)}
           />
           <StatCard
             icon={<Link2 className="h-5 w-5" strokeWidth={2} />}
             label="Read-only links active"
-            tint="purple"
+            tint="accent"
             value={formatCompactNumber(activeShareCount)}
           />
           <StatCard
             icon={<BookOpenCheck className="h-5 w-5" strokeWidth={2} />}
             label="Word lists used"
-            tint="amber"
+            tint="warning"
             value={formatCompactNumber(usedWordListCount)}
           />
         </div>
@@ -236,20 +244,23 @@ export default async function DocumentsPage({
             <form className="relative w-full max-w-[420px]" method="GET">
               <input name="tab" type="hidden" value={activeTab} />
               <input name="sort" type="hidden" value={sort} />
-              <FileSearch className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" strokeWidth={2} />
+              <FileSearch
+                className="text-muted pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+                strokeWidth={2}
+              />
               <input
-                className="h-11 w-full rounded-[12px] border border-[#E5E7EB] bg-white pl-11 pr-12 text-[14px] text-[#111827] outline-none transition focus:border-[#BFDBFE] focus:ring-4 focus:ring-[#DBEAFE]"
+                className="field-input h-11 rounded-[12px] pl-11 pr-12 text-[14px]"
                 defaultValue={resolvedSearchParams.q ?? ""}
                 name="q"
                 placeholder="Search documents..."
                 type="search"
               />
-              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-[#9CA3AF]">
+              <span className="kbd-hint pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[12px]">
                 ⌘K
               </span>
             </form>
 
-            <div className="inline-flex rounded-[12px] border border-[#E5E7EB] bg-white p-1">
+            <div className="inline-flex rounded-[12px] border border-[color:var(--border)] bg-[var(--surface-strong)] p-1">
               <TabLink
                 active={activeTab === "all"}
                 href={buildQuery({ q: resolvedSearchParams.q, sort, tab: "all" })}
@@ -277,37 +288,21 @@ export default async function DocumentsPage({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <select
-                className="h-11 appearance-none rounded-[12px] border border-[#E5E7EB] bg-white pl-4 pr-10 text-[14px] font-medium text-[#4B5563] outline-none"
-                defaultValue={sort}
-                form="document-sort-form"
-                name="sort"
-              >
-                <option value="last-edited">Sort: Last edited</option>
-                <option value="created">Sort: Created</option>
-                <option value="title">Sort: Title</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" strokeWidth={2} />
-              <form id="document-sort-form" method="GET">
-                <input name="q" type="hidden" value={resolvedSearchParams.q ?? ""} />
-                <input name="tab" type="hidden" value={activeTab} />
-              </form>
-            </div>
-            <button
-              className="inline-flex h-11 items-center rounded-[12px] border border-[#E5E7EB] px-4 text-[14px] font-medium text-[#4B5563]"
-              form="document-sort-form"
-              type="submit"
-            >
-              Apply sort
-            </button>
-          </div>
+          <form className="flex items-center" method="GET">
+            <input name="q" type="hidden" value={resolvedSearchParams.q ?? ""} />
+            <input name="tab" type="hidden" value={activeTab} />
+            <AutoSubmitSelectField
+              className="min-w-[220px]"
+              name="sort"
+              options={DOCUMENT_SORT_OPTIONS}
+              value={sort}
+            />
+          </form>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-[18px] border border-[#E8EBF0]">
-          <table className="min-w-full divide-y divide-[#E8EBF0] text-left">
-            <thead className="bg-[#FBFCFE] text-[13px] font-medium text-[#7B8594]">
+        <div className="mt-6 overflow-hidden rounded-[18px] border border-[color:var(--border)] bg-[var(--surface-strong)]">
+          <table className="min-w-full divide-y divide-[color:var(--border)] text-left">
+            <thead className="text-muted bg-[var(--surface-soft)] text-[13px] font-medium">
               <tr>
                 <th className="px-4 py-4">Document</th>
                 <th className="px-4 py-4">Words</th>
@@ -318,10 +313,10 @@ export default async function DocumentsPage({
                 <th className="px-4 py-4">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E8EBF0] bg-white">
+            <tbody className="divide-y divide-[color:var(--border)] bg-[var(--surface-strong)]">
               {pagedDocuments.length === 0 ? (
                 <tr>
-                  <td className="px-6 py-14 text-center text-[15px] text-[#6B7280]" colSpan={7}>
+                  <td className="text-muted px-6 py-14 text-center text-[15px]" colSpan={7}>
                     No documents matched this view.
                   </td>
                 </tr>
@@ -330,18 +325,18 @@ export default async function DocumentsPage({
                 <tr className="align-top" key={document.id}>
                   <td className="px-4 py-5">
                     <Link className="block" href={`/documents/${document.id}`}>
-                      <p className="text-[16px] font-semibold text-[#111827]">
+                      <p className="text-[16px] font-semibold">
                         {document.originalName || document.title}
                       </p>
-                      <p className="mt-1 max-w-[320px] text-[14px] leading-6 text-[#7B8594]">
+                      <p className="text-muted mt-1 max-w-[320px] text-[14px] leading-6">
                         {document.summary}
                       </p>
                     </Link>
                   </td>
-                  <td className="px-4 py-5 text-[15px] text-[#4B5563]">
+                  <td className="text-soft px-4 py-5 text-[15px]">
                     {formatCompactNumber(document.wordCount)}
                   </td>
-                  <td className="px-4 py-5 text-[15px] text-[#4B5563]">
+                  <td className="text-soft px-4 py-5 text-[15px]">
                     {formatDateTimeLabel(document.updatedAt)}
                   </td>
                   <td className="px-4 py-5">
@@ -349,23 +344,23 @@ export default async function DocumentsPage({
                       {document.activeLists.length > 0 ? (
                         document.activeLists.slice(0, 2).map((wordList) => (
                           <span
-                            className="rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[12px] font-medium text-[#3B82F6]"
+                            className="badge-accent"
                             key={`${document.id}-${wordList.wordList.name}`}
                           >
                             {wordList.wordList.name}
                           </span>
                         ))
                       ) : (
-                        <span className="text-[14px] text-[#9CA3AF]">-</span>
+                        <span className="text-muted text-[14px]">-</span>
                       )}
                       {document.activeLists.length > 2 ? (
-                        <span className="rounded-full bg-[#F3F4F6] px-2.5 py-1 text-[12px] font-medium text-[#6B7280]">
+                        <span className="badge-neutral">
                           +{document.activeLists.length - 2}
                         </span>
                       ) : null}
                     </div>
                   </td>
-                  <td className="px-4 py-5 text-[15px] text-[#4B5563]">
+                  <td className="text-soft px-4 py-5 text-[15px]">
                     {document._count.annotations}
                   </td>
                   <DocumentTableRowActions
@@ -390,7 +385,7 @@ export default async function DocumentsPage({
           </table>
         </div>
 
-        <div className="mt-6 flex flex-col gap-4 text-[14px] text-[#6B7280] xl:flex-row xl:items-center xl:justify-between">
+        <div className="text-muted mt-6 flex flex-col gap-4 text-[14px] xl:flex-row xl:items-center xl:justify-between">
           <p>
             {filteredDocuments.length === 0
               ? "0 documents"
@@ -412,7 +407,7 @@ export default async function DocumentsPage({
             >
               <ChevronLeft className="h-4 w-4" strokeWidth={2} />
             </PageButton>
-            <span className="inline-flex h-10 min-w-10 items-center justify-center rounded-[12px] border border-[#BFDBFE] bg-[#F5F9FF] px-3 text-[#2563EB]">
+            <span className="pagination-link pagination-link-active inline-flex h-10 min-w-10 items-center justify-center rounded-[12px] px-3">
               {currentPage}
             </span>
             <PageButton
@@ -509,29 +504,27 @@ function StatCard({
   icon,
   label,
   value,
-  tint = "blue",
+  tint = "accent",
 }: {
   icon: ReactNode;
   label: string;
   value: string;
-  tint?: "amber" | "blue" | "green" | "purple";
+  tint?: "accent" | "success" | "warning";
 }) {
   const iconClassName =
-    tint === "green"
-      ? "bg-[#ECFDF3] text-[#12B76A]"
-      : tint === "purple"
-        ? "bg-[#F4F0FF] text-[#9E77ED]"
-        : tint === "amber"
-          ? "bg-[#FFFAEB] text-[#EAAA08]"
-          : "bg-[#EEF4FF] text-[#3B82F6]";
+    tint === "success"
+      ? "bg-[var(--success-bg)] text-[var(--success-foreground)]"
+      : tint === "warning"
+        ? "bg-[var(--warning-bg)] text-[var(--warning-foreground)]"
+        : "bg-[var(--accent-soft)] text-[var(--accent-strong)]";
 
   return (
-    <article className="rounded-[18px] border border-[#E8EBF0] bg-white p-6">
+    <article className="panel-card p-6">
       <div className={`flex h-12 w-12 items-center justify-center rounded-[14px] ${iconClassName}`}>
         {icon}
       </div>
-      <p className="mt-5 text-[38px] font-semibold tracking-[-0.04em] text-[#111827]">{value}</p>
-      <p className="mt-1 text-[15px] text-[#7B8594]">{label}</p>
+      <p className="mt-5 text-[38px] font-semibold tracking-[-0.04em]">{value}</p>
+      <p className="text-muted mt-1 text-[15px]">{label}</p>
     </article>
   );
 }
@@ -548,7 +541,9 @@ function TabLink({
   return (
     <Link
       className={`inline-flex h-10 items-center rounded-[10px] px-4 text-[14px] font-medium transition ${
-        active ? "bg-[#EEF4FF] text-[#2563EB]" : "text-[#4B5563] hover:bg-[#F9FAFB]"
+        active
+          ? "bg-[var(--accent-soft)] text-[var(--accent-strong)]"
+          : "text-[var(--foreground-soft)] hover:bg-[var(--surface-soft)]"
       }`}
       href={href}
     >
@@ -568,7 +563,7 @@ function PageButton({
 }) {
   if (disabled) {
     return (
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#C0C6D0]">
+      <span className="pagination-link inline-flex h-10 w-10 items-center justify-center rounded-[12px] opacity-40">
         {children}
       </span>
     );
@@ -576,7 +571,7 @@ function PageButton({
 
   return (
     <Link
-      className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#E5E7EB] text-[#4B5563] transition hover:bg-[#F9FAFB]"
+      className="pagination-link inline-flex h-10 w-10 items-center justify-center rounded-[12px]"
       href={href}
     >
       {children}

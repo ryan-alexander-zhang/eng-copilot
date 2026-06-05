@@ -31,12 +31,12 @@ export function LibraryPageShell({
   userInitial,
 }: LibraryPageShellProps) {
   return (
-    <main className="min-h-screen bg-[#F8FAFC]">
-      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
+    <main className="app-shell">
+      <div className="app-frame">
         <OwnerTopBar activeTab="documents" userInitial={userInitial} />
 
         <div className="flex min-h-[calc(100vh-72px)]">
-          <aside className="w-full max-w-[296px] border-r border-[#E8EBF0] bg-white px-6 py-6">
+          <aside className="app-sidebar w-full max-w-[296px] px-6 py-6">
             <DocumentUploadSidebar />
             <div className="mt-6">
               <LibraryNavSidebar activeItem={activeItem} counts={counts} storage={storage} />

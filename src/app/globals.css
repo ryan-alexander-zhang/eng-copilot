@@ -1,20 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f5f1;
-  --surface: rgba(255, 255, 255, 0.86);
-  --surface-strong: #ffffff;
-  --surface-muted: #f3efe8;
-  --border: rgba(24, 24, 27, 0.09);
-  --foreground: #18181b;
-  --muted: #5f6471;
-  --accent: #4a9fd8;
-  --accent-strong: #0f4c71;
-  --highlight-word: #fef08a;
-  --highlight-word-foreground: #713f12;
-  --highlight-annotation: #d9f1f4;
-  --highlight-annotation-foreground: #0c4a5a;
-  --shadow-soft: 0 24px 80px rgba(17, 24, 39, 0.08);
+  --background: #fbf7f0;
+  --surface: rgba(255, 252, 247, 0.88);
+  --surface-strong: #fffdfa;
+  --surface-muted: #fff5e9;
+  --surface-soft: #fffaf4;
+  --border: rgba(184, 119, 58, 0.16);
+  --border-strong: rgba(184, 119, 58, 0.28);
+  --foreground: #211910;
+  --foreground-soft: #4e4031;
+  --muted: #7b6754;
+  --accent: #f97316;
+  --accent-hover: #e16510;
+  --accent-strong: #ab4d12;
+  --accent-soft: #fff0df;
+  --accent-soft-strong: #c76117;
+  --focus-ring: rgba(249, 115, 22, 0.16);
+  --success-bg: #ecfdf3;
+  --success-border: #cbe8d5;
+  --success-foreground: #256a3d;
+  --error-bg: #fff5f5;
+  --error-border: #f4c7c7;
+  --error-foreground: #b42318;
+  --warning-bg: #fff4e8;
+  --warning-border: #f6d89a;
+  --warning-foreground: #7c4a12;
+  --highlight-word: #fde68a;
+  --highlight-word-foreground: #7c4a12;
+  --highlight-annotation: #fff1dc;
+  --highlight-annotation-foreground: #8f4f17;
+  --shadow-soft: 0 24px 80px rgba(97, 52, 18, 0.08);
+  --shadow-selection: 0 8px 24px rgba(160, 81, 22, 0.08);
   --radius-card: 1.5rem;
 }
 
@@ -24,8 +41,8 @@
 
 html {
   background:
-    radial-gradient(circle at top left, rgba(74, 159, 216, 0.16), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(207, 188, 164, 0.24), transparent 28%),
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255, 213, 169, 0.32), transparent 28%),
     var(--background);
   color: var(--foreground);
   scroll-behavior: smooth;
@@ -51,7 +68,7 @@ select {
 }
 
 ::selection {
-  background: rgba(74, 159, 216, 0.24);
+  background: rgba(249, 115, 22, 0.2);
 }
 
 @layer base {
@@ -74,8 +91,8 @@ select {
 
   .page-backdrop::before {
     background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.56)),
-      radial-gradient(circle at top right, rgba(74, 159, 216, 0.18), transparent 36%);
+      linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 239, 0.66)),
+      radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 36%);
     border: 1px solid var(--border);
     border-radius: calc(var(--radius-card) + 0.5rem);
     box-shadow: var(--shadow-soft);
@@ -101,9 +118,9 @@ select {
 
   .eyebrow {
     @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em];
-    border-color: rgba(74, 159, 216, 0.14);
+    border-color: var(--border);
     color: var(--accent-strong);
-    background: rgba(255, 255, 255, 0.58);
+    background: rgba(255, 255, 255, 0.64);
   }
 
   .surface-card {
@@ -115,7 +132,7 @@ select {
 
   .surface-card-muted {
     @apply rounded-[1.25rem] border p-4 md:p-5;
-    background: rgba(243, 239, 232, 0.75);
+    background: rgba(255, 245, 233, 0.88);
     border-color: var(--border);
   }
 
@@ -124,25 +141,26 @@ select {
     background: var(--accent);
     color: white;
     cursor: pointer;
-    box-shadow: 0 16px 40px rgba(74, 159, 216, 0.28);
+    box-shadow: 0 16px 40px rgba(249, 115, 22, 0.24);
   }
 
   .button-primary:hover {
     transform: translateY(-1px);
-    background: #3d8ec4;
+    background: var(--accent-hover);
   }
 
   .button-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition duration-200;
     border-color: var(--border);
-    background: rgba(255, 255, 255, 0.72);
-    color: var(--foreground);
+    background: rgba(255, 252, 247, 0.8);
+    color: var(--foreground-soft);
     cursor: pointer;
   }
 
   .button-secondary:hover {
     transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 248, 239, 0.96);
+    border-color: var(--border-strong);
   }
 
   .button-primary:focus-visible,
@@ -166,31 +184,427 @@ select {
 
   .chip {
     @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
-    background: rgba(74, 159, 216, 0.1);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .app-shell {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .app-frame {
+    @apply mx-auto overflow-hidden rounded-[28px] border;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    box-shadow: 0 12px 36px rgba(97, 52, 18, 0.08);
+  }
+
+  .app-sidebar {
+    background: rgba(255, 253, 249, 0.96);
+    border-right: 1px solid var(--border);
+  }
+
+  .panel-card {
+    @apply rounded-[16px] border p-4;
+    background: rgba(255, 253, 249, 0.96);
+    border-color: var(--border);
+    box-shadow: 0 1px 2px rgba(97, 52, 18, 0.04);
+  }
+
+  .panel-card-accent {
+    @apply rounded-[18px] border px-5 py-5;
+    background: linear-gradient(180deg, rgba(255, 249, 241, 0.98), rgba(255, 243, 230, 0.92));
+    border-color: rgba(249, 115, 22, 0.16);
+    box-shadow: 0 18px 44px rgba(160, 81, 22, 0.08);
+  }
+
+  .text-muted {
+    color: var(--muted);
+  }
+
+  .text-soft {
+    color: var(--foreground-soft);
+  }
+
+  .text-accent {
+    color: var(--accent-strong);
+  }
+
+  .divider {
+    background: var(--border);
+  }
+
+  .badge-neutral {
+    @apply rounded-full px-2 py-0.5 text-[12px] font-semibold;
+    background: rgba(123, 103, 84, 0.1);
+    color: var(--muted);
+  }
+
+  .badge-accent {
+    @apply rounded-full px-2.5 py-1 text-[12px] font-medium;
+    background: var(--accent-soft);
+    color: var(--accent-soft-strong);
+  }
+
+  .status-badge-success {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-[12px] font-medium;
+    background: var(--success-bg);
+    color: var(--success-foreground);
+  }
+
+  .selection-card {
+    @apply flex cursor-pointer items-start gap-5 rounded-[18px] border p-5 transition;
+    background: var(--surface-strong);
+    border-color: var(--border);
+  }
+
+  .selection-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .selection-card-active {
+    background: var(--surface-soft);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-selection);
+  }
+
+  .selection-check {
+    @apply mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] border;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    color: transparent;
+  }
+
+  .selection-check-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .selected-item-card {
+    @apply flex items-center justify-between rounded-[14px] border px-4 py-4;
+    background: var(--surface-soft);
+    border-color: var(--border);
+  }
+
+  .selected-item-icon {
+    @apply flex h-6 w-6 items-center justify-center rounded-full text-white;
+    background: var(--accent);
+  }
+
+  .icon-chip {
+    @apply flex items-center justify-center rounded-[14px];
+  }
+
+  .icon-chip-accent {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .icon-chip-success {
+    background: var(--success-bg);
+    color: var(--success-foreground);
+  }
+
+  .icon-chip-warning {
+    background: var(--warning-bg);
+    color: var(--warning-foreground);
+  }
+
+  .icon-chip-neutral {
+    background: rgba(123, 103, 84, 0.1);
+    color: var(--muted);
+  }
+
+  .progress-track {
+    background: rgba(184, 119, 58, 0.12);
+  }
+
+  .progress-fill {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+  }
+
+  .link-accent {
+    color: var(--accent-strong);
+  }
+
+  .link-accent:hover {
+    color: var(--accent-hover);
+  }
+
+  .kbd-hint {
+    color: var(--muted);
+  }
+
+  .control-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] border px-4 text-[14px] font-medium transition;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    color: var(--foreground-soft);
+  }
+
+  .control-button:hover {
+    background: var(--surface-soft);
+    border-color: var(--border-strong);
+  }
+
+  .control-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .control-button-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.18);
+  }
+
+  .control-button-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .control-icon-button {
+    @apply inline-flex items-center justify-center rounded-[12px] border transition;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    color: var(--foreground-soft);
+  }
+
+  .control-icon-button:hover {
+    background: var(--surface-soft);
+    border-color: var(--border-strong);
+    color: var(--foreground);
+  }
+
+  .control-icon-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .icon-ghost-button {
+    @apply inline-flex items-center justify-center rounded-[10px] transition;
+    color: var(--foreground-soft);
+  }
+
+  .icon-ghost-button:hover {
+    background: var(--surface-soft);
+    color: var(--foreground);
+  }
+
+  .icon-ghost-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .select-trigger {
+    @apply flex h-11 w-full items-center justify-between rounded-[14px] border px-4 text-[14px] font-medium outline-none transition;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    color: var(--foreground-soft);
+  }
+
+  .select-trigger:hover {
+    background: var(--surface-soft);
+  }
+
+  .select-trigger:focus-visible {
+    border-color: rgba(249, 115, 22, 0.42);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+
+  .select-panel {
+    @apply absolute left-0 top-[calc(100%+0.5rem)] z-20 w-full max-h-[320px] overflow-y-auto rounded-[16px] border p-1.5;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    box-shadow: 0 18px 40px rgba(97, 52, 18, 0.12);
+  }
+
+  .select-option {
+    @apply flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-[14px] transition;
+    color: var(--foreground-soft);
+  }
+
+  .select-option:hover {
+    background: var(--surface-soft);
+  }
+
+  .select-option-active {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-weight: 500;
+  }
+
+  .segment-control {
+    @apply inline-flex rounded-[12px] border p-1;
+    background: var(--surface-strong);
+    border-color: var(--border);
+  }
+
+  .segment-control-link {
+    @apply inline-flex h-10 items-center rounded-[10px] px-4 text-[14px] font-medium transition;
+    color: var(--foreground-soft);
+  }
+
+  .segment-control-link:hover {
+    background: var(--surface-soft);
+  }
+
+  .segment-control-link-active {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .popover-panel {
+    @apply rounded-[18px] border bg-white p-4;
+    border-color: var(--border);
+    box-shadow: 0 24px 60px rgba(97, 52, 18, 0.16);
+  }
+
+  .menu-panel {
+    @apply rounded-[14px] border bg-white p-1.5;
+    border-color: var(--border);
+    box-shadow: 0 16px 40px rgba(97, 52, 18, 0.14);
+  }
+
+  .menu-item {
+    @apply flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[14px] font-medium transition;
+    color: var(--foreground-soft);
+  }
+
+  .menu-item:hover {
+    background: var(--surface-soft);
+  }
+
+  .menu-item-icon {
+    color: var(--muted);
+  }
+
+  .menu-item-danger {
+    color: var(--error-foreground);
+  }
+
+  .menu-item-danger:hover {
+    background: var(--error-bg);
+  }
+
+  .tooltip-bubble {
+    @apply rounded-[10px] px-3 py-1.5 text-[12px] font-medium text-white;
+    background: var(--foreground);
+    box-shadow: 0 12px 30px rgba(97, 52, 18, 0.18);
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    background: rgba(33, 25, 16, 0.18);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-panel {
+    @apply w-full rounded-[20px] border p-6;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    box-shadow: 0 24px 60px rgba(97, 52, 18, 0.18);
+  }
+
+  .modal-input-group {
+    @apply overflow-hidden rounded-[12px] border;
+    background: var(--surface-strong);
+    border-color: var(--border);
+  }
+
+  .modal-input-action {
+    @apply inline-flex items-center justify-center border-l px-4 text-[13px] font-medium transition;
+    background: var(--surface-soft);
+    border-color: var(--border);
+    color: var(--foreground-soft);
+  }
+
+  .modal-input-action:hover {
+    background: var(--surface-muted);
+  }
+
+  .toggle-switch {
+    @apply relative inline-flex h-6 w-11 rounded-full transition;
+    background: rgba(123, 103, 84, 0.28);
+  }
+
+  .toggle-switch-active {
+    background: var(--accent);
+  }
+
+  .table-surface {
+    @apply overflow-hidden rounded-[18px] border;
+    background: var(--surface-strong);
+    border-color: var(--border);
+  }
+
+  .stat-card {
+    @apply rounded-[18px] border p-6;
+    background: var(--surface-strong);
+    border-color: var(--border);
+  }
+
+  .pagination-link {
+    @apply inline-flex items-center justify-center border px-3 font-medium transition;
+    background: var(--surface-strong);
+    border-color: var(--border);
+    color: var(--foreground-soft);
+  }
+
+  .pagination-link:hover {
+    background: var(--surface-soft);
+    border-color: var(--border-strong);
+  }
+
+  .pagination-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .pagination-link-active {
+    background: var(--accent-soft);
+    border-color: var(--border-strong);
+    color: var(--accent-strong);
+  }
+
+  .checkbox-accent {
+    accent-color: var(--accent);
+  }
+
+  .step-badge {
+    @apply inline-flex items-center justify-center rounded-full font-semibold;
+    background: var(--accent-soft);
     color: var(--accent-strong);
   }
 
   .field-label {
-    @apply text-sm font-medium text-zinc-900;
+    @apply text-sm font-medium;
+    color: var(--foreground);
   }
 
   .field-input,
   .field-textarea,
   .field-select,
   .field-file {
-    @apply w-full rounded-2xl border bg-white/80 px-4 py-3 text-sm text-zinc-950 outline-none transition;
-    border-color: rgba(24, 24, 27, 0.12);
-    box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.03);
+    @apply w-full rounded-2xl border px-4 py-3 text-sm outline-none transition;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--foreground);
+    border-color: var(--border);
+    box-shadow: inset 0 1px 2px rgba(97, 52, 18, 0.03);
   }
 
   .field-input:focus,
   .field-textarea:focus,
   .field-select:focus,
   .field-file:focus {
-    border-color: rgba(74, 159, 216, 0.42);
+    border-color: rgba(249, 115, 22, 0.42);
     box-shadow:
-      0 0 0 4px rgba(74, 159, 216, 0.12),
-      inset 0 1px 2px rgba(17, 24, 39, 0.03);
+      0 0 0 4px var(--focus-ring),
+      inset 0 1px 2px rgba(97, 52, 18, 0.03);
   }
 
   .field-file {

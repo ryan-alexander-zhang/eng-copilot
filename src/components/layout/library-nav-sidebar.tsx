@@ -67,32 +67,34 @@ export function LibraryNavSidebar({
         />
       </div>
 
-      <section className="rounded-[16px] border border-[#E7EBF1] bg-white p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <h3 className="text-[14px] font-semibold text-[#111827]">Storage</h3>
-        <p className="mt-2 text-[12px] text-[#9CA3AF]">
+      <section className="panel-card">
+        <h3 className="text-[14px] font-semibold">Storage</h3>
+        <p className="text-muted mt-2 text-[12px]">
           {storage.usedLabel} of {storage.totalLabel} used
         </p>
-        <div className="mt-3 h-2 rounded-full bg-[#EEF2F7]">
+        <div className="progress-track mt-3 h-2 rounded-full">
           <div
-            className="h-2 rounded-full bg-[#3B82F6]"
+            className="progress-fill h-2 rounded-full"
             style={{ width: `${Math.max(6, Math.min(100, storage.progress * 100))}%` }}
           />
         </div>
         <button
-          className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-[10px] border border-[#DCE5F3] bg-[#F8FBFF] text-[14px] font-medium text-[#3B82F6]"
+          className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-[10px] border bg-[var(--accent-soft)] text-[14px] font-medium text-[var(--accent-strong)]"
+          style={{ borderColor: "var(--border)" }}
           type="button"
         >
           Upgrade plan
         </button>
       </section>
 
-      <section className="rounded-[16px] border border-[#E7EBF1] bg-white p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <p className="text-[14px] font-semibold text-[#111827]">Learn more, together.</p>
-        <p className="mt-3 text-[13px] leading-6 text-[#6B7280]">
+      <section className="panel-card">
+        <p className="text-[14px] font-semibold">Learn more, together.</p>
+        <p className="text-muted mt-3 text-[13px] leading-6">
           Share read-only links so others can learn without editing.
         </p>
         <button
-          className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-[10px] border border-[#E5E7EB] text-[14px] font-medium text-[#3B82F6]"
+          className="mt-4 inline-flex h-9 w-full items-center justify-center rounded-[10px] border text-[14px] font-medium text-[var(--accent-strong)]"
+          style={{ borderColor: "var(--border)" }}
           type="button"
         >
           See how it works
@@ -103,7 +105,7 @@ export function LibraryNavSidebar({
 }
 
 function NavSectionTitle({ title }: { title: string }) {
-  return <h2 className="text-[15px] font-semibold text-[#111827]">{title}</h2>;
+  return <h2 className="text-[15px] font-semibold">{title}</h2>;
 }
 
 function NavItem({
@@ -122,30 +124,41 @@ function NavItem({
   label: string;
 }) {
   const className = `flex items-center justify-between rounded-[12px] px-3 py-3 text-[14px] font-medium transition ${
-    active
-      ? "bg-[#F4F8FF] text-[#2563EB]"
-      : disabled
-        ? "cursor-default text-[#6B7280]"
-        : "text-[#4B5563] hover:bg-[#F8FAFC]"
+    disabled
+        ? "text-muted cursor-default"
+        : active
+          ? ""
+          : "text-soft hover:bg-[var(--surface-soft)]"
   }`;
   const content = (
     <>
       <span className="flex items-center gap-3">
-        <span className={active ? "text-[#3B82F6]" : "text-[#9CA3AF]"}>{icon}</span>
+        <span className={active ? "text-[var(--accent)]" : "text-muted"}>{icon}</span>
         {label}
       </span>
-      <span className="rounded-full bg-[#F3F4F6] px-2 py-0.5 text-[12px] text-[#6B7280]">
+      <span className="badge-neutral">
         {count}
       </span>
     </>
   );
 
   if (disabled || !href) {
-    return <div className={className}>{content}</div>;
+    return (
+      <div
+        className={className}
+        style={active ? { backgroundColor: "var(--accent-soft)", color: "var(--accent-strong)" } : undefined}
+      >
+        {content}
+      </div>
+    );
   }
 
   return (
-    <Link className={className} href={href}>
+    <Link
+      className={className}
+      href={href}
+      style={active ? { backgroundColor: "var(--accent-soft)", color: "var(--accent-strong)" } : undefined}
+    >
       {content}
     </Link>
   );

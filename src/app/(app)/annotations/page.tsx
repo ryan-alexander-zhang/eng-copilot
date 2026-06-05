@@ -106,8 +106,8 @@ export default async function AnnotationsPage({
   const currentQuery = resolvedSearchParams.q ?? "";
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC]">
-      <div className="mx-auto overflow-hidden rounded-[28px] border border-[#E8EBF0] bg-white shadow-[0_12px_36px_rgba(15,23,42,0.06)]">
+    <main className="app-shell">
+      <div className="app-frame">
         <OwnerTopBar activeTab="annotations" userInitial={userInitial} />
 
         <section className="px-11 py-9">
@@ -185,7 +185,7 @@ export default async function AnnotationsPage({
                 </div>
 
                 <Link
-                  className="mt-7 inline-flex items-center gap-2 text-[15px] font-medium text-[#2563EB]"
+                  className="link-accent mt-7 inline-flex items-center gap-2 text-[15px] font-medium"
                   href="/documents"
                 >
                   View all documents
@@ -224,7 +224,7 @@ export default async function AnnotationsPage({
                           />
                           <div className="min-w-0">
                             <Link
-                              className="block text-[16px] font-medium text-[#111827] transition hover:text-[#2563EB]"
+                              className="block text-[16px] font-medium text-[#111827] transition hover:text-[var(--accent-strong)]"
                               href={item.href}
                             >
                               {item.title}
@@ -251,7 +251,7 @@ export default async function AnnotationsPage({
                       </td>
                       <td className="px-4 py-5 align-top">
                         {item.wordListName ? (
-                          <span className="inline-flex rounded-full bg-[#EEF4FF] px-3 py-1 text-[13px] font-medium text-[#2563EB]">
+                          <span className="badge-accent px-3 py-1 text-[13px]">
                             {item.wordListName}
                           </span>
                         ) : (
@@ -274,7 +274,7 @@ export default async function AnnotationsPage({
                         <p className="mt-1">{formatShortTimeLabel(item.createdAt)}</p>
                       </td>
                       <td className="px-4 py-5 align-top">
-                        <button className="text-[#667085]" type="button">
+                        <button className="control-icon-button h-9 w-9" type="button">
                           <MoreHorizontal className="h-4 w-4" strokeWidth={2} />
                         </button>
                       </td>
@@ -393,10 +393,8 @@ function PaginationLink({
   disabled?: boolean;
   href: string;
 }) {
-  const className = `inline-flex h-10 min-w-10 items-center justify-center rounded-[10px] border px-3 text-[15px] ${
-    active
-      ? "border-[#BFDBFE] bg-[#F5F9FF] text-[#2563EB]"
-      : "border-[#E5E7EB] bg-white text-[#667085]"
+  const className = `pagination-link h-10 min-w-10 rounded-[10px] px-3 text-[15px] ${
+    active ? "pagination-link-active" : ""
   }`;
 
   if (disabled) {

@@ -14,16 +14,19 @@ export function OwnerTopBar({
   userInitial,
 }: OwnerTopBarProps) {
   return (
-    <header className="flex h-[72px] items-center justify-between border-b border-[#E8EBF0] bg-white px-8">
-      <Link className="text-[23px] font-semibold tracking-[-0.05em] text-[#111827]" href="/documents">
+    <header
+      className="flex h-[72px] items-center justify-between border-b bg-[var(--surface-strong)] px-8"
+      style={{ borderColor: "var(--border)" }}
+    >
+      <Link className="text-[23px] font-semibold tracking-[-0.05em]" href="/documents">
         eng-copilot
       </Link>
 
-      <div className="flex items-center gap-7 text-[15px] text-[#374151]">
+      <div className="text-soft flex items-center gap-7 text-[15px]">
         {showSearch ? (
           <button
             aria-label="Search"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#6B7280] transition hover:bg-[#F3F4F6]"
+            className="text-muted inline-flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
             type="button"
           >
             <Search className="h-4.5 w-4.5" strokeWidth={2} />
@@ -59,15 +62,16 @@ function TopBarLink({
   return (
     <Link
       className={`relative py-6 transition ${
-        active ? "text-[#111827]" : "text-[#4B5563] hover:text-[#111827]"
+        active ? "" : "text-soft hover:text-[var(--foreground)]"
       }`}
       href={href}
     >
       {children}
       <span
-        className={`absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-[#3B82F6] ${
+        className={`absolute inset-x-0 bottom-0 h-0.5 rounded-full ${
           active ? "opacity-100" : "opacity-0"
         }`}
+        style={{ backgroundColor: "var(--accent)" }}
       />
     </Link>
   );

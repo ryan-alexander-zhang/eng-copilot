@@ -208,7 +208,7 @@ export default async function WordListsPage({
               <section className="rounded-[18px] border border-[#E8EBF0] bg-white p-5">
                 <div className="flex items-center justify-between">
                   <h2 className="text-[15px] font-semibold text-[#111827]">Selected for highlighting</h2>
-                  <span className="rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[12px] font-semibold text-[#3B82F6]">
+                  <span className="badge-accent">
                     {dashboardData.selectedCount}
                   </span>
                 </div>
@@ -224,17 +224,14 @@ export default async function WordListsPage({
                     dashboardData.lists
                       .filter((list) => list.isSelected)
                       .map((list) => (
-                        <div
-                          className="flex items-center justify-between rounded-[14px] border border-[#E5E7EB] bg-[#F9FBFF] px-4 py-4"
-                          key={list.id}
-                        >
-                          <span className="flex items-center gap-3 text-[15px] font-medium text-[#374151]">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3B82F6] text-white">
+                        <div className="selected-item-card" key={list.id}>
+                          <span className="text-soft flex items-center gap-3 text-[15px] font-medium">
+                            <span className="selected-item-icon">
                               <Check className="h-3.5 w-3.5" strokeWidth={2.4} />
                             </span>
                             {list.name}
                           </span>
-                          <span className="text-[13px] text-[#6B7280]">
+                          <span className="text-muted text-[13px]">
                             {formatCompactNumber(list.wordCount)} words
                           </span>
                         </div>

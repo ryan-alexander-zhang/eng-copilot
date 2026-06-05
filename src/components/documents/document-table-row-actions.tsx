@@ -66,18 +66,18 @@ export function DocumentTableRowActions({
     <>
       <td className="px-4 py-5">
         {share?.isActive ? (
-          <span className="inline-flex items-center rounded-full bg-[#ECFDF3] px-3 py-1 text-[12px] font-medium text-[#027A48]">
+          <span className="status-badge-success">
             Read-only link active
           </span>
         ) : (
-          <span className="text-[14px] text-[#9CA3AF]">-</span>
+          <span className="text-muted text-[14px]">-</span>
         )}
       </td>
       <td className="px-4 py-5">
-        <div className="relative flex items-center gap-1 text-[#6B7280]">
+        <div className="text-soft relative flex items-center gap-1">
           {copiedTarget === "title" ? (
             <div
-              className="pointer-events-none absolute right-10 top-[-40px] rounded-[10px] bg-[#111827] px-3 py-1.5 text-[12px] font-medium text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)]"
+              className="tooltip-bubble pointer-events-none absolute right-10 top-[-40px]"
               role="status"
             >
               Copied
@@ -85,14 +85,14 @@ export function DocumentTableRowActions({
           ) : null}
           <Link
             aria-label={`Open ${title}`}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
+            className="icon-ghost-button h-9 w-9"
             href={`/documents/${documentId}`}
           >
             <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
           </Link>
           <button
             aria-label={`Copy ${title}`}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
+            className="icon-ghost-button h-9 w-9"
             onClick={() => {
               void handleCopyTitle();
             }}
@@ -102,8 +102,8 @@ export function DocumentTableRowActions({
           </button>
           <Link
             aria-label={`Open shared view for ${title}`}
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition ${
-              share?.isActive ? "hover:bg-[#F3F4F6]" : "pointer-events-none opacity-35"
+            className={`icon-ghost-button h-9 w-9 ${
+              share?.isActive ? "" : "pointer-events-none opacity-35"
             }`}
             href={share?.isActive ? `/shared/${share.token}` : "#"}
           >
@@ -116,7 +116,7 @@ export function DocumentTableRowActions({
             onMoveToTrashSuccess={() => {
               router.refresh();
             }}
-            triggerClassName="inline-flex h-9 w-9 items-center justify-center rounded-[10px] transition hover:bg-[#F3F4F6]"
+            triggerClassName="icon-ghost-button h-9 w-9"
             triggerLabel={`More actions for ${title}`}
           >
             <DocumentShareButton

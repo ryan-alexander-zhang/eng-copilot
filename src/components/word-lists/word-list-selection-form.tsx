@@ -37,7 +37,7 @@ export function WordListSelectionForm({
 
   return (
     <form action={updateWordListsAction} className="mt-8" id="word-lists-form">
-      <div className="mt-8 flex items-center justify-between text-[15px] text-[#6B7280]">
+      <div className="text-muted mt-8 flex items-center justify-between text-[15px]">
         <span>{lists.length} lists available</span>
         <span>{selectedWordListIds.length} selected</span>
       </div>
@@ -48,11 +48,7 @@ export function WordListSelectionForm({
 
           return (
             <label
-              className={`flex cursor-pointer items-start gap-5 rounded-[18px] border p-5 transition ${
-                isSelected
-                  ? "border-[#BFD7FF] bg-[#F8FBFF] shadow-[0_8px_24px_rgba(59,130,246,0.08)]"
-                  : "border-[#E8EBF0] bg-white hover:border-[#D7DEE8]"
-              }`}
+              className={`selection-card ${isSelected ? "selection-card-active" : ""}`}
               data-selected={isSelected ? "true" : "false"}
               data-testid={`word-list-option-${list.id}`}
               key={list.id}
@@ -69,35 +65,31 @@ export function WordListSelectionForm({
                 value={list.id}
               />
               <span
-                className={`mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] border ${
-                  isSelected
-                    ? "border-[#3B82F6] bg-[#3B82F6] text-white"
-                    : "border-[#D0D5DD] bg-white text-transparent"
-                }`}
+                className={`selection-check ${isSelected ? "selection-check-active" : ""}`}
               >
                 <Check className="h-4 w-4" strokeWidth={2.4} />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                   <div>
-                    <span className="inline-flex rounded-full bg-[#EEF4FF] px-3 py-1 text-[12px] font-semibold text-[#3B82F6]">
+                    <span className="badge-accent px-3">
                       {list.name}
                     </span>
-                    <p className="mt-4 max-w-[360px] text-[15px] leading-7 text-[#6B7280]">
+                    <p className="text-muted mt-4 max-w-[360px] text-[15px] leading-7">
                       {list.description}
                     </p>
                   </div>
 
-                  <dl className="grid grid-cols-2 gap-x-[18px] gap-y-4 text-[14px] text-[#6B7280] xl:w-[298px] xl:flex-none xl:grid-cols-[110px_170px]">
+                  <dl className="text-muted grid grid-cols-2 gap-x-[18px] gap-y-4 text-[14px] xl:w-[298px] xl:flex-none xl:grid-cols-[110px_170px]">
                     <div>
-                      <dt className="text-[#9CA3AF]">Words</dt>
-                      <dd className="mt-1 text-[18px] font-semibold text-[#111827]">
+                      <dt className="text-muted">Words</dt>
+                      <dd className="mt-1 text-[18px] font-semibold text-[var(--foreground)]">
                         {formatCompactNumber(list.wordCount)}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-[#9CA3AF]">Last synced</dt>
-                      <dd className="mt-1 text-[15px] text-[#111827]">
+                      <dt className="text-muted">Last synced</dt>
+                      <dd className="mt-1 text-[15px] text-[var(--foreground)]">
                         {list.syncedLabel}
                       </dd>
                     </div>
