@@ -221,7 +221,7 @@ export function DocumentMoreActionsMenu({
   }
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative shrink-0" ref={menuRef}>
       <button
         aria-label={triggerLabel}
         className={

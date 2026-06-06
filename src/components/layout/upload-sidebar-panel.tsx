@@ -44,7 +44,7 @@ export function UploadSidebarPanel({
       </button>
 
       <button
-        className="flex min-h-[150px] w-full flex-col items-center justify-center rounded-[14px] border border-dashed bg-[var(--surface-strong)] px-6 text-center transition hover:bg-[var(--surface-soft)]"
+        className="flex min-h-[150px] w-full flex-col items-center justify-start rounded-[14px] border border-dashed bg-[var(--surface-strong)] px-6 pb-5 pt-6 text-center transition hover:bg-[var(--surface-soft)]"
         onClick={() => inputRef.current?.click()}
         style={{ borderColor: "var(--border)" }}
         type="button"

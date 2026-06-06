@@ -35,6 +35,9 @@ export function DocumentTableRowActions({
   const [copiedTarget, setCopiedTarget] = useState<"link" | "title" | null>(null);
   const [share, setShare] = useState<DocumentShareState>(initialShare);
   const shareLabel = originalName || title;
+  const actionButtonClass = "control-icon-button h-9 w-9 rounded-[10px]";
+  const inactiveActionButtonClass =
+    "control-icon-button h-9 w-9 rounded-[10px] pointer-events-none opacity-45";
 
   useEffect(() => {
     if (!copiedTarget) {
@@ -73,8 +76,8 @@ export function DocumentTableRowActions({
           <span className="text-muted text-[14px]">-</span>
         )}
       </td>
-      <td className="px-4 py-5">
-        <div className="text-soft relative flex items-center gap-1">
+      <td className="px-4 py-5 whitespace-nowrap">
+        <div className="text-soft relative flex items-center gap-2">
           {copiedTarget === "title" ? (
             <div
               className="tooltip-bubble pointer-events-none absolute right-10 top-[-40px]"
@@ -85,14 +88,14 @@ export function DocumentTableRowActions({
           ) : null}
           <Link
             aria-label={`Open ${title}`}
-            className="icon-ghost-button h-9 w-9"
+            className={actionButtonClass}
             href={`/documents/${documentId}`}
           >
             <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
           </Link>
           <button
             aria-label={`Copy ${title}`}
-            className="icon-ghost-button h-9 w-9"
+            className={actionButtonClass}
             onClick={() => {
               void handleCopyTitle();
             }}
@@ -102,9 +105,7 @@ export function DocumentTableRowActions({
           </button>
           <Link
             aria-label={`Open shared view for ${title}`}
-            className={`icon-ghost-button h-9 w-9 ${
-              share?.isActive ? "" : "pointer-events-none opacity-35"
-            }`}
+            className={share?.isActive ? actionButtonClass : inactiveActionButtonClass}
             href={share?.isActive ? `/shared/${share.token}` : "#"}
           >
             <Link2 className="h-4 w-4" strokeWidth={2} />
@@ -116,7 +117,7 @@ export function DocumentTableRowActions({
             onMoveToTrashSuccess={() => {
               router.refresh();
             }}
-            triggerClassName="icon-ghost-button h-9 w-9"
+            triggerClassName={actionButtonClass}
             triggerLabel={`More actions for ${title}`}
           >
             <DocumentShareButton

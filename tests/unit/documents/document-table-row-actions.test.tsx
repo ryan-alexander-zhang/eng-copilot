@@ -38,6 +38,44 @@ afterEach(() => {
 });
 
 describe("DocumentTableRowActions", () => {
+  it("uses the shared action button treatment from vocabulary", () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <DocumentTableRowActions
+              documentId="doc_123"
+              enableShareAction={vi.fn().mockResolvedValue(null)}
+              initialShare={null}
+              moveToTrashAction={vi.fn().mockResolvedValue(undefined)}
+              revokeShareAction={vi.fn().mockResolvedValue(undefined)}
+              originalName="study-notes.md"
+              title="The Value of Lifelong Learning"
+            />
+          </tr>
+        </tbody>
+      </table>,
+    );
+
+    const openButton = screen.getByRole("link", {
+      name: /Open The Value of Lifelong Learning/i,
+    });
+    const copyButton = screen.getByRole("button", {
+      name: /Copy The Value of Lifelong Learning/i,
+    });
+    const sharedViewButton = screen.getByRole("link", {
+      name: /Open shared view for The Value of Lifelong Learning/i,
+    });
+    const moreActionsButton = screen.getByRole("button", {
+      name: /More actions for The Value of Lifelong Learning/i,
+    });
+
+    expect(openButton.className).toContain("control-icon-button");
+    expect(copyButton.className).toContain("control-icon-button");
+    expect(sharedViewButton.className).toContain("control-icon-button");
+    expect(moreActionsButton.className).toContain("control-icon-button");
+  });
+
   it("copies the document file name and shows transient feedback", async () => {
     render(
       <table>
