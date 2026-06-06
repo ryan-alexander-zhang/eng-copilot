@@ -136,6 +136,7 @@ describe("VocabularyPage", () => {
     expect(screen.getByRole("button", { name: "Edit observability" })).toBeInTheDocument();
     expect(screen.getAllByText("Default Word List").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Academic Review").length).toBeGreaterThan(0);
+    expect(vocabularyLookupLink.parentElement).toHaveClass("flex-nowrap");
   });
 
   it("keeps the vocabulary table card at content height when pagination is absent", async () => {
@@ -144,24 +145,20 @@ describe("VocabularyPage", () => {
     expect(screen.getByRole("table").closest("section")).toHaveClass("xl:self-start");
   });
 
-  it("keeps the edit action area visible for dropdown panels", async () => {
+  it("uses the same table surface treatment as documents while keeping action anchors intact", async () => {
     render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
 
     expect(screen.getByRole("button", { name: "Edit observability" }).closest("td")).toHaveClass(
-      "overflow-visible",
+      "relative",
     );
-    expect(screen.getByRole("table").closest("section")).not.toHaveClass("overflow-hidden");
+    expect(screen.getByRole("table").closest("section")).toHaveClass("overflow-hidden");
   });
 
-  it("uses the same outer page shell spacing as annotations", async () => {
+  it("uses the shared app shell and frame", async () => {
     const { container } = render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
 
-    expect(container.querySelector("main")).toHaveClass("min-h-screen", "bg-[#F8FAFC]");
-    expect(container.querySelector("main")).not.toHaveClass("px-3", "py-3", "md:px-5", "md:py-5");
-    expect(screen.getByText("Top bar").parentElement).toHaveClass(
-      "border-[#E8EBF0]",
-      "shadow-[0_12px_36px_rgba(15,23,42,0.06)]",
-    );
+    expect(container.querySelector("main")).toHaveClass("app-shell");
+    expect(container.querySelector("main > div")).toHaveClass("app-frame");
   });
 
   it("auto-submits the filter form when sort changes", async () => {
@@ -179,5 +176,32 @@ describe("VocabularyPage", () => {
 
     expect(requestSubmit).toHaveBeenCalledTimes(1);
     expect(submittedSort).toBe("oldest");
+  });
+
+  it("opens the new list popover when its trigger is clicked", async () => {
+    render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
+
+    fireEvent.click(screen.getByRole("button", { name: "New list" }));
+
+    expect(screen.getByPlaceholderText("Word list name")).toBeInTheDocument();
+  });
+
+  it("shows 15 vocabulary entries on the first page by default", async () => {
+    vi.mocked(prisma.vocabularyEntry.findMany).mockResolvedValue(
+      Array.from({ length: 16 }, (_, index) => ({
+        id: `entry_${index + 1}`,
+        note: `Note ${index + 1}`,
+        word: `word-${index + 1}`,
+        source: "manual",
+        createdAt: new Date(`2026-05-${String((index % 9) + 1).padStart(2, "0")}T00:00:00.000Z`),
+        wordLists: [],
+      })) as never,
+    );
+
+    render(await VocabularyPage({ searchParams: Promise.resolve({}) }));
+
+    expect(screen.getAllByLabelText(/^Select word-/i)).toHaveLength(15);
+    expect(screen.getByText("1-15 of 16 words")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "2" })).toBeInTheDocument();
   });
 });

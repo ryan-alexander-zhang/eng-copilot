@@ -28,7 +28,7 @@ import {
 } from "@/lib/vocabulary/service";
 import { createOwnerWordList, getOwnerCustomWordLists } from "@/lib/word-lists/service";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 15;
 const ACTION_BUTTON_CLASS_NAME =
   "control-icon-button h-9 w-9 rounded-[10px]";
 
@@ -467,30 +467,30 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
               </section>
             </aside>
 
-            <section className="overflow-visible rounded-[20px] border border-[#E6EBF2] bg-white shadow-[0_12px_30px_rgba(15,23,42,0.04)] xl:self-start">
-              <div className="overflow-x-auto">
-                <table className="min-w-full border-separate border-spacing-0">
-                  <thead>
-                    <tr className="bg-[#FBFCFF] text-left text-[13px] font-medium text-[#64748B]">
-                      <th className="w-12 border-b border-[#EEF2F7] px-4 py-4">
+            <section className="overflow-hidden rounded-[18px] border border-[color:var(--border)] bg-[var(--surface-strong)] xl:self-start">
+              <div className="overflow-x-auto xl:overflow-visible">
+                <table className="w-full min-w-[1180px] table-fixed text-left">
+                  <thead className="text-muted bg-[var(--surface-soft)] text-[13px] font-medium">
+                    <tr>
+                      <th className="w-12 border-b border-[color:var(--border)] px-4 py-4">
                         <input
                           aria-label="Select all vocabulary entries"
                           className="checkbox-accent h-4 w-4 rounded"
                           type="checkbox"
                         />
                       </th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Word</th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Added</th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Word List</th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Note</th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Lookup links</th>
-                      <th className="border-b border-[#EEF2F7] px-4 py-4">Actions</th>
+                      <th className="w-[220px] border-b border-[color:var(--border)] px-4 py-4">Word</th>
+                      <th className="w-[150px] border-b border-[color:var(--border)] px-4 py-4">Added</th>
+                      <th className="w-[220px] border-b border-[color:var(--border)] px-4 py-4">Word List</th>
+                      <th className="w-[140px] border-b border-[color:var(--border)] px-4 py-4">Note</th>
+                      <th className="w-[260px] border-b border-[color:var(--border)] px-4 py-4">Lookup links</th>
+                      <th className="w-[200px] border-b border-[color:var(--border)] px-4 py-4">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-[color:var(--border)] bg-[var(--surface-strong)]">
                     {visibleEntries.length === 0 ? (
                       <tr>
-                        <td className="px-6 py-12 text-center text-[15px] text-[#64748B]" colSpan={7}>
+                        <td className="text-muted px-6 py-12 text-center text-[15px]" colSpan={7}>
                           No vocabulary matched this view.
                         </td>
                       </tr>
@@ -500,23 +500,25 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                       const selectedSlugs = new Set(entryWordLists.map((wordList) => wordList.slug));
 
                       return (
-                        <tr className="text-[14px] text-[#475569]" key={entry.id}>
-                          <td className="border-b border-[#EEF2F7] px-4 py-4 align-top">
+                        <tr className="text-soft text-[14px]" key={entry.id}>
+                          <td className="px-4 py-5 align-top">
                             <input
                               aria-label={`Select ${entry.word}`}
                               className="checkbox-accent mt-1 h-4 w-4 rounded"
                               type="checkbox"
                             />
                           </td>
-                          <td className="border-b border-[#EEF2F7] px-4 py-4 align-top">
-                            <span className="text-[16px] font-semibold text-[#0F172A]">{entry.word}</span>
+                          <td className="px-4 py-5 align-top">
+                            <span className="text-[16px] font-semibold text-[var(--foreground)]">
+                              {entry.word}
+                            </span>
                           </td>
-                          <td className="border-b border-[#EEF2F7] px-4 py-4 align-top text-[#64748B]">
+                          <td className="text-soft px-4 py-5 align-top">
                             {formatVocabularyDate(entry.createdAt)}
                           </td>
-                          <td className="border-b border-[#EEF2F7] px-4 py-4 align-top">
+                          <td className="px-4 py-5 align-top">
                             {entryWordLists.length === 0 ? (
-                              <span className="inline-flex rounded-full bg-[#F1F5F9] px-3 py-1 text-[12px] font-semibold text-[#64748B]">
+                              <span className="badge-neutral">
                                 Not in list
                               </span>
                             ) : (
@@ -536,11 +538,11 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               </div>
                             )}
                           </td>
-                          <td className="max-w-[260px] border-b border-[#EEF2F7] px-4 py-4 align-top text-[#64748B]">
+                          <td className="text-muted px-4 py-5 align-top">
                             {entry.note.length > 0 ? entry.note : "—"}
                           </td>
-                          <td className="border-b border-[#EEF2F7] px-4 py-4 align-top">
-                            <div className="flex flex-wrap gap-x-3 gap-y-2">
+                          <td className="px-4 py-5 align-top">
+                            <div className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
                               {buildVocabularyLookupLinks(entry.word).map((link) => (
                                 <a
                                   aria-label={`${link.label} lookup for ${entry.word}`}
@@ -569,7 +571,7 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                               ))}
                             </div>
                           </td>
-                          <td className="relative overflow-visible border-b border-[#EEF2F7] px-4 py-4 align-top">
+                          <td className="relative px-4 py-5 align-top">
                             <div className="flex items-center gap-2">
                               <VocabularyDisclosure
                                 className="relative"
@@ -690,16 +692,32 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                   </tbody>
                 </table>
               </div>
+            </section>
+
+            <div className="text-muted mt-6 flex flex-col gap-4 text-[14px] xl:flex-row xl:items-center xl:justify-between">
+              <p>
+                {filteredEntries.length === 0
+                  ? "0 words"
+                  : `${(currentPage - 1) * PAGE_SIZE + 1}-${Math.min(
+                      currentPage * PAGE_SIZE,
+                      filteredEntries.length,
+                    )} of ${filteredEntries.length} words`}
+              </p>
 
               {totalPages > 1 ? (
-                <div className="flex items-center justify-center gap-2 border-t border-[#EEF2F7] px-4 py-5">
-                  <PaginationLink
-                    currentPage={currentPage}
-                    page={Math.max(1, currentPage - 1)}
-                    searchParams={resolvedSearchParams}
+                <div className="flex items-center gap-2">
+                  <PageButton
+                    disabled={currentPage === 1}
+                    href={createVocabularyPageHref({
+                      page: currentPage - 1,
+                      q: resolvedSearchParams.q,
+                      sort: selectedSort,
+                      source: selectedSource,
+                      wordList: selectedWordListSlug,
+                    })}
                   >
                     <ChevronLeft aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
-                  </PaginationLink>
+                  </PageButton>
                   {getVisiblePageNumbers(currentPage, totalPages).map((pageNumber) => (
                     <PaginationLink
                       currentPage={currentPage}
@@ -710,16 +728,21 @@ export default async function VocabularyPage({ searchParams }: VocabularyPagePro
                       {pageNumber}
                     </PaginationLink>
                   ))}
-                  <PaginationLink
-                    currentPage={currentPage}
-                    page={Math.min(totalPages, currentPage + 1)}
-                    searchParams={resolvedSearchParams}
+                  <PageButton
+                    disabled={currentPage >= totalPages}
+                    href={createVocabularyPageHref({
+                      page: currentPage + 1,
+                      q: resolvedSearchParams.q,
+                      sort: selectedSort,
+                      source: selectedSource,
+                      wordList: selectedWordListSlug,
+                    })}
                   >
                     <ChevronRight aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
-                  </PaginationLink>
+                  </PageButton>
                 </div>
               ) : null}
-            </section>
+            </div>
           </div>
         </section>
       </div>
@@ -780,7 +803,7 @@ function PaginationLink({
   return (
     <Link
       aria-current={isActive ? "page" : undefined}
-      className={`pagination-link h-10 min-w-10 rounded-[12px] px-3 text-[14px] ${
+      className={`pagination-link inline-flex h-10 min-w-10 items-center justify-center rounded-[12px] px-3 text-[14px] ${
         isActive ? "pagination-link-active" : ""
       }`}
       href={createVocabularyPageHref({
@@ -790,6 +813,33 @@ function PaginationLink({
         source: searchParams.source,
         wordList: searchParams.wordList,
       })}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function PageButton({
+  children,
+  disabled,
+  href,
+}: {
+  children: ReactNode;
+  disabled: boolean;
+  href: string;
+}) {
+  if (disabled) {
+    return (
+      <span className="pagination-link inline-flex h-10 w-10 items-center justify-center rounded-[12px] opacity-40">
+        {children}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      className="pagination-link inline-flex h-10 w-10 items-center justify-center rounded-[12px]"
+      href={href}
     >
       {children}
     </Link>
